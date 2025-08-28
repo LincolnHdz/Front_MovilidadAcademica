@@ -1,42 +1,130 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #333;
+  background: #fff;
+  display: block !important;
+  place-items: initial !important;
+}
+
+
+
+html, #root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #004b87;
+  color: white;
+  padding: 10px 40px;
+  z-index: 1000;
+}
+
+.header .logo-text h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.header .logo-text span {
+  font-size: 12px;
+  display: block;
+}
+
+.header nav a {
+  margin-left: 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header nav a:hover {
+  text-decoration: underline;
+}
+
+/* Hero sin imagen */
+.hero-solid {
+  background: linear-gradient(135deg, #004b87, #0077cc);
+  width: 100%;          /* ✅ fuerza que abarque todo el ancho */
+  height: 10vh;        /* ocupa toda la altura de la pantalla */
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
+  color: white;
+  padding: 0 20px;
+  box-sizing: border-box; /* evita que el padding reste ancho */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+
+
+.hero-solid h2 {
+  font-size: 34px;
+  margin: 0;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.hero-solid p {
+  margin-top: 10px;
+  font-size: 18px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* Sections */
+.section {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.section h3 {
+  color: #004b87;
+  font-size: 26px;
+  margin-bottom: 15px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
 
 .card {
-  padding: 2em;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
 
-.read-the-docs {
-  color: #888;
+.card h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #004b87;
+}
+
+.card span {
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* Footer */
+.footer {
+  background: #004b87;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
 }
