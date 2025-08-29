@@ -1,4 +1,6 @@
 import React from "react";
+import logo from "../../Front_MovilidadAcademica/src/Img/logoUni.jpg";
+import facultad from "../../Front_MovilidadAcademica/src/Img/facultad.jpg";
 import "./App.css";
 
 export default function App() {
@@ -7,10 +9,11 @@ export default function App() {
       {/* Header */}
       <header className="header">
         <div className="logo">
-          <div className="logo-text">
-            <h1>UASLP</h1>
-            <span>Facultad de Ingeniería</span>
-          </div>
+        <img 
+          src={logo} 
+          alt="UASLP" 
+          style={{ height: "60px", width: "auto" }} 
+        />
         </div>
         <nav>
           <a href="#facultad">Facultad</a>
@@ -22,7 +25,13 @@ export default function App() {
       </header>
 
       {/* Hero sin imagen */}
-      <section className="hero hero-solid">
+      {/* <section className="hero hero-solid"> */}
+      <section className="hero hero-solid bg-cover bg-center relative" 
+        style={{ 
+          backgroundImage: `linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url(${facultad})`,
+          backgroundBlendMode: "overlay",
+          backgroundPosition: "center",
+        }}>
         <div className="overlay">
           <h2>Movilidad Académica - Facultad de Ingeniería</h2>
           <p>
