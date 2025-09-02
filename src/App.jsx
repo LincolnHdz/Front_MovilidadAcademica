@@ -24,7 +24,7 @@ export default function App() {
         </nav>
       </header>
 
-      {/* Hero sin imagen */}
+     
       {/* <section className="hero hero-solid"> */}
       <section className="hero hero-solid bg-cover bg-center relative" 
         style={{ 
@@ -40,7 +40,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Programas */}
+      
       <section id="programas" className="section">
         <h3>Programas de Movilidad</h3>
         <p>
@@ -63,7 +63,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Convocatorias */}
+      
       <section id="convocatorias" className="section">
         <h3>Convocatorias Vigentes</h3>
         <ul>
