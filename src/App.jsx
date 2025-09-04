@@ -5,6 +5,7 @@ import "./App.css";
 import Navigation from "./components/Navigation";
 import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
 import ConvocatoriasPage from "./pages/ConvocatoriasPage";
+import MovilidadPresencial from "./pages/MovilidadPresencial";
 
 const HomePage = () => {
   return (
@@ -90,6 +91,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
+        <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
       </Routes>
     </Router>
   );
