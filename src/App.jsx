@@ -1,8 +1,12 @@
 import React from "react";
-import facultad from "../../Front/src/Img/facultad.png";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import facultad from "./Img/facultad.png";
 import "./App.css";
+import Navigation from "./components/Navigation";
+import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
+import ConvocatoriasPage from "./pages/ConvocatoriasPage";
 
-export default function App() {
+const HomePage = () => {
   return (
     <div>
       {/* Hero */}
@@ -50,22 +54,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* Convocatorias */}
+     
       <section id="convocatorias" className="section">
-        <h3>Convocatorias Vigentes</h3>
-        <ul>
-          <li>
-            <strong>Convocatoria Erasmus+ 2025</strong> — Inscripciones hasta el
-            30 de septiembre.
-          </li>
-          <li>
-            <strong>Convenio con Universidades de Quebec</strong> — Fecha
-            límite: 15 de octubre.
-          </li>
-        </ul>
+        <ConvocatoriasSlider />
       </section>
 
-      {/* Experiencias */}
+      
       <section id="experiencias" className="section">
         <h3>Experiencias de Estudiantes</h3>
         <div className="cards">
@@ -86,5 +80,17 @@ export default function App() {
         </div>
       </section>
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <Router>
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
+      </Routes>
+    </Router>
   );
 }
