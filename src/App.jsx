@@ -1,25 +1,10 @@
 import React from "react";
-import logo from "../../Front_MovilidadAcademica/src/Img/logoUni.jpg";
-import facultad from "../../Front_MovilidadAcademica/src/Img/facultad.jpg";
+import facultad from "../../Front/src/Img/facultad.png";
 import "./App.css";
 
 export default function App() {
   return (
     <div>
-      {/* Header */}
-      <header className="header">
-        <div className="logo">
-          <img src={logo} alt="UASLP" style={{ height: "50px", width: "auto" }} />
-        </div>
-        <nav>
-          <a href="#facultad">Facultad</a>
-          <a href="#programas">Programas</a>
-          <a href="#convocatorias">Convocatorias</a>
-          <a href="#experiencias">Experiencias</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
-      </header>
-
       {/* Hero */}
       <section
         className="hero"
@@ -100,14 +85,6 @@ export default function App() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <p>
-          © {new Date().getFullYear()} UASLP - Facultad de Ingeniería. Todos los
-          derechos reservados.
-        </p>
-      </footer>
     </div>
   );
 }

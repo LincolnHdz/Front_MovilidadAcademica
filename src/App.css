@@ -16,32 +16,6 @@ html, #root {
   box-sizing: border-box;
 }
 
-/* ===== HEADER ===== */
-.header {
-  position: sticky;
-  top: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #004b87;
-  color: white;
-  padding: 12px 40px;
-  z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* sombra sutil */
-}
-
-.header nav a {
-  margin-left: 25px;
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.header nav a:hover {
-  color: #ffdd57; /* amarillo para resaltar */
-  text-decoration: none;
-}
 
 /* ===== HERO ===== */
 .hero {
@@ -148,18 +122,4 @@ html, #root {
   font-size: 14px;
   font-weight: bold;
   color: #004b87;
-}
-
-/* ===== FOOTER ===== */
-.footer {
-  background: #002f56;
-  color: white;
-  text-align: center;
-  padding: 25px 20px;
-  font-size: 14px;
-  margin-top: 60px;
-}
-
-.footer p {
-  margin: 0;
 }

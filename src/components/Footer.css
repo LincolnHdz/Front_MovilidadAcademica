@@ -1,0 +1,115 @@
+/* Footer principal */
+.footer {
+  background-color: #004a98;
+  color: white;
+  margin-top: auto;
+}
+
+/* Línea azul superior */
+.footer-line {
+  height: 6px;
+  background-color: #00B2E3;
+}
+
+/* Contenido principal */
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 10px 40px;
+}
+
+/* Iconos de redes sociales en la parte superior */
+.social-links {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  transform: translateY(-2px);
+  opacity: 0.8;
+}
+
+.social-link svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+/* Subtítulo Facultad de Ingeniería */
+.footer-content h3 {
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0 0 15px 0;
+  color: white;
+}
+
+/* Información de contacto */
+.footer-content p {
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.6;
+  margin: 5px 0;
+  color: white;
+  opacity: 0.95;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-content {
+    padding: 25px 20px 30px;
+    text-align: center;
+  }
+  
+  .social-links {
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .footer-content h2 {
+    font-size: 36px;
+  }
+  
+  .footer-content h3 {
+    font-size: 18px;
+  }
+  
+  .footer-content p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-content {
+    padding: 20px 15px 25px;
+  }
+  
+  .footer-content h2 {
+    font-size: 32px;
+  }
+  
+  .footer-content p {
+    font-size: 13px;
+  }
+  
+  .social-link {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .social-link svg {
+    width: 20px;
+    height: 20px;
+  }
+}
