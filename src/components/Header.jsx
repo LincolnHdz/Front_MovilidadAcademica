@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import logo from '../Img/logoUni.png';
 import './Header.css';
+import LanguageSwitcher from '../components/Language/LanguageSwitcher';
 
 export default function Header() {
     const [isMovilidadOpen, setIsMovilidadOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function Header() {
                 </div>
                 <nav>
                     <a href="/" className="nav-link">Inicio</a>
-                    
+                     <LanguageSwitcher />
                     {/* Menú desplegable para Movilidad */}
                     <div className="dropdown" onMouseLeave={closeAllDropdowns}>
                         <button 

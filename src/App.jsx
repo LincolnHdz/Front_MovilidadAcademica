@@ -2,6 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import facultad from "./Img/facultad.png";
 import "./App.css";
+import "./i18n";
+import { useTranslation } from "react-i18next";
 import Navigation from "./components/Navigation";
 import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
 import ConvocatoriasPage from "./pages/ConvocatoriasPage";
@@ -11,6 +13,7 @@ import MovAcadFormatos from "./pages/MovAcadFormatos";
 import DeptoRelInter from "./pages/DeptoRelInter";
 
 const HomePage = () => {
+  const { t } = useTranslation();
   return (
     <div>
       {/* Hero */}
@@ -21,39 +24,31 @@ const HomePage = () => {
         }}
       >
         <div className="overlay">
-          <h2>Movilidad Académica - Facultad de Ingeniería</h2>
+          <h2>{t("hero.title")}</h2>
           <p>
-            Impulsando experiencias internacionales para estudiantes y docentes
-            de Ingeniería.
+            {t("hero.subtitle")}
           </p>
         </div>
       </section>
 
       {/* Programas */}
       <section id="programas" className="section">
-        <h3>Programas de Movilidad</h3>
+        <h3>{t("programas.title")}</h3>
         <p>
-          Conoce nuestras oportunidades de intercambio y convenios con
-          universidades en todo el mundo.
+          {t("programas.description")}
         </p>
         <div className="cards">
           <div className="card">
-            <h4>Intercambio Académico</h4>
-            <p>Convenios con universidades de América, Europa y Asia.</p>
+            <h4>{t("programas.cards.intercambio.title")}</h4>
+            <p>{t("programas.cards.intercambio.text")}</p>
           </div>
           <div className="card">
-            <h4>Movilidad de Investigación</h4>
-            <p>
-              Colabora en proyectos de ingeniería con instituciones de prestigio
-              internacional.
-            </p>
+            <h4>{t("programas.cards.investigacion.title")}</h4>
+            <p>{t("programas.cards.investigacion.text")}</p>
           </div>
           <div className="card">
-            <h4>Prácticas Profesionales</h4>
-            <p>
-              Realiza prácticas en empresas y organismos internacionales de
-              ingeniería.
-            </p>
+            <h4>{t("programas.cards.practicas.title")}</h4>
+            <p>{t("programas.cards.practicas.text")}</p>
           </div>
         </div>
       </section>
@@ -65,21 +60,19 @@ const HomePage = () => {
 
       
       <section id="experiencias" className="section">
-        <h3>Experiencias de Estudiantes</h3>
+        <h3>{t("experiencias.title")}</h3>
         <div className="cards">
           <div className="card">
             <p>
-              "Mi experiencia en Alemania fue increíble. Aprendí mucho sobre
-              ingeniería y conocí personas de todo el mundo."
+              {t("experiencias.cards.0.text")}
             </p>
-            <span>— Ana Pérez, Ingeniería Mecánica</span>
+            <span>{t("experiencias.cards.0.author")}</span>
           </div>
           <div className="card">
             <p>
-              "El intercambio en Argentina me ayudó a crecer académica y
-              personalmente dentro de mi carrera."
+              {t("experiencias.cards.1.text")}
             </p>
-            <span>— Luis Hernández, Ingeniería en Sistemas</span>
+            <span>{t("experiencias.cards.1.author")}</span>
           </div>
         </div>
       </section>
