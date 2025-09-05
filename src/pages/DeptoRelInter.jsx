@@ -1,5 +1,5 @@
 import React from 'react';
-import './DeptoRelInter.css'; // Asegúrate de crear este archivo para los estilos
+import './DeptoRelInt.css';
 
 const DeptoRelInter = () => {
   return (
@@ -7,7 +7,7 @@ const DeptoRelInter = () => {
       {/* Encabezado institucional */}
       <header className="header">
         <div className="logo">
-          <img src={logo} alt="UASLP" style={{ height: "50px", width: "auto" }} />
+          <img src="/logo-uaslp.png" alt="UASLP" style={{ height: "50px", width: "auto" }} />
         </div>
         <nav>
           <a href="#facultad">Facultad</a>
@@ -56,23 +56,45 @@ const DeptoRelInter = () => {
       {/* Sección de oportunidades */}
       <section className="oportunidades">
         <div className="card">
-          <img src="/ruta-a-icono-movilidad.png" alt="Movilidad Estudiantil" />
+          <div className="card-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#004b87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 17L12 22L22 17" stroke="#004b87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 12L12 17L22 12" stroke="#004b87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
           <h5>Movilidad Estudiantil</h5>
+          <p>Oportunidades de intercambio académico con universidades internacionales.</p>
         </div>
+        
         <div className="card">
-          <img src="/ruta-a-icono-doble-titulacion.png" alt="Doble Titulación" />
+          <div className="card-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 10V6C22 5.45 21.55 5 21 5H3C2.45 5 2 5.45 2 6V10" stroke="#004b87" strokeWidth="2"/>
+              <path d="M7 19H17" stroke="#004b87" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M12 15V19" stroke="#004b87" strokeWidth="2" strokeLinecap="round"/>
+              <path d="M22 10C22 13.31 19.31 16 16 16H8C4.69 16 2 13.31 2 10" stroke="#004b87" strokeWidth="2"/>
+            </svg>
+          </div>
           <h5>Doble Titulación</h5>
+          <p>Programas que permiten obtener títulos de dos universidades diferentes.</p>
         </div>
+        
         <div className="card">
-          <img src="/ruta-a-icono-eiffel.png" alt="Becas EIFFEL" />
+          <div className="card-icon">
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L15.09 8.26L22 9L17 14L18.18 21L12 17.77L5.82 21L7 14L2 9L8.91 8.26L12 2Z" stroke="#004b87" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
           <h5>Convocatoria a Becas EIFFEL</h5>
+          <p>Prestigiosas becas del gobierno francés para estudios de posgrado en Francia.</p>
         </div>
       </section>
 
       <footer className="footer">
         <p>
           © {new Date().getFullYear()} UASLP - Facultad de Ingeniería. Todos los
-            derechos reservados.
+          derechos reservados.
         </p>
       </footer>
     </div>
@@ -80,5 +102,3 @@ const DeptoRelInter = () => {
 };
 
 export default DeptoRelInter;
-
-

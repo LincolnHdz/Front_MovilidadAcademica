@@ -153,11 +153,15 @@
 .delete-btn {
   background: none;
   border: none;
-  font-size: 1.2rem;
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.4rem;
   border-radius: 4px;
   transition: background-color 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
 }
 
 .edit-btn:hover {
@@ -168,6 +172,22 @@
 .delete-btn:hover {
   background-color: #ffebee;
   transform: scale(1.1);
+}
+
+.edit-btn svg,
+.delete-btn svg {
+  width: 16px;
+  height: 16px;
+  color: #7f8c8d;
+  transition: color 0.3s ease;
+}
+
+.edit-btn:hover svg {
+  color: #3498db;
+}
+
+.delete-btn:hover svg {
+  color: #e74c3c;
 }
 
 .convocatoria-id {
@@ -242,5 +262,18 @@
 
   .convocatoria-content p {
     font-size: 0.9rem;
+  }
+  
+  .edit-btn,
+  .delete-btn {
+    width: 28px;
+    height: 28px;
+    padding: 0.3rem;
+  }
+  
+  .edit-btn svg,
+  .delete-btn svg {
+    width: 14px;
+    height: 14px;
   }
 }

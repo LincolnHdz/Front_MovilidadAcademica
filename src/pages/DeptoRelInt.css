@@ -23,50 +23,7 @@ html, #root {
   padding: 20px;
 }
 
-/* ===== HEADER INSTITUCIONAL ===== */
-.header {
-  position: sticky;
-  top: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #004b87;
-  color: white;
-  padding: 12px 40px;
-  z-index: 1000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* sombra sutil */
-}
 
-.header nav a {
-  margin-left: 25px;
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.header nav a:hover {
-  color: #ffdd57; /* amarillo para resaltar */
-  text-decoration: none;
-}
-
-.nav-principal ul {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  list-style: none;
-  padding: 0;
-}
-
-.nav-principal li {
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.nav-principal li:hover {
-  color: #ffdd57;
-}
 
 /* ===== TÍTULO DEL DEPARTAMENTO ===== */
 .titulo-depto {
@@ -110,7 +67,7 @@ html, #root {
 /* ===== OPORTUNIDADES ===== */
 .oportunidades {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 24px;
   margin-top: 40px;
 }
@@ -130,20 +87,48 @@ html, #root {
   box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 
-.card img {
-  width: 80px;
-  height: auto;
+.card-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-bottom: 15px;
 }
 
 .card h5 {
   font-size: 18px;
   color: #004b87;
-  margin: 0;
+  margin: 0 0 10px 0;
 }
+
+.card p {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+  text-align: left;
+}
+
+
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px 20px;
+  }
+  
+  .header nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+  }
+  
+  .header nav a {
+    margin: 0;
+  }
+
   .nav-principal ul {
     flex-direction: column;
     gap: 10px;
@@ -152,5 +137,12 @@ html, #root {
   .oportunidades {
     grid-template-columns: 1fr;
   }
+  
+  .titulo-depto h2 {
+    font-size: 28px;
+  }
+  
+  .depto-container {
+    padding: 15px;
+  }
 }
-

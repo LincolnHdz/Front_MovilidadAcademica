@@ -7,6 +7,8 @@ import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
 import ConvocatoriasPage from "./pages/ConvocatoriasPage";
 import MovilidadPresencial from "./pages/MovilidadPresencial";
 import MovilidadVirtual from "./pages/MovilidadVirtual";
+import MovAcadFormatos from "./pages/MovAcadFormatos";
+import DeptoRelInter from "./pages/DeptoRelInter";
 
 const HomePage = () => {
   return (
@@ -88,12 +90,14 @@ const HomePage = () => {
 export default function App() {
   return (
     <Router>
-      <Navigation />
+      {/* <Navigation /> */}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
         <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
         <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
+        <Route path="/MovAcadFormatos" element={<MovAcadFormatos />} />
+        <Route path="/deptoRelInter" element={<DeptoRelInter />} />
       </Routes>
     </Router>
   );
