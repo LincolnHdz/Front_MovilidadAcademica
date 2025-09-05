@@ -11,6 +11,8 @@ import MovilidadPresencial from "./pages/MovilidadPresencial";
 import MovilidadVirtual from "./pages/MovilidadVirtual";
 import MovAcadFormatos from "./pages/MovAcadFormatos";
 import DeptoRelInter from "./pages/DeptoRelInter";
+import DobleTitulacion from "./pages/DobleTitulacion";
+import BecasParaFrancia from "./pages/BecasParaFrancia";
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -91,6 +93,8 @@ export default function App() {
         <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
         <Route path="/MovAcadFormatos" element={<MovAcadFormatos />} />
         <Route path="/deptoRelInter" element={<DeptoRelInter />} />
+        <Route path="/doble-titulacion" element={<DobleTitulacion />} />
+        <Route path="/becas-internacionales" element={<BecasParaFrancia />} />
       </Routes>
     </Router>
   );
