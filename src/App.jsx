@@ -6,6 +6,7 @@ import Navigation from "./components/Navigation";
 import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
 import ConvocatoriasPage from "./pages/ConvocatoriasPage";
 import MovilidadPresencial from "./pages/MovilidadPresencial";
+import MovilidadVirtual from "./pages/MovilidadVirtual";
 
 const HomePage = () => {
   return (
@@ -92,6 +93,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
         <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
+        <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
       </Routes>
     </Router>
   );

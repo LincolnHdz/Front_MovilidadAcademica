@@ -52,23 +52,6 @@ body {
   font-weight: 400;
 }
 
-.header-badge {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(10px);
-  padding: 0.75rem 1.25rem;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  font-weight: 500;
-}
-
-.badge-icon {
-  width: 20px;
-  height: 20px;
-}
-
 /* Layout */
 .mobility-layout {
   max-width: 1200px;
@@ -172,17 +155,6 @@ body {
   text-align: justify;
 }
 
-.overview-image {
-  width: 100%;
-  height: auto;
-  max-height: 400px;
-  object-fit: contain;
-  border-radius: 12px;
-  margin: 1.5rem 0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s ease;
-}
-
 .quick-links {
   display: flex;
   gap: 1rem;
@@ -279,11 +251,6 @@ body {
   flex: 1;
 }
 
-.requirement-detail {
-  padding: 0 1.25rem 1.25rem 4.25rem;
-  color: #64748b;
-  line-height: 1.6;
-}
 
 /* Documents */
 .documents-list {
@@ -349,113 +316,7 @@ body {
   text-decoration: underline;
 }
 
-.document-detail {
-  padding: 0 1.25rem 1.25rem 4.25rem;
-  color: #64748b;
-  line-height: 1.6;
-}
-
-/* Process steps */
-.process-steps {
-  display: grid;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.step-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: #f8fafc;
-  border-radius: 12px;
-  border-left: 4px solid #2563eb;
-}
-
-.step-number {
-  background: #2563eb;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 1.125rem;
-  flex-shrink: 0;
-}
-
-.step-card h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #1e293b;
-}
-
-.step-card p {
-  color: #64748b;
-  line-height: 1.6;
-}
-
-/* Important notes */
-.important-notes {
-  display: grid;
-  gap: 1rem;
-}
-
-.note-card {
-  display: flex;
-  gap: 1rem;
-  padding: 1.25rem;
-  border-radius: 12px;
-  border: 1px solid;
-}
-
-.note-card.alert {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #dc2626;
-}
-
-.note-card.info {
-  background: #f0f9ff;
-  border-color: #bae6fd;
-  color: #0284c7;
-}
-
 /* Contacts */
-.office-info {
-  margin-bottom: 2rem;
-}
-
-.office-card {
-  display: flex;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.office-icon {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-  margin-top: 0.25rem;
-}
-
-.office-card h3 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.office-card p {
-  margin-bottom: 0.25rem;
-  opacity: 0.9;
-}
 
 .contacts-grid {
   display: grid;
