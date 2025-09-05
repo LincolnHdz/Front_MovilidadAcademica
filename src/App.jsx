@@ -1,25 +1,16 @@
 import React from "react";
-import logo from "../../Front_MovilidadAcademica/src/Img/logoUni.jpg";
-import facultad from "../../Front_MovilidadAcademica/src/Img/facultad.jpg";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import facultad from "./Img/facultad.png";
 import "./App.css";
+import Navigation from "./components/Navigation";
+import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
+import ConvocatoriasPage from "./pages/ConvocatoriasPage";
+import MovilidadPresencial from "./pages/MovilidadPresencial";
+import MovilidadVirtual from "./pages/MovilidadVirtual";
 
-export default function App() {
+const HomePage = () => {
   return (
     <div>
-      {/* Header */}
-      <header className="header">
-        <div className="logo">
-          <img src={logo} alt="UASLP" style={{ height: "50px", width: "auto" }} />
-        </div>
-        <nav>
-          <a href="#facultad">Facultad</a>
-          <a href="#programas">Programas</a>
-          <a href="#convocatorias">Convocatorias</a>
-          <a href="#experiencias">Experiencias</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
-      </header>
-
       {/* Hero */}
       <section
         className="hero"
@@ -65,22 +56,12 @@ export default function App() {
         </div>
       </section>
 
-      {/* Convocatorias */}
+     
       <section id="convocatorias" className="section">
-        <h3>Convocatorias Vigentes</h3>
-        <ul>
-          <li>
-            <strong>Convocatoria Erasmus+ 2025</strong> — Inscripciones hasta el
-            30 de septiembre.
-          </li>
-          <li>
-            <strong>Convenio con Universidades de Quebec</strong> — Fecha
-            límite: 15 de octubre.
-          </li>
-        </ul>
+        <ConvocatoriasSlider />
       </section>
 
-      {/* Experiencias */}
+      
       <section id="experiencias" className="section">
         <h3>Experiencias de Estudiantes</h3>
         <div className="cards">
@@ -100,14 +81,20 @@ export default function App() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <p>
-          © {new Date().getFullYear()} UASLP - Facultad de Ingeniería. Todos los
-          derechos reservados.
-        </p>
-      </footer>
     </div>
+  );
+};
+
+export default function App() {
+  return (
+    <Router>
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
+        <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
+        <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
+      </Routes>
+    </Router>
   );
 }

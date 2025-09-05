@@ -1,0 +1,156 @@
+/* Reset básico */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #333;
+  background: #fff;
+}
+
+html, #root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.depto-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== HEADER INSTITUCIONAL ===== */
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #004b87;
+  color: white;
+  padding: 12px 40px;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* sombra sutil */
+}
+
+.header nav a {
+  margin-left: 25px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.header nav a:hover {
+  color: #ffdd57; /* amarillo para resaltar */
+  text-decoration: none;
+}
+
+.nav-principal ul {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  list-style: none;
+  padding: 0;
+}
+
+.nav-principal li {
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nav-principal li:hover {
+  color: #ffdd57;
+}
+
+/* ===== TÍTULO DEL DEPARTAMENTO ===== */
+.titulo-depto {
+  text-align: center;
+  margin: 60px 0 30px;
+}
+
+.titulo-depto h2 {
+  font-size: 32px;
+  color: #004b87;
+  position: relative;
+}
+
+.titulo-depto h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #004b87;
+  margin: 10px auto 0;
+  border-radius: 2px;
+}
+
+/* ===== INFORMACIÓN DEPARTAMENTO ===== */
+.info-depto {
+  text-align: center;
+  line-height: 1.7;
+  color: #555;
+  margin-bottom: 60px;
+}
+
+.info-depto h4 {
+  margin-top: 30px;
+  font-size: 22px;
+  color: #004b87;
+  border-bottom: 2px solid #cfd8dc;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+/* ===== OPORTUNIDADES ===== */
+.oportunidades {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #eee;
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.card img {
+  width: 80px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.card h5 {
+  font-size: 18px;
+  color: #004b87;
+  margin: 0;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nav-principal ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .oportunidades {
+    grid-template-columns: 1fr;
+  }
+}
+
