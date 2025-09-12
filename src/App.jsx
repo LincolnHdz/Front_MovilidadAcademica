@@ -13,6 +13,8 @@ import MovAcadFormatos from "./pages/MovAcadFormatos";
 import DeptoRelInter from "./pages/DeptoRelInter";
 import DobleTitulacion from "./pages/DobleTitulacion";
 import BecasParaFrancia from "./pages/BecasParaFrancia";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -94,7 +96,9 @@ export default function App() {
         <Route path="/MovAcadFormatos" element={<MovAcadFormatos />} />
         <Route path="/deptoRelInter" element={<DeptoRelInter />} />
         <Route path="/doble-titulacion" element={<DobleTitulacion />} />
-        <Route path="/becas-internacionales" element={<BecasParaFrancia />} />
+        <Route path="/becas-Francia" element={<BecasParaFrancia />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Routes>
     </Router>
   );

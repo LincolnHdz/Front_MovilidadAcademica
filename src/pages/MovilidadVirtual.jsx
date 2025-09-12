@@ -100,7 +100,7 @@ const MovilidadVirtual = () => {
       <header className="mobility-header">
         <div className="header-content">
           <div className="header-text">
-            <h1>Progrmama de Movilidad Virtual</h1>
+            <h1>Programa de Movilidad Virtual</h1>
             <p>Universidad Autónoma de San Luis Potosí</p>
           </div>
         </div>

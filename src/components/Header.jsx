@@ -31,8 +31,9 @@ export default function Header() {
                     </a>
                 </div>
                 <nav>
+                    <LanguageSwitcher />
                     <a href="/" className="nav-link">Inicio</a>
-                     <LanguageSwitcher />
+                    
                     {/* Menú desplegable para Movilidad */}
                     <div className="dropdown" onMouseLeave={closeAllDropdowns}>
                         <button 
@@ -71,14 +72,14 @@ export default function Header() {
                         
                         {isBecasOpen && (
                             <div className="dropdown-menu">
-                                <a href="/becas-nacionales" className="dropdown-item">
-                                    Becas Nacionales
+                                <a href="/becas-Francia" className="dropdown-item">
+                                    Becas Francia
                                 </a>
                                 <a href="/becas-internacionales" className="dropdown-item">
-                                    Becas Internacionales
+                                    Becas X...
                                 </a>
                                 <a href="/becas-posgrado" className="dropdown-item">
-                                    Becas de Posgrado
+                                    Becas de X---
                                 </a>
                             </div>
                         )}
