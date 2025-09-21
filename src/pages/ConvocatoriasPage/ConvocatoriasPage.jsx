@@ -1,5 +1,5 @@
 import React from "react";
-import ConvocatoriasList from "../components/ConvocatoriasList";
+import ConvocatoriasList from "../../components/ConvocatoriasList";
 import "./ConvocatoriasPage.css";
 
 const ConvocatoriasPage = () => {

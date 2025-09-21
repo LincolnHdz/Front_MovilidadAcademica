@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import imgMovilidad from '../Img/becaEIFFEL.png';
+import imgMovilidad from '../../Img/becaCityU.jpeg';
 import {
   ChevronDown,
   ChevronRight,
@@ -10,9 +10,9 @@ import {
   Mail,
   CheckCircle,
 } from "lucide-react";
-import "./BecasParaFrancia.css";
+import "./DobleTitulacion.css";
 
-const BecasParaFrancia = () => {
+const DobleTitulacion = () => {
   //Estado que controla la sección activa
   const [activeSection, setActiveSection] = useState("overview");
   //Estado que controla el estado de la sección de requisitos
@@ -23,56 +23,53 @@ const BecasParaFrancia = () => {
   const requirements = [
     {
       id: 1,
-      title: "Promedio MINIMO de 9.0",
+      title: "Ser estudiante activo REGULAR de la UASLP",
+      detail: "Requisito fundamental para participar en el programa",
     },
     {
       id: 2,
-      title: "Francés B1",
+      title: "Estar inscrito en una carrera que sea parte del Programa de Doble Titulación",
+      detail: "Descubre si tu carrera es parte del programa mediante la encuesta en el apartado de Documentos",
     },
     {
       id: 3,
-      title: "Estar en 5to semestre en adelante",
+      title: "Tener una acreditación con un minimo de 540 puntos de TOEFL",
+      detail: "El alumno deberá contar con una acreditación vigente",
     },
     {
       id: 4,
-      title: "CV",
-    },
-    {
-      id: 5,
-      title: "Carta de motivos",
-    },
-    {
-      id: 6,
-      title: "Cartas de recomendación",
-    },
-    {
-      id: 7,
-      title: "Kardex",
-    },
-    {
-      id: 8,
-      title: "Certificación de inglés",
-    },
-    {
-      id: 9,
-      title: "Certificación de Francés",
-    },
-    {
-      id: 10,
-      title: "Carta del director",
+      title: "Haber cursado minimo 3 semestres para empezar a cursar las materias en la CityU",
+      detail: "Si así lo desea puede empezar a hacer pagos mensuales tan pronto ingrese a la UASLP",
     },
   ];
 
   const documents = [
+    {
+      id: 1,
+      title: "Convocatoria CityU 2025",
+      link: "https://u.uaslp.mx/cityu2025",
+    },
+    {
+      id: 2,
+      title: "¿Tu Carrera es Parte del Programa de Doble Titulación?",
+      link: "https://docs.google.com/forms/d/e/1FAIpQLSfFWvnPjl9Ab43u5jI0gQCUTNFxsBO-UL6A8BJ9MX5ytRiMXw/viewform"
+    },
   ];
 
   const contacts = [
     {
-      name: "LCC. Rosa María Martínez García",
-      role: "Enlace del Programa de Movilidad en la Facultad de Ingeniería",
-      areas: "Facultad de Ingeniería, Edificio P, Planta Baja",
-      email: "rosma.garcia@uaslp.mx",
-      phone: "444 826 23 00 Ext. 6277",
+      name: "LAE. Mariela Guadalupe Chávez Ramírez",
+      role: "Directora de Internacionalización",
+      areas: "Edificio de Finanzas de la UASLP, 1er Piso",
+      email: "mariela.chavez@uaslp.mx",
+      phone: "444 826 23 00 Ext. 7170",
+    },
+    {
+      name: "Ing. Oscar Colunga Chavez",
+      role: "Reclutador de CityU",
+      areas: "Facultad de Ingeniería, Edificio L, 1er Piso",
+      email: "colungaoscar@cityu.edu",
+      phone: "444 826 23 00 Ext. 6055",
     },
   ];
 
@@ -88,7 +85,7 @@ const BecasParaFrancia = () => {
       <header className="mobility-header">
         <div className="header-content">
           <div className="header-text">
-            <h1>Convocatoria a Becas para Francia por parte de EIFFEL</h1>
+            <h1>Programa de Doble Titulación</h1>
             <p>Universidad Autónoma de San Luis Potosí</p>
           </div>
         </div>
@@ -118,71 +115,62 @@ const BecasParaFrancia = () => {
         <main className="main-content">
           {activeSection === "overview" && (
             <section className="content-section">
-              <img src={imgMovilidad} alt="Beca EIFFEL" className="overview-image" />
-              <h2>Calendario de Actividades</h2>
-              <h3>Marzo</h3>
+              <h2>Objetivo</h2>
               <div className="overview-card">
                 <p>
-                  • Inicio de clases de francés para principiantes. 
-                  Alumnos de 2do o 4to semestre. (opcional)
+                  El objetivo de este programa es ofrecer a los alumnos, 
+                  la alternativa de egresar con dos títulos universitarios en 
+                  un mismo tiempo.
                 </p>
               </div>
-              <h3>Octubre</h3>
+              <img src={imgMovilidad} alt="Beca CityU 2025" className="overview-image" />
               <div className="overview-card">
                 <p>
-                  • Registro de alumnos que quieren aplicar a Eiffel con el 
-                  departamento de Relaciones Internacionales de la Facultad de Ingeniería.
+                  ¡Sé un profesional para el mundo! Obtén dos títulos al mismo tiempo, 
+                  en San Luis Potosí y en Estados Unidos. Además de vivir la experiencia 
+                  de cursar materias y vivir un verano en USA y en la Republica Checa.
                 </p>
               </div>
-              <h3>Noviembre</h3>
+              <h2>Los servicios que brindamos son</h2>
               <div className="overview-card">
                 <p>
-                  • Entrevista en francés con un profesor de las Escuelas 
-                  Centrales (Preselección Eiffel).
-                </p>
-              </div>
-              <h3>Diciembre</h3>
-              <div className="overview-card">
-                <p>
-                  • Resultados de la preselección. Los seleccionados están 
-                  aceptados en una Escuela Central y van a competir para la beca Eiffel.
+                  • Asesoría en la inscripción al programa.
                 </p>
                 <p>
-                  • Actualización de los documentos.
+                  • Asesoría de las materias a cursar tanto en la UASLP como en CityU.
                 </p>
-              </div>
-              <h3>Abril/Mayo</h3>
-              <div className="overview-card">
                 <p>
-                  • Resultados Eiffel a finales de marzo o principios de abril.
+                  • Inscripción en las materias de CityU.
                 </p>
-              </div>
-              <h3>Junio</h3>
-              <div className="overview-card">
                 <p>
-                  • Registro en Campus France y tramite de Visa
+                  • Control de los pagos por los cursos tomados.
+                </p>
+                <p>
+                  • La totalidad de trámites para asistir un verano a cursar materias en CityU, además de lo relacionado con la Graduación.
                 </p>
               </div>
             </section>
           )}
 
-          {activeSection === "requirements" && (
+          {activeSection === 'requirements' && (
             <section className="content-section">
-              <h2>Requisitos Solicitados por el EIFFEL</h2>
+              <h2>Requisitos para Participar</h2>
               <div className="requirements-grid">
                 {requirements.map((req) => (
                   <div key={req.id} className="requirement-card">
-                    <div
+                    <div 
                       className="requirement-header"
-                      onClick={() =>
-                        setExpandedRequirement(
-                          expandedRequirement === req.id ? null : req.id
-                        )
-                      }
+                      onClick={() => setExpandedRequirement(expandedRequirement === req.id ? null : req.id)}
                     >
                       <div className="requirement-number">{req.id}</div>
                       <h3>{req.title}</h3>
+                      {expandedRequirement === req.id ? <ChevronDown /> : <ChevronRight />}
                     </div>
+                    {expandedRequirement === req.id && (
+                      <div className="requirement-detail">
+                        <p>{req.detail}</p>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -273,4 +261,4 @@ const BecasParaFrancia = () => {
   );
 };
 
-export default BecasParaFrancia;
+export default DobleTitulacion;

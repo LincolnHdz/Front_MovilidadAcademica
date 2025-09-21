@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import imgMovilidad from '../Img/convocatoria.jpg';
+import imgMovilidad from '../../Img/convocatoria.jpg';
 import { ChevronDown, ChevronRight, FileText, Users, Globe, Phone, Mail, MapPin, Calendar, AlertCircle, CheckCircle } from 'lucide-react';
 import './MovilidadPresencial.css';
 
