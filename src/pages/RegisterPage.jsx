@@ -49,7 +49,7 @@ const RegisterPage = () => {
         <input name="nombres" type="text" placeholder="Nombres" value={form.nombres} onChange={handleChange} required />
         <input name="apellidos" type="text" placeholder="Apellidos" value={form.apellidos} onChange={handleChange} required />
         <input name="clave" type="text" placeholder="Clave" value={form.clave} onChange={handleChange} required />
-  {/* El campo teléfono se elimina del registro, se agregará en el perfil */}
+        {/* El campo teléfono se elimina del registro, se agregará en el perfil */}
         <input name="email" type="email" placeholder="Correo institucional" value={form.email} onChange={handleChange} required />
         <input name="password" type="password" placeholder="Contraseña" value={form.password} onChange={handleChange} required />
         {error && <div className="auth-error">{error}</div>}

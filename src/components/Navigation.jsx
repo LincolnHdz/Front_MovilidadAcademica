@@ -1,9 +1,17 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 import "./Navigation.css";
 
 const Navigation = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <nav className="navigation">
@@ -25,6 +33,24 @@ const Navigation = () => {
           >
             Convocatorias
           </Link>
+          
+          {/* Usuario y botón de perfil */}
+          {user && (
+            <Link
+              to="/perfil"
+              className="user-profile-link"
+              title="Ver perfil"
+            >
+              <span className="user-clave">{user.clave || "Usuario"}</span>
+            </Link>
+          )}
+          
+          <button 
+            onClick={handleLogout}
+            className="logout-btn"
+          >
+            Cerrar Sesión
+          </button>
         </div>
       </div>
     </nav>

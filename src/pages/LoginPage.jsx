@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 import "./LoginRegister.css";
 
 const LoginPage = () => {
@@ -7,6 +8,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,8 +21,8 @@ const LoginPage = () => {
       });
       const data = await res.json();
       if (data.success) {
-        // Guardar token y redirigir
-        localStorage.setItem("token", data.data.token);
+        // Usar el login del contexto para guardar el token y datos del usuario
+        login(data.data.token, data.data.user);
         navigate("/");
       } else {
         setError(data.message || "Error de login");

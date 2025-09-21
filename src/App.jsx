@@ -1,8 +1,9 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import facultad from "./Img/facultad.png";
 import "./App.css";
 import "./i18n";
+import PerfilPage from "./pages/PerfilPage";
 import { useTranslation } from "react-i18next";
 import Navigation from "./components/Navigation";
 import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
@@ -86,20 +87,18 @@ const HomePage = () => {
 
 export default function App() {
   return (
-    <Router>
-      {/* <Navigation /> */}
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
-        <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
-        <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
-        <Route path="/MovAcadFormatos" element={<MovAcadFormatos />} />
-        <Route path="/deptoRelInter" element={<DeptoRelInter />} />
-        <Route path="/doble-titulacion" element={<DobleTitulacion />} />
-        <Route path="/becas-Francia" element={<BecasParaFrancia />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
+      <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
+      <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
+      <Route path="/MovAcadFormatos" element={<MovAcadFormatos />} />
+      <Route path="/deptoRelInter" element={<DeptoRelInter />} />
+      <Route path="/doble-titulacion" element={<DobleTitulacion />} />
+      <Route path="/becas-Francia" element={<BecasParaFrancia />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/perfil" element={<PerfilPage />} />
+    </Routes>
   );
 }
