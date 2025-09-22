@@ -16,6 +16,7 @@ import DobleTitulacion from "./pages/DobleTitulacion/DobleTitulacion";
 import BecasParaFrancia from "./pages/BecasParaFrancia/BecasParaFrancia";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import AdminUsersPage from "./pages/AdminUsers/AdminUsersPage";
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -30,18 +31,14 @@ const HomePage = () => {
       >
         <div className="overlay">
           <h2>{t("hero.title")}</h2>
-          <p>
-            {t("hero.subtitle")}
-          </p>
+          <p>{t("hero.subtitle")}</p>
         </div>
       </section>
 
       {/* Programas */}
       <section id="programas" className="section">
         <h3>{t("programas.title")}</h3>
-        <p>
-          {t("programas.description")}
-        </p>
+        <p>{t("programas.description")}</p>
         <div className="cards">
           <div className="card">
             <h4>{t("programas.cards.intercambio.title")}</h4>
@@ -58,25 +55,19 @@ const HomePage = () => {
         </div>
       </section>
 
-     
       <section id="convocatorias" className="section">
         <ConvocatoriasSlider />
       </section>
 
-      
       <section id="experiencias" className="section">
         <h3>{t("experiencias.title")}</h3>
         <div className="cards">
           <div className="card">
-            <p>
-              {t("experiencias.cards.0.text")}
-            </p>
+            <p>{t("experiencias.cards.0.text")}</p>
             <span>{t("experiencias.cards.0.author")}</span>
           </div>
           <div className="card">
-            <p>
-              {t("experiencias.cards.1.text")}
-            </p>
+            <p>{t("experiencias.cards.1.text")}</p>
             <span>{t("experiencias.cards.1.author")}</span>
           </div>
         </div>
@@ -99,6 +90,7 @@ export default function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/perfil" element={<PerfilPage />} />
+      <Route path="/admin/usuarios" element={<AdminUsersPage />} />
     </Routes>
   );
 }

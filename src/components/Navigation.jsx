@@ -10,7 +10,7 @@ const Navigation = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -19,36 +19,43 @@ const Navigation = () => {
         <Link to="/" className="nav-logo">
           <h2>Movilidad Académica</h2>
         </Link>
-        
+
         <div className="nav-links">
-          <Link 
-            to="/" 
+          <Link
+            to="/"
             className={`nav-link ${location.pathname === "/" ? "active" : ""}`}
           >
             Inicio
           </Link>
-          <Link 
-            to="/convocatorias-lista" 
-            className={`nav-link ${location.pathname === "/convocatorias-lista" ? "active" : ""}`}
+          <Link
+            to="/convocatorias-lista"
+            className={`nav-link ${
+              location.pathname === "/convocatorias-lista" ? "active" : ""
+            }`}
           >
             Convocatorias
           </Link>
-          
+
+          {/* Link de administración visible solo para administradores */}
+          {user?.rol === "administrador" && (
+            <Link
+              to="/admin/usuarios"
+              className={`nav-link ${
+                location.pathname === "/admin/usuarios" ? "active" : ""
+              }`}
+            >
+              Usuarios
+            </Link>
+          )}
+
           {/* Usuario y botón de perfil */}
           {user && (
-            <Link
-              to="/perfil"
-              className="user-profile-link"
-              title="Ver perfil"
-            >
+            <Link to="/perfil" className="user-profile-link" title="Ver perfil">
               <span className="user-clave">{user.clave || "Usuario"}</span>
             </Link>
           )}
-          
-          <button 
-            onClick={handleLogout}
-            className="logout-btn"
-          >
+
+          <button onClick={handleLogout} className="logout-btn">
             Cerrar Sesión
           </button>
         </div>

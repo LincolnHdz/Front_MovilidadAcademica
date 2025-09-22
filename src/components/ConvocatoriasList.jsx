@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./ConvocatoriasList.css";
 import ConvocatoriaForm from "./ConvocatoriaForm";
+import { useAuth } from "../context/useAuth";
 
 const ConvocatoriasList = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -8,6 +9,7 @@ const ConvocatoriasList = () => {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingConvocatoria, setEditingConvocatoria] = useState(null);
+  const { user } = useAuth();
 
   const API_URL = "http://localhost:3000/api/convocatorias";
 
@@ -79,8 +81,12 @@ const ConvocatoriasList = () => {
     }
 
     try {
+      const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/${id}`, {
         method: "DELETE",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
       });
 
       if (!response.ok) {
@@ -134,12 +140,14 @@ const ConvocatoriasList = () => {
     <div className="convocatorias-container">
       <div className="convocatorias-header">
         <h3>Convocatorias Vigentes</h3>
-        <button
-          onClick={() => setShowForm(true)}
-          className="add-convocatoria-btn"
-        >
-          + Nueva Convocatoria
-        </button>
+        {user && (user.rol === "becarios" || user.rol === "administrador") && (
+          <button
+            onClick={() => setShowForm(true)}
+            className="add-convocatoria-btn"
+          >
+            + Nueva Convocatoria
+          </button>
+        )}
       </div>
 
       {showForm && (

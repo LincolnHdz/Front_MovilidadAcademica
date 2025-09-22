@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import "./ConvocatoriaForm.css";
 
-const ConvocatoriaForm = ({ onConvocatoriaCreated, onCancel, convocatoriaToEdit = null }) => {
+const ConvocatoriaForm = ({
+  onConvocatoriaCreated,
+  onCancel,
+  convocatoriaToEdit = null,
+}) => {
   const [formData, setFormData] = useState({
     titulo: convocatoriaToEdit?.titulo || "",
     descripcion: convocatoriaToEdit?.descripcion || "",
@@ -14,9 +18,9 @@ const ConvocatoriaForm = ({ onConvocatoriaCreated, onCancel, convocatoriaToEdit 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -26,16 +30,18 @@ const ConvocatoriaForm = ({ onConvocatoriaCreated, onCancel, convocatoriaToEdit 
     setError(null);
 
     try {
-      const url = convocatoriaToEdit 
+      const url = convocatoriaToEdit
         ? `${API_URL}/${convocatoriaToEdit.id}`
         : API_URL;
-      
+
       const method = convocatoriaToEdit ? "PUT" : "POST";
 
+      const token = localStorage.getItem("token");
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify(formData),
       });
@@ -63,7 +69,9 @@ const ConvocatoriaForm = ({ onConvocatoriaCreated, onCancel, convocatoriaToEdit 
   return (
     <div className="convocatoria-form-container">
       <div className="form-header">
-        <h3>{convocatoriaToEdit ? "Editar Convocatoria" : "Nueva Convocatoria"}</h3>
+        <h3>
+          {convocatoriaToEdit ? "Editar Convocatoria" : "Nueva Convocatoria"}
+        </h3>
         {onCancel && (
           <button type="button" onClick={onCancel} className="cancel-btn">
             ✕
@@ -120,14 +128,14 @@ const ConvocatoriaForm = ({ onConvocatoriaCreated, onCancel, convocatoriaToEdit 
         )}
 
         <div className="form-actions">
-          <button
-            type="submit"
-            disabled={loading}
-            className="submit-btn"
-          >
-            {loading ? "Guardando..." : (convocatoriaToEdit ? "Actualizar" : "Crear")}
+          <button type="submit" disabled={loading} className="submit-btn">
+            {loading
+              ? "Guardando..."
+              : convocatoriaToEdit
+              ? "Actualizar"
+              : "Crear"}
           </button>
-          
+
           {onCancel && (
             <button
               type="button"
