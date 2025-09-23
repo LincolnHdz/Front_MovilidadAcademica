@@ -36,6 +36,15 @@ const Navigation = () => {
             Convocatorias
           </Link>
 
+          <Link
+            to="/registro-materia"
+            className={`nav-link ${
+              location.pathname === "/registro-materia" ? "active" : ""
+            }`}
+          >
+            Registro Materia
+          </Link>
+
           {/* Link de administración visible solo para administradores */}
           {user?.rol === "administrador" && (
             <Link
