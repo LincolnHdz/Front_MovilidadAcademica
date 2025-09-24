@@ -1,0 +1,249 @@
+.admin-users-container {
+  padding: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.admin-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #004a98;
+  padding-bottom: 16px;
+}
+
+.admin-title {
+  color: #004a98;
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.refresh-button {
+  background-color: #004a98;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.refresh-button:hover {
+  background-color: #003a78;
+}
+
+.status-message {
+  margin: 16px 0;
+  padding: 12px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #c62828;
+  animation: fadeIn 0.3s ease;
+}
+
+.success-message {
+  background-color: #e3f2fd;
+  color: #004a98;
+  border-left: 4px solid #004a98;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #004a98;
+  margin: 24px 0;
+  font-weight: 500;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.users-table thead {
+  background-color: #004a98;
+  color: white;
+}
+
+.users-table th {
+  padding: 14px 16px;
+  text-align: left;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.users-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.users-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.users-table tbody tr:hover {
+  background-color: rgba(0, 74, 152, 0.05);
+}
+
+.users-table td {
+  padding: 14px 16px;
+  vertical-align: middle;
+}
+
+.users-table td:first-child {
+  font-weight: 500;
+  color: #004a98;
+}
+
+.user-role {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 0.85em;
+  font-weight: 600;
+  text-align: center;
+  min-width: 100px;
+}
+
+.role-alumno {
+  background-color: #e3f2fd;
+  color: #004a98;
+  border: 1px solid rgba(0, 74, 152, 0.3);
+}
+
+.role-becarios {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid rgba(46, 125, 50, 0.3);
+}
+
+.role-administrador {
+  background-color: #fbe9e7;
+  color: #d84315;
+  border: 1px solid rgba(216, 67, 21, 0.3);
+}
+
+.select-role {
+  width: 100%;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  font-weight: 500;
+  color: #004a98;
+  transition: all 0.2s ease;
+}
+
+.select-role:hover {
+  border-color: #004a98;
+}
+
+.select-role:focus {
+  outline: none;
+  border-color: #004a98;
+  box-shadow: 0 0 0 3px rgba(0, 74, 152, 0.2);
+}
+
+.action-container {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: #757575;
+  background-color: #f9f9f9;
+}
+
+.users-stats {
+  margin-top: 25px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.total-users {
+  font-size: 16px;
+  color: #004a98;
+  margin-bottom: 12px;
+}
+
+.total-users span {
+  margin-right: 5px;
+}
+
+.total-users strong {
+  font-size: 20px;
+}
+
+.role-stats {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.role-stat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.role-stat span {
+  color: #616161;
+}
+
+.role-stat strong {
+  font-size: 16px;
+  color: #004a98;
+}
+
+.access-denied {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  color: #d32f2f;
+}
+
+.access-denied h2 {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.access-denied p {
+  font-size: 18px;
+  color: #757575;
+}

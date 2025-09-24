@@ -17,7 +17,8 @@ import BecasParaFrancia from "./pages/BecasParaFrancia/BecasParaFrancia";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminUsersPage from "./pages/AdminUsers/AdminUsersPage";
-import RegistroMateria from "./pages/RegistroMateria/RegistroMateria";
+import AdminApplicationsPage from "./pages/AdminApplications/AdminApplicationsPage";
+import Solicitud from "./pages/ApplicationPage/ApplicationPage";
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -92,7 +93,8 @@ export default function App() {
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/perfil" element={<PerfilPage />} />
       <Route path="/admin/usuarios" element={<AdminUsersPage />} />
-      <Route path="/registro-materia" element={<RegistroMateria />} />
+      <Route path="/admin/applications" element={<AdminApplicationsPage />} />
+      <Route path="/solicitud" element={<Solicitud />} />
     </Routes>
   );
 }

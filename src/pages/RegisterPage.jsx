@@ -6,7 +6,8 @@ import api from "../api/axiosConfig";
 const RegisterPage = () => {
   const [form, setForm] = useState({
     nombres: "",
-    apellidos: "",
+    apellido_paterno: "",
+    apellido_materno: "",
     clave: "",
     telefono: "",
     email: "",
@@ -25,7 +26,22 @@ const RegisterPage = () => {
   setError("");
   setSuccess("");
   try {
-    const res = await api.post("/auth/register", form);
+    // Validar que todos los campos obligatorios estén presentes
+    const { nombres, apellido_paterno, apellido_materno, clave, email, password } = form;
+    
+    if (!nombres || !apellido_paterno || !apellido_materno || !clave || !email || !password) {
+      setError("Todos los campos son obligatorios");
+      return;
+    }
+    
+    const res = await api.post("/auth/register", {
+      nombres,
+      apellido_paterno,
+      apellido_materno,
+      clave,
+      email,
+      password
+    });
 
     if (res.data.success) {
       setSuccess("Registro exitoso. Ahora puedes iniciar sesión.");
@@ -34,8 +50,8 @@ const RegisterPage = () => {
       setError(res.data.message || "Error de registro");
     }
   } catch (error) {
-    console.error("Error en el registro:", error);
-    setError("Error de conexión");
+    console.error("Error en el registro:", error.response?.data?.message || error.message);
+    setError(error.response?.data?.message || "Error de conexión");
   }
 };
 
@@ -44,7 +60,8 @@ const RegisterPage = () => {
       <form className="auth-form" onSubmit={handleRegister}>
         <h2>Registro</h2>
         <input name="nombres" type="text" placeholder="Nombres" value={form.nombres} onChange={handleChange} required />
-        <input name="apellidos" type="text" placeholder="Apellidos" value={form.apellidos} onChange={handleChange} required />
+        <input name="apellido_paterno" type="text" placeholder="Apellido Paterno" value={form.apellido_paterno} onChange={handleChange} required />
+        <input name="apellido_materno" type="text" placeholder="Apellido Materno" value={form.apellido_materno} onChange={handleChange} required />
         <input name="clave" type="text" placeholder="Clave" value={form.clave} onChange={handleChange} required />
         {/* El campo teléfono se elimina del registro, se agregará en el perfil */}
         <input name="email" type="email" placeholder="Correo institucional" value={form.email} onChange={handleChange} required />

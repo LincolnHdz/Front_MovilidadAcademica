@@ -1,23 +1,24 @@
-import React, { useState } from "react";
-import api from "../../api/axiosConfig";  // ajusta la ruta según tu proyecto
-
+import React, { useState, useEffect } from "react";
+import api from "../../api/axiosConfig";
+import { useAuth } from "../../context/useAuth";
+import "./ApplicationPage.css";
 import {
   Upload,
+  FileText,
+  X,
   Send,
   User,
   GraduationCap,
   BookOpen,
   Building2,
-  X,
-  FileText,
-  CheckCircle,
-  AlertCircle,
   Hash,
-  Calendar
+  Calendar,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
-import "./RegistroMateria.css";
 
 const RegistroMateria = () => {
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     nombre: "",
     apellidoMaterno: "",
@@ -31,10 +32,55 @@ const RegistroMateria = () => {
     archivo: null,
   });
 
+  const [existingApplication, setExistingApplication] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); 
   const [dragActive, setDragActive] = useState(false);
+  
+  // Verificar si el usuario ya tiene una solicitud existente
+  useEffect(() => {
+    const checkExistingApplication = async () => {
+      try {
+        if (user && user.clave) {
+          setLoading(true);
+          const response = await api.get(`/applications/all`);
+          
+          if (response.data && response.data.success) {
+            const userApplication = response.data.data.find(
+              (app) => app.clave === user.clave
+            );
+            
+            if (userApplication) {
+              console.log("Usuario ya tiene solicitud, redirigiendo a perfil");
+              setExistingApplication(userApplication);
+              
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error al verificar solicitud existente:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkExistingApplication();
+  }, [user]);
+
+  // Inicializar datos del formulario con la información del usuario
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        nombre: user.nombre || "",
+        apellidoMaterno: user.apellidoMaterno || "",
+        apellidoPaterno: user.apellidoPaterno || "",
+        clave: user.clave || "",
+      }));
+    }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -43,7 +89,7 @@ const RegistroMateria = () => {
       [name]: value,
     }));
 
-   
+    // Limpiar error cuando el usuario comienza a escribir
     if (errors[name]) {
       setErrors((prev) => ({
         ...prev,
@@ -54,7 +100,6 @@ const RegistroMateria = () => {
 
   const handleFileChange = (file) => {
     if (file) {
-      
       const allowedTypes = [
         "application/pdf",
       ];
@@ -82,6 +127,7 @@ const RegistroMateria = () => {
         archivo: file,
       }));
 
+      // Limpiar error cuando se selecciona un archivo válido
       if (errors.archivo) {
         setErrors((prev) => ({
           ...prev,
@@ -138,7 +184,7 @@ const RegistroMateria = () => {
     }
 
     if (!formData.claveMateria.trim()) {
-      newErrors.claveMateria = "La clave materia es requerida";
+      newErrors.claveMateria = "La clave de materia es requerida";
     }
 
     if (!formData.cicloEscolar.trim()) {
@@ -176,7 +222,7 @@ const RegistroMateria = () => {
     setSubmitStatus(null);
 
     try {
-     const submitData = new FormData();
+      const submitData = new FormData();
       submitData.append("nombre", formData.nombre);
       submitData.append("apellidoMaterno", formData.apellidoMaterno);
       submitData.append("apellidoPaterno", formData.apellidoPaterno);
@@ -188,26 +234,21 @@ const RegistroMateria = () => {
       submitData.append("materia", formData.materia);
       submitData.append("archivo", formData.archivo);
 
-      const res = await api.post("/application/addApplication", submitData);
+  const res = await api.post("/applications/addApplication", submitData);
 
       console.log("Respuesta del servidor:", res.data);
-
-      setSubmitStatus("success");
-
-      setFormData({
-        nombre: "",
-        apellidoMaterno: "",
-        apellidoPaterno: "",
-        clave: "",
-        claveMateria: "",
-        cicloEscolar: "",
-        universidad: "",
-        carrera: "",
-        materia: "",
-        archivo: null,
-      });
+      
+      if (res.data && res.data.success) {
+        setExistingApplication(res.data.data);
+        setSubmitStatus("success");
+        
+        // Redirigir después de un tiempo
+        setTimeout(() => {
+          
+        }, 2000);
+      }
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error al enviar la solicitud:", error);
       setSubmitStatus("error");
     } finally {
       setIsSubmitting(false);
@@ -221,6 +262,31 @@ const RegistroMateria = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
+
+  // Mostrar cargador mientras se verifica si el usuario tiene una solicitud
+  if (loading) {
+    return (
+      <div className="form-container">
+        <header className="form-header">
+          <div className="header-content">
+            <div className="header-text">
+              <h1>Cargando...</h1>
+            </div>
+          </div>
+        </header>
+        <div className="form-layout">
+          <main className="form-main">
+            <div className="form-card">
+              <div className="loading-spinner-container" style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
+                <div className="loading-spinner" style={{width: '40px', height: '40px', border: '4px solid #f3f3f3', borderTop: '4px solid #3498db', borderRadius: '50%', animation: 'spin 1s linear infinite'}}></div>
+              </div>
+              <p style={{textAlign: 'center'}}>Cargando información de solicitud...</p>
+            </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="form-container">
@@ -477,6 +543,7 @@ const RegistroMateria = () => {
                       </div>
                       <input
                         type="file"
+                        name="archivo"
                         onChange={(e) => handleFileChange(e.target.files[0])}
                         className="file-input"
                         accept=".pdf"

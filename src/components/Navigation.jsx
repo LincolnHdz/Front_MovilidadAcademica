@@ -36,25 +36,38 @@ const Navigation = () => {
             Convocatorias
           </Link>
 
-          <Link
-            to="/registro-materia"
-            className={`nav-link ${
-              location.pathname === "/registro-materia" ? "active" : ""
-            }`}
-          >
-            Solicitudes
-          </Link>
+          {/* Link de solicitud visible solo para alumnos */}
+          {user?.rol === "alumno" && (
+            <Link
+              to="/solicitud"
+              className={`nav-link ${
+                location.pathname === "/solicitud" ? "active" : ""
+              }`}
+            >
+              Solicitud
+            </Link>
+          )}
 
           {/* Link de administración visible solo para administradores */}
           {user?.rol === "administrador" && (
-            <Link
-              to="/admin/usuarios"
-              className={`nav-link ${
-                location.pathname === "/admin/usuarios" ? "active" : ""
-              }`}
-            >
-              Usuarios
-            </Link>
+            <>
+              <Link
+                to="/admin/usuarios"
+                className={`nav-link ${
+                  location.pathname === "/admin/usuarios" ? "active" : ""
+                }`}
+              >
+                Usuarios
+              </Link>
+              <Link
+                to="/admin/applications"
+                className={`nav-link ${
+                  location.pathname === "/admin/applications" ? "active" : ""
+                }`}
+              >
+                Solicitudes
+              </Link>
+            </>
           )}
 
           {/* Usuario y botón de perfil */}

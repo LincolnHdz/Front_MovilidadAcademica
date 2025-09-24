@@ -12,8 +12,10 @@ const ConvocatoriaForm = ({
     descripcion: convocatoriaToEdit?.descripcion || "",
     fecha: convocatoriaToEdit?.fecha || "",
   });
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [focusedField, setFocusedField] = useState(null);
 
   const API_URL = "http://localhost:3000/api/convocatorias";
 
@@ -23,6 +25,20 @@ const ConvocatoriaForm = ({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+
+  const handleFocus = (field) => {
+    setFocusedField(field);
+  };
+  
+  const handleBlur = () => {
+    setFocusedField(null);
   };
 
   const handleSubmit = async (e) => {
@@ -36,19 +52,31 @@ const ConvocatoriaForm = ({
         : "/convocatorias";
 
       const method = convocatoriaToEdit ? "put" : "post";
-
       const token = localStorage.getItem("token");
+
+      // Prepare form data for image upload
+      const formDataToSend = new FormData();
+      formDataToSend.append("titulo", formData.titulo);
+      formDataToSend.append("descripcion", formData.descripcion);
+      formDataToSend.append("fecha", formData.fecha);
+      if (image) {
+        formDataToSend.append("imagen", image);
+      }
 
       const res = await api({
         method,
         url,
-        data: formData,
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        data: formDataToSend,
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (res.data.success) {
         onConvocatoriaCreated(res.data.data);
         setFormData({ titulo: "", descripcion: "", fecha: "" });
+        setImage(null);
       } else {
         throw new Error(res.data.message || "Error al procesar la convocatoria");
       }
@@ -75,44 +103,76 @@ const ConvocatoriaForm = ({
 
       <form onSubmit={handleSubmit} className="convocatoria-form">
         <div className="form-group">
-          <label htmlFor="titulo">Título *</label>
+          <label htmlFor="titulo">
+            <span>Título</span>
+          </label>
           <input
             type="text"
             id="titulo"
             name="titulo"
             value={formData.titulo}
             onChange={handleChange}
+            onFocus={() => handleFocus('titulo')}
+            onBlur={handleBlur}
             required
             placeholder="Ej: Convocatoria Erasmus+ 2025"
-            className="form-input"
+            className={`form-input ${focusedField === 'titulo' ? 'input-focused' : ''}`}
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="descripcion">Descripción *</label>
+          <label htmlFor="descripcion">
+            <span>Descripción</span>
+          </label>
           <textarea
             id="descripcion"
             name="descripcion"
             value={formData.descripcion}
             onChange={handleChange}
+            onFocus={() => handleFocus('descripcion')}
+            onBlur={handleBlur}
             required
             rows="5"
             placeholder="Describe los detalles de la convocatoria, requisitos, beneficios, etc."
-            className="form-textarea"
+            className={`form-textarea ${focusedField === 'descripcion' ? 'input-focused' : ''}`}
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="fecha">Fecha Límite *</label>
+          <label htmlFor="fecha">
+            <span>Fecha Límite</span>
+          </label>
           <input
             type="date"
             id="fecha"
             name="fecha"
             value={formData.fecha}
             onChange={handleChange}
+            onFocus={() => handleFocus('fecha')}
+            onBlur={handleBlur}
             required
+            className={`form-input ${focusedField === 'fecha' ? 'input-focused' : ''}`}
+          />
+          <small className="form-hint">Selecciona la fecha límite para postularse</small>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="imagen">
+            <span>Imagen (opcional)</span>
+          </label>
+          <input
+            type="file"
+            id="imagen"
+            name="imagen"
+            accept="image/*"
+            onChange={handleImageChange}
             className="form-input"
           />
+          {image && (
+            <div style={{ marginTop: '0.5rem' }}>
+              <img src={URL.createObjectURL(image)} alt="Previsualización" style={{ maxWidth: '180px', maxHeight: '120px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }} />
+            </div>
+          )}
         </div>
 
         {error && (
@@ -123,11 +183,16 @@ const ConvocatoriaForm = ({
 
         <div className="form-actions">
           <button type="submit" disabled={loading} className="submit-btn">
-            {loading
-              ? "Guardando..."
-              : convocatoriaToEdit
-              ? "Actualizar"
-              : "Crear"}
+            {loading ? (
+              <>
+                <span className="spinner"></span>
+                <span>Guardando...</span>
+              </>
+            ) : convocatoriaToEdit ? (
+              'Actualizar Convocatoria'
+            ) : (
+              'Crear Convocatoria'
+            )}
           </button>
 
           {onCancel && (
