@@ -20,16 +20,21 @@ const AdminUsersPage = () => {
     try {
       setLoading(true);
       setError("");
+
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No autenticado");
-      const res = await fetch("http://localhost:3000/api/users/all", {
+
+      const res = await api.get("/users/all", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await parseResponse(res);
-      if (!res.ok || !data.success) throw new Error(data.message || "Error");
-      setUsers(data.data);
+
+      if (!res.data.success) {
+        throw new Error(res.data.message || "Error");
+      }
+
+      setUsers(res.data.data);
     } catch (e) {
       setError(e.message);
     } finally {

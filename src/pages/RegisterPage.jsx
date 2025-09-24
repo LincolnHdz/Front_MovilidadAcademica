@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginRegister.css";
+import api from "../api/axiosConfig";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -20,27 +21,23 @@ const RegisterPage = () => {
   };
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    try {
-      const res = await fetch("http://localhost:3000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSuccess("Registro exitoso. Ahora puedes iniciar sesión.");
-        setTimeout(() => navigate("/login"), 1500);
-      } else {
-        setError(data.message || "Error de registro");
-      }
-    } catch (error) {
-        console.error('Error en el registro:', error);
-      setError("Error de conexión");
+  e.preventDefault();
+  setError("");
+  setSuccess("");
+  try {
+    const res = await api.post("/auth/register", form);
+
+    if (res.data.success) {
+      setSuccess("Registro exitoso. Ahora puedes iniciar sesión.");
+      setTimeout(() => navigate("/login"), 1500);
+    } else {
+      setError(res.data.message || "Error de registro");
     }
-  };
+  } catch (error) {
+    console.error("Error en el registro:", error);
+    setError("Error de conexión");
+  }
+};
 
   return (
     <div className="auth-container">
