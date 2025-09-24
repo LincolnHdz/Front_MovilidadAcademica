@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import "./LoginRegister.css";
+import api from "../api/axiosConfig";
 
 const LoginPage = () => {
   const [identifier, setIdentifier] = useState("");
@@ -14,22 +15,21 @@ const LoginPage = () => {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, password }),
+      const res = await api.post("/auth/login", {
+        identifier,
+        password,
       });
-      const data = await res.json();
-      if (data.success) {
+
+      if (res.data.success) {
         // Usar el login del contexto para guardar el token y datos del usuario
-        login(data.data.token, data.data.user);
+        login(res.data.data.token, res.data.data.user);
         navigate("/");
       } else {
-        setError(data.message || "Error de login");
+        setError(res.data.message || "Error de login");
       }
     } catch (error) {
-        console.error('Error en el login:', error);
-      setError("Error de conexión");
+        console.error("Error en el login:", error);
+        setError("Error de conexión");
     }
   };
 

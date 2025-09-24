@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./ConvocatoriasList.css";
 import ConvocatoriaForm from "./ConvocatoriaForm";
 import { useAuth } from "../context/useAuth";
+import api from "../api/axiosConfig"; 
 
 const ConvocatoriasList = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -11,8 +12,6 @@ const ConvocatoriasList = () => {
   const [editingConvocatoria, setEditingConvocatoria] = useState(null);
   const { user } = useAuth();
 
-  const API_URL = "http://localhost:3000/api/convocatorias";
-
   useEffect(() => {
     fetchConvocatorias();
   }, []);
@@ -20,18 +19,12 @@ const ConvocatoriasList = () => {
   const fetchConvocatorias = async () => {
     try {
       setLoading(true);
-      const response = await fetch(API_URL);
+      const res = await api.get("/convocatorias");
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        setConvocatorias(data.data);
+      if (res.data.success) {
+        setConvocatorias(res.data.data);
       } else {
-        throw new Error(data.message || "Error al obtener convocatorias");
+        throw new Error(res.data.message || "Error al obtener convocatorias");
       }
     } catch (err) {
       console.error("Error fetching convocatorias:", err);
@@ -52,7 +45,6 @@ const ConvocatoriasList = () => {
 
   const handleConvocatoriaCreated = (newConvocatoria) => {
     if (editingConvocatoria) {
-      
       setConvocatorias((prev) =>
         prev.map((conv) =>
           conv.id === editingConvocatoria.id ? newConvocatoria : conv
@@ -60,7 +52,6 @@ const ConvocatoriasList = () => {
       );
       setEditingConvocatoria(null);
     } else {
-      
       setConvocatorias((prev) => [newConvocatoria, ...prev]);
     }
     setShowForm(false);
@@ -72,33 +63,20 @@ const ConvocatoriasList = () => {
   };
 
   const handleDelete = async (id) => {
-    if (
-      !window.confirm(
-        "¿Estás seguro de que quieres eliminar esta convocatoria?"
-      )
-    ) {
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta convocatoria?")) {
       return;
     }
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+      const token = localStorage.getItem("token");
+      const res = await api.delete(`/convocatorias/${id}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
+      if (res.data.success) {
         setConvocatorias((prev) => prev.filter((conv) => conv.id !== id));
       } else {
-        throw new Error(data.message || "Error al eliminar la convocatoria");
+        throw new Error(res.data.message || "Error al eliminar la convocatoria");
       }
     } catch (err) {
       console.error("Error deleting convocatoria:", err);

@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import api from "../../api/axiosConfig";  // ajusta la ruta según tu proyecto
+
 import {
   Upload,
   Send,
@@ -174,11 +176,7 @@ const RegistroMateria = () => {
     setSubmitStatus(null);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Here you would typically send the data to your backend
-      const submitData = new FormData();
+     const submitData = new FormData();
       submitData.append("nombre", formData.nombre);
       submitData.append("apellidoMaterno", formData.apellidoMaterno);
       submitData.append("apellidoPaterno", formData.apellidoPaterno);
@@ -190,11 +188,12 @@ const RegistroMateria = () => {
       submitData.append("materia", formData.materia);
       submitData.append("archivo", formData.archivo);
 
-      console.log("Form data to submit:", formData);
+      const res = await api.post("/application/addApplication", submitData);
+
+      console.log("Respuesta del servidor:", res.data);
 
       setSubmitStatus("success");
 
-      //Borrar el formulario
       setFormData({
         nombre: "",
         apellidoMaterno: "",
@@ -228,7 +227,7 @@ const RegistroMateria = () => {
       <header className="form-header">
         <div className="header-content">
           <div className="header-text">
-            <h1>Solicitud de Registro de Materia</h1>
+            <h1>Solicitud de Registro</h1>
           </div>
         </div>
       </header>
