@@ -42,7 +42,7 @@ const Navigation = () => {
               location.pathname === "/registro-materia" ? "active" : ""
             }`}
           >
-            Registro Materia
+            Solicitudes
           </Link>
 
           {/* Link de administración visible solo para administradores */}

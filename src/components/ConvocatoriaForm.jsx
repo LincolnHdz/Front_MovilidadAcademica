@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./ConvocatoriaForm.css";
+import api from "../api/axiosConfig";
 
 const ConvocatoriaForm = ({
   onConvocatoriaCreated,
@@ -31,32 +32,25 @@ const ConvocatoriaForm = ({
 
     try {
       const url = convocatoriaToEdit
-        ? `${API_URL}/${convocatoriaToEdit.id}`
-        : API_URL;
+        ? `/convocatorias/${convocatoriaToEdit.id}`
+        : "/convocatorias";
 
-      const method = convocatoriaToEdit ? "PUT" : "POST";
+      const method = convocatoriaToEdit ? "put" : "post";
 
       const token = localStorage.getItem("token");
-      const response = await fetch(url, {
+
+      const res = await api({
         method,
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(formData),
+        url,
+        data: formData,
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        onConvocatoriaCreated(data.data);
+      if (res.data.success) {
+        onConvocatoriaCreated(res.data.data);
         setFormData({ titulo: "", descripcion: "", fecha: "" });
       } else {
-        throw new Error(data.message || "Error al procesar la convocatoria");
+        throw new Error(res.data.message || "Error al procesar la convocatoria");
       }
     } catch (err) {
       console.error("Error submitting form:", err);

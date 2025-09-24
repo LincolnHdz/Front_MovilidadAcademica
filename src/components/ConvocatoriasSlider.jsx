@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ConvocatoriasSlider.css";
+import api from "../api/axiosConfig"; 
 
 const ConvocatoriasSlider = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -9,8 +10,6 @@ const ConvocatoriasSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
 
-  const API_URL = "http://localhost:3000/api/convocatorias";
-
   useEffect(() => {
     fetchConvocatorias();
   }, []);
@@ -18,19 +17,13 @@ const ConvocatoriasSlider = () => {
   const fetchConvocatorias = async () => {
     try {
       setLoading(true);
-      const response = await fetch(API_URL);
+      const res = await api.get("/convocatorias");
 
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success) {
-        
-        setConvocatorias(data.data.slice(0, 5));
+      if (res.data.success) {
+        // 👇 Solo traemos las primeras 5
+        setConvocatorias(res.data.data.slice(0, 5));
       } else {
-        throw new Error(data.message || "Error al obtener convocatorias");
+        throw new Error(res.data.message || "Error al obtener convocatorias");
       }
     } catch (err) {
       console.error("Error fetching convocatorias:", err);
@@ -113,7 +106,7 @@ const ConvocatoriasSlider = () => {
 
       <div className="slider-wrapper">
         <div className="slider-container">
-          <div 
+          <div
             className="slider-track"
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
