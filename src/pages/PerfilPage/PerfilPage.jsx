@@ -1,36 +1,138 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
+import MateriasSlider from "../../components/MateriasSlider";
 import "./PerfilPage.css";
 
 const PerfilPage = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [newPhone, setNewPhone] = useState("");
+  const [phoneLoading, setPhoneLoading] = useState(false);
+  const [phoneError, setPhoneError] = useState("");
+  const [phoneSuccess, setPhoneSuccess] = useState("");
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+
   const [application, setApplication] = useState(null);
   const [loading, setLoading] = useState(true);
-  // Estado para selects de universidad, facultad, carrera y beca
-  const [universidad, setUniversidad] = useState("");
-  const [facultad, setFacultad] = useState("");
-  const [carrera, setCarrera] = useState("");
-  const [beca, setBeca] = useState("");
+  const [universidades, setUniversidades] = useState([]);
+  const [facultades, setFacultades] = useState([]);
+  const [carreras, setCarreras] = useState([]);
+  const [becas, setBecas] = useState([]);
 
-  // Opciones vacías, para llenar desde el backend en el futuro
-  const universidades = [];
-  const facultades = [];
-  const carreras = [];
-  const becas = [];
+  useEffect(() => {
+    if (user && user.telefono) {
+      setNewPhone(user.telefono);
+    }
+  }, [user]);
 
-  // Buscar la solicitud del usuario cuando se carga el componente
+  // Carga inicial de universidades y becas
+  useEffect(() => {
+    const fetchCatalogos = async () => {
+      try {
+        console.log("Intentando cargar catálogos iniciales...");
+        
+        // Carga individual de universidades
+        try {
+          const uRes = await api.get("/catalogo/universidades");
+          console.log("Respuesta universidades:", uRes.data);
+          setUniversidades(uRes.data.data || []);
+        } catch (error) {
+          console.error("Error cargando universidades:", error.message);
+        }
+        
+        // Carga individual de becas
+        try {
+          const bRes = await api.get("/catalogo/becas");
+          console.log("Respuesta becas:", bRes.data);
+          setBecas(bRes.data.data || []);
+        } catch (error) {
+          console.error("Error cargando becas:", error.message);
+        }
+      } catch (err) {
+        console.error("Error general cargando catálogos:", err);
+      }
+    };
+    fetchCatalogos();
+  }, []);
+  
+  // Carga de facultades cuando cambia la universidad seleccionada
+  useEffect(() => {
+    const fetchFacultades = async () => {
+      if (!user || !user.universidad_id) {
+        setFacultades([]);
+        return;
+      }
+      
+      try {
+        const universidadId = user.universidad_id;
+        console.log(`Cargando facultades para la universidad ${universidadId}...`);
+        const response = await api.get(`/catalogo/universidades/${universidadId}/facultades`);
+        console.log("Respuesta facultades por universidad:", response.data);
+        setFacultades(response.data.data || []);
+      } catch (error) {
+        console.error(`Error cargando facultades:`, error.message);
+        setFacultades([]);
+      }
+    };
+    
+    fetchFacultades();
+  }, [user]);
+  
+  // Carga de carreras cuando cambia la facultad seleccionada
+  useEffect(() => {
+    const fetchCarreras = async () => {
+      if (!user || !user.facultad_id) {
+        setCarreras([]);
+        return;
+      }
+      
+      try {
+        const facultadId = user.facultad_id;
+        console.log(`Cargando carreras para la facultad ${facultadId}...`);
+        const response = await api.get(`/catalogo/facultades/${facultadId}/carreras`);
+        console.log("Respuesta carreras por facultad:", response.data);
+        setCarreras(response.data.data || []);
+      } catch (error) {
+        console.error(`Error cargando carreras para la facultad:`, error.message);
+        setCarreras([]);
+      }
+    };
+    
+    fetchCarreras();
+  }, [user]);
+
   useEffect(() => {
     const fetchUserApplication = async () => {
       try {
         if (user) {
           setLoading(true);
-          // Usar la nueva ruta específica para obtener las aplicaciones del usuario autenticado
           const response = await api.get(`/applications/user/applications`);
           
           if (response.data && response.data.success && response.data.data.length > 0) {
-            // Tomamos la primera solicitud (la más reciente)
-            setApplication(response.data.data[0]);
+            const applicationData = response.data.data[0];
+            
+            // Procesar materias de interés si existen
+            if (applicationData.materiasinteres) {
+              // Si es una cadena JSON, intentar parsearla
+              if (typeof applicationData.materiasinteres === 'string') {
+                try {
+                  applicationData.materiasinteres = JSON.parse(applicationData.materiasinteres);
+                } catch (error) {
+                  console.error("Error al parsear materiasinteres:", error);
+                  applicationData.materiasinteres = [];
+                }
+              }
+            } else {
+              applicationData.materiasinteres = [];
+            }
+            
+            setApplication(applicationData);
           }
         }
       } catch (error) {
@@ -42,6 +144,71 @@ const PerfilPage = () => {
 
     fetchUserApplication();
   }, [user]);
+
+  const handlePasswordChange = async () => {
+    setPasswordLoading(true);
+    setPasswordError("");
+    try {
+      const response = await api.post(`/users/${user.id}/cambiar-password`, {
+        currentPassword: oldPassword,
+        newPassword
+      });
+      if (response.data.success) {
+        setPasswordSuccess("Contraseña actualizada correctamente");
+        setTimeout(() => {
+          setShowPasswordModal(false);
+          setOldPassword("");
+          setNewPassword("");
+        }, 1500);
+      } else {
+        setPasswordError(response.data.message || "No se pudo cambiar la contraseña");
+      }
+    } catch (err) {
+      setPasswordError(err.response?.data?.message || "Error al conectar con el servidor");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handlePhoneChange = async () => {
+    setPhoneLoading(true);
+    setPhoneError("");
+    try {
+      const response = await api.patch(`/users/${user.id}`, { telefono: newPhone });
+      if (response.data.success) {
+        updateUser({ ...user, telefono: newPhone });
+        setPhoneSuccess("Teléfono actualizado correctamente");
+        setTimeout(() => setShowPhoneModal(false), 1500);
+      } else {
+        setPhoneError(response.data.message || "No se pudo actualizar el teléfono");
+      }
+    } catch (err) {
+      console.error("Error al conectar con el servidor:", err);
+    } finally {
+      setPhoneLoading(false);
+    }
+  };
+
+  const handleFieldUpdate = async (fieldName, value) => {
+    try {
+      const endpoint = fieldName === 'tipo_movilidad' 
+        ? `/users/${user.id}/tipo-movilidad`
+        : `/users/${user.id}`;
+      
+      const response = await api.patch(endpoint, { [fieldName]: value });
+      
+      if (response.data.success) {
+        updateUser({ ...user, [fieldName]: value });
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error(`Error al actualizar ${fieldName}:`, error);
+      return false;
+    }
+  };
+
+  // Ya no necesitamos la función getSelectedName porque eliminamos los divs de valores seleccionados
 
   if (!user) {
     return (
@@ -61,10 +228,8 @@ const PerfilPage = () => {
             {user.nombres ? user.nombres.charAt(0).toUpperCase() : "U"}
           </div>
           <div className="perfil-title-actions">
-            <h3>
-              {user.nombres} {user.apellido_paterno} {user.apellido_materno}
-            </h3>
-            <button className="change-password-btn">
+            <h3>{user.nombres} {user.apellido_paterno} {user.apellido_materno}</h3>
+            <button className="change-password-btn" onClick={() => setShowPasswordModal(true)}>
               Cambiar contraseña
             </button>
           </div>
@@ -83,75 +248,161 @@ const PerfilPage = () => {
             <span className="label">Teléfono:</span>
             <div className="value-with-action">
               <span className="value">{user.telefono || "No registrado"}</span>
-              <button className="add-phone-btn">
+              <button className="add-phone-btn" onClick={() => setShowPhoneModal(true)}>
                 {user.telefono ? "Editar teléfono" : "Añadir teléfono"}
               </button>
+              {phoneSuccess && <span className="success-message">{phoneSuccess}</span>}
             </div>
           </div>
           <div className="info-item">
             <span className="label">Rol:</span>
             <span className="value">{user.rol}</span>
           </div>
+          
+          <div className="info-item">
+            <span className="label">Tipo de Movilidad:</span>
+            <select
+              className="perfil-select"
+              value={user.tipo_movilidad || ''}
+              onChange={async (e) => {
+                const success = await handleFieldUpdate('tipo_movilidad', e.target.value || null);
+                if (!success) alert("Error al actualizar tipo de movilidad");
+              }}
+            >
+              <option value="">Sin tipo de movilidad</option>
+              <option value="movilidad_internacional">Movilidad Internacional</option>
+              <option value="movilidad_virtual">Movilidad Virtual</option>
+              <option value="visitante_nacional">Visitante Nacional</option>
+              <option value="visitante_internacional">Visitante Internacional</option>
+            </select>
+          </div>
+
           <div className="info-item">
             <span className="label">Universidad:</span>
             <select
               className="perfil-select"
-              value={universidad}
-              onChange={e => setUniversidad(e.target.value)}
+              value={user.universidad_id || ''}
+              onChange={async (e) => {
+                const value = e.target.value ? Number(e.target.value) : null;
+                const success = await handleFieldUpdate('universidad_id', value);
+                if (!success) alert("Error al actualizar universidad");
+              }}
               disabled={universidades.length === 0}
             >
               <option value="">Selecciona tu universidad</option>
               {universidades.map(u => (
-                <option key={u} value={u}>{u}</option>
+                <option key={u.id} value={u.id}>{u.nombre}</option>
               ))}
             </select>
           </div>
+
           <div className="info-item">
             <span className="label">Facultad:</span>
             <select
               className="perfil-select"
-              value={facultad}
-              onChange={e => setFacultad(e.target.value)}
+              value={user.facultad_id || ''}
+              onChange={async (e) => {
+                const value = e.target.value ? Number(e.target.value) : null;
+                const success = await handleFieldUpdate('facultad_id', value);
+                if (!success) alert("Error al actualizar facultad");
+              }}
               disabled={facultades.length === 0}
             >
               <option value="">Selecciona tu facultad</option>
               {facultades.map(f => (
-                <option key={f} value={f}>{f}</option>
+                <option key={f.id} value={f.id}>{f.nombre}</option>
               ))}
             </select>
           </div>
+
           <div className="info-item">
             <span className="label">Carrera:</span>
             <select
               className="perfil-select"
-              value={carrera}
-              onChange={e => setCarrera(e.target.value)}
+              value={user.carrera_id || ''}
+              onChange={async (e) => {
+                const value = e.target.value ? Number(e.target.value) : null;
+                const success = await handleFieldUpdate('carrera_id', value);
+                if (!success) alert("Error al actualizar carrera");
+              }}
               disabled={carreras.length === 0}
             >
               <option value="">Selecciona tu carrera</option>
               {carreras.map(c => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c.id} value={c.id}>{c.nombre}</option>
               ))}
             </select>
           </div>
+
           <div className="info-item">
             <span className="label">Beca:</span>
             <select
               className="perfil-select"
-              value={beca}
-              onChange={e => setBeca(e.target.value)}
+              value={user.beca_id || ''}
+              onChange={async (e) => {
+                const value = e.target.value ? Number(e.target.value) : null;
+                const success = await handleFieldUpdate('beca_id', value);
+                if (!success) alert("Error al actualizar beca");
+              }}
               disabled={becas.length === 0}
             >
               <option value="">Selecciona tu beca</option>
               {becas.map(b => (
-                <option key={b} value={b}>{b}</option>
+                <option key={b.id} value={b.id}>{b.nombre}</option>
               ))}
             </select>
           </div>
         </div>
       </div>
+
+      {showPasswordModal && (
+        <div className="password-modal-overlay">
+          <div className="password-modal modern-modal">
+            <div className="modal-header">
+              <h3 className="modal-title">Cambiar contraseña</h3>
+              <button className="modal-close-btn" onClick={() => setShowPasswordModal(false)}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="input-group">
+                <label htmlFor="oldPassword">Contraseña actual</label>
+                <input
+                  id="oldPassword"
+                  type="password"
+                  placeholder="Contraseña actual"
+                  value={oldPassword}
+                  onChange={e => setOldPassword(e.target.value)}
+                  className="password-input"
+                  autoFocus
+                />
+              </div>
+              <div className="input-group">
+                <label htmlFor="newPassword">Nueva contraseña</label>
+                <input
+                  id="newPassword"
+                  type="password"
+                  placeholder="Nueva contraseña"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                  className="password-input"
+                />
+              </div>
+              {passwordError && <div className="error-message modal-error">{passwordError}</div>}
+              {passwordSuccess && <div className="success-message modal-success">{passwordSuccess}</div>}
+            </div>
+            <div className="modal-footer">
+              <button
+                className="save-password-btn primary-btn"
+                disabled={passwordLoading}
+                onClick={handlePasswordChange}
+              >
+                {passwordLoading ? <span className="spinner"></span> : "Guardar"}
+              </button>
+              <button className="cancel-password-btn secondary-btn" onClick={() => setShowPasswordModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
       
-      {/* Sección para mostrar la solicitud del usuario solo si NO es admin */}
       {user.rol !== 'administrador' && (
         loading ? (
           <div className="application-loading">
@@ -168,24 +419,26 @@ const PerfilPage = () => {
             </div>
             <div className="application-details">
               <div className="detail-item">
-                <span className="label">Universidad:</span>
+                <span className="label">Universidad destino:</span>
                 <span className="value">{application.universidad}</span>
               </div>
               <div className="detail-item">
                 <span className="label">Carrera:</span>
                 <span className="value">{application.carrera}</span>
               </div>
-              <div className="detail-item">
-                <span className="label">Materia:</span>
-                <span className="value">{application.materia}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Clave de Materia:</span>
-                <span className="value">{application.claveMateria}</span>
+              <div className="detail-item full-width">
+                <span className="label">Materias de Interés:</span>
+                <div className="materias-container">
+                  {application.materiasinteres ? (
+                    <MateriasSlider materias={application.materiasinteres} readOnly={true} />
+                  ) : (
+                    <span className="value">No hay materias seleccionadas</span>
+                  )}
+                </div>
               </div>
               <div className="detail-item">
                 <span className="label">Ciclo Escolar:</span>
-                <span className="value">{application.cicloEscolar}</span>
+                <span className="value">{application.cicloescolar}</span>
               </div>
               <div className="detail-item">
                 <span className="label">Fecha de Solicitud:</span>
@@ -214,25 +467,22 @@ const PerfilPage = () => {
                   })()}
                 </div>
               )}
-                {/* Comentarios de la solicitud */}
-                {application.estado === 'rechazada' && (
-                  <div className="application-comments-section">
-                    <h4>Comentarios de la solicitud</h4>
-                    {Array.isArray(application.comentarios) && application.comentarios.length > 0 ? (
-                      application.comentarios.map((comentario, idx) => (
-                        <div className="application-comment" key={idx}>
-                          {comentario}
-                        </div>
-                      ))
-                    ) : (typeof application.comentarios === 'string' && application.comentarios.trim() !== '' ? (
-                      <div className="application-comment">{application.comentarios}</div>
-                    ) : (
-                      <div className="application-comment" style={{color: '#e74c3c'}}>
-                        No hay comentarios para esta solicitud.
-                      </div>
-                    ))}
+              <div className="application-comments-section">
+                <h4>Comentarios de la solicitud</h4>
+                {Array.isArray(application.comentarios) && application.comentarios.length > 0 ? (
+                  application.comentarios.map((comentario, idx) => (
+                    <div className="application-comment" key={idx}>
+                      {comentario}
+                    </div>
+                  ))
+                ) : (typeof application.comentarios === 'string' && application.comentarios.trim() !== '' ? (
+                  <div className="application-comment">{application.comentarios}</div>
+                ) : (
+                  <div className="application-comment" style={{color: '#e74c3c'}}>
+                    No hay comentarios para esta solicitud.
                   </div>
-                )}
+                ))}
+              </div>
             </div>
           </div>
         ) : (
@@ -242,8 +492,44 @@ const PerfilPage = () => {
         )
       )}
       
-      {/* Espacio adicional al final de la página */}
       <div className="perfil-footer-space"></div>
+      
+      {showPhoneModal && (
+        <div className="password-modal-overlay">
+          <div className="password-modal modern-modal">
+            <div className="modal-header">
+              <h3 className="modal-title">Actualizar Teléfono</h3>
+              <button className="modal-close-btn" onClick={() => setShowPhoneModal(false)}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="input-group">
+                <label htmlFor="newPhone">Número de Teléfono</label>
+                <input
+                  id="newPhone"
+                  type="text"
+                  placeholder="Ingrese su número telefónico"
+                  value={newPhone}
+                  onChange={e => setNewPhone(e.target.value)}
+                  className="password-input"
+                  autoFocus
+                />
+              </div>
+              {phoneError && <div className="error-message modal-error">{phoneError}</div>}
+              {phoneSuccess && <div className="success-message modal-success">{phoneSuccess}</div>}
+            </div>
+            <div className="modal-footer">
+              <button
+                className="save-password-btn primary-btn"
+                disabled={phoneLoading}
+                onClick={handlePhoneChange}
+              >
+                {phoneLoading ? <span className="spinner"></span> : "Guardar"}
+              </button>
+              <button className="cancel-password-btn secondary-btn" onClick={() => setShowPhoneModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

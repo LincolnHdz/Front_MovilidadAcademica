@@ -29,8 +29,8 @@ const RegisterPage = () => {
     // Validar que todos los campos obligatorios estén presentes
     const { nombres, apellido_paterno, apellido_materno, clave, email, password } = form;
     
-    if (!nombres || !apellido_paterno || !apellido_materno || !clave || !email || !password) {
-      setError("Todos los campos son obligatorios");
+    if (!nombres || !apellido_paterno || !apellido_materno || !email || !password) {
+      setError("Nombres, apellidos, correo y contraseña son obligatorios");
       return;
     }
     
@@ -38,7 +38,7 @@ const RegisterPage = () => {
       nombres,
       apellido_paterno,
       apellido_materno,
-      clave,
+      clave: clave || null,
       email,
       password
     });
@@ -62,10 +62,11 @@ const RegisterPage = () => {
         <input name="nombres" type="text" placeholder="Nombres" value={form.nombres} onChange={handleChange} required />
         <input name="apellido_paterno" type="text" placeholder="Apellido Paterno" value={form.apellido_paterno} onChange={handleChange} required />
         <input name="apellido_materno" type="text" placeholder="Apellido Materno" value={form.apellido_materno} onChange={handleChange} required />
-        <input name="clave" type="text" placeholder="Clave" value={form.clave} onChange={handleChange} required />
+        <input name="clave" type="text" placeholder="Clave (opcional)" value={form.clave} onChange={handleChange} />
         {/* El campo teléfono se elimina del registro, se agregará en el perfil */}
         <input name="email" type="email" placeholder="Correo institucional" value={form.email} onChange={handleChange} required />
         <input name="password" type="password" placeholder="Contraseña" value={form.password} onChange={handleChange} required />
+
         {error && <div className="auth-error">{error}</div>}
         {success && <div className="auth-success">{success}</div>}
         <button type="submit">Registrarse</button>

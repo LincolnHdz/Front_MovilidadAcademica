@@ -126,9 +126,6 @@ const ConvocatoriasList = () => {
             >
               + Nueva Convocatoria
             </button>
-            <div className="admin-text" style={{marginTop: '0.5rem', color: '#64748b', fontSize: '1rem'}}>
-              Administra todas las convocatorias de movilidad académica
-            </div>
           </>
         )}
       </div>

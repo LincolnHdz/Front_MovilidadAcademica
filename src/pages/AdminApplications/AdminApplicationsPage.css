@@ -7,6 +7,16 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+/* Estilos específicos para el slider de materias en la vista de admin */
+.admin-applications-container .materias-slider-container {
+  margin: 0;
+}
+
+.admin-applications-container .materia-item {
+  background-color: #f0f7ff;
+  border-color: #d0e1fd;
+}
+
 .admin-page-header {
   display: flex;
   justify-content: space-between;

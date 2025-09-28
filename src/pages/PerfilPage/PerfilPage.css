@@ -1,3 +1,125 @@
+/* Modal de cambio de contraseña */
+.password-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(44, 62, 80, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.password-modal.modern-modal {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(44,62,80,0.18);
+  width: 100%;
+  max-width: 370px;
+  padding: 2rem 2.2rem 1.5rem 2.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+.modal-title {
+  font-size: 1.25rem;
+  color: #004A98;
+  font-weight: 600;
+}
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 1.7rem;
+  color: #7f8c8d;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-close-btn:hover {
+  color: #e74c3c;
+}
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.input-group label {
+  font-size: 0.95rem;
+  color: #2563eb;
+  font-weight: 500;
+}
+.password-input {
+  padding: 0.6rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.password-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+  outline: none;
+}
+.modal-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.2rem;
+}
+.primary-btn {
+  background-color: #00B2E3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+.primary-btn:hover {
+  background-color: #004A98;
+}
+.secondary-btn {
+  background: #f1f5f9;
+  color: #004A98;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.secondary-btn:hover {
+  background: #e2e8f0;
+  color: #e74c3c;
+}
+.modal-error {
+  color: #e74c3c;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
+.modal-success {
+  color: #2ecc71;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
+}
 .perfil-select {
   width: 100%;
   padding: 0.7rem 1.1rem;
@@ -20,6 +142,41 @@
   background: #f1f5f9;
   color: #94a3b8;
   cursor: not-allowed;
+  border-color: #cbd5e1;
+  box-shadow: none;
+}
+
+.field-disabled-message {
+  font-size: 0.8rem;
+  color: #f59e0b;
+  margin-top: 0.3rem;
+  display: flex;
+  align-items: center;
+}
+
+.field-disabled-message::before {
+  content: "⚠️";
+  margin-right: 0.3rem;
+}
+.selected-value {
+  font-size: 0.9rem;
+  color: #2563eb;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #f0f9ff;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.info-message {
+  font-size: 0.9rem;
+  color: #0891b2;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background-color: #ecfeff;
+  border-radius: 6px;
+  font-weight: 500;
+  border-left: 3px solid #0891b2;
 }
 .perfil-container {
   max-width: 800px;
@@ -270,9 +427,8 @@
   100% { transform: rotate(360deg); }
 }
 
-/* Espacio adicional al final del perfil */
 .perfil-footer-space {
-  height: 4rem; /* Altura del espacio adicional */
+  height: 4rem; 
   width: 100%;
 }
 
@@ -315,4 +471,14 @@
   .perfil-container {
     padding-bottom: 3rem;
   }
+}
+
+/* Estilos para la vista de materias en el perfil del alumno */
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.materias-container {
+  margin-top: 0.5rem;
+  width: 100%;
 }

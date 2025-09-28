@@ -131,13 +131,7 @@ const AdminUsersPage = () => {
           {loading ? "Actualizando..." : "↻ Actualizar lista"}
         </button>
       </div>
-      
-      {loading && (
-        <div className="loading-spinner">
-          <div>Cargando usuarios...</div>
-        </div>
-      )}
-      
+            
       {error && (
         <div className="status-message error-message">
           <strong>Error:</strong> {error}
