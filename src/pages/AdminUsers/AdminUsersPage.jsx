@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
+import Filtros from "../../components/Filter"; // 👈 importa tu componente
 import "./AdminUsersPage.css";
 
 const AdminUsersPage = () => {
@@ -9,6 +10,7 @@ const AdminUsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [showFiltros, setShowFiltros] = useState(false); // 👈 estado para abrir/cerrar filtros
 
   const fetchUsers = async () => {
     try {
@@ -17,44 +19,18 @@ const AdminUsersPage = () => {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No autenticado");
       
-      // Configurar el token para esta petición
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-      
-      console.log("API URL:", import.meta.env.VITE_API_URL);
-      console.log("Haciendo petición a:", `${import.meta.env.VITE_API_URL}/users/all`);
-      
-      // Usar axios (api) para hacer la petición
+      const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await api.get("/users/all", config);
-      
-      console.log("Respuesta completa:", response);
-      
-      // axios ya parsea automáticamente la respuesta JSON
+
       const { data } = response;
-      
-      console.log("Datos recibidos:", data);
-      
       if (!data || !data.success) throw new Error(data?.message || "Error en la respuesta");
-      
-      // Verificar que data.data es un array
+
       if (!Array.isArray(data.data)) {
-        console.warn("La respuesta no contiene un array:", data.data);
         setUsers([]);
         return;
       }
-      
       setUsers(data.data);
     } catch (e) {
-      console.error("Error al obtener usuarios:", e);
-      console.error("Detalles del error:", {
-        message: e.message,
-        response: e.response,
-        status: e.response?.status,
-        statusText: e.response?.statusText
-      });
       setError(e.response?.data?.message || e.message || "Error de conexión");
     } finally {
       setLoading(false);
@@ -65,40 +41,18 @@ const AdminUsersPage = () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No autenticado");
-      
-      // Configurar el token para esta petición
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-      
-      // Usar axios para hacer la petición PATCH
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+
       const response = await api.patch(`/users/${userId}/rol`, { rol }, config);
-      
-      // axios ya parsea automáticamente la respuesta JSON
       const { data } = response;
-      
       if (!data.success) throw new Error(data.message || "Error");
-      
-      // Actualizar el usuario en la lista
+
       setUsers((prev) => prev.map((u) => (u.id === userId ? data.data : u)));
-      
-      // Mostrar mensaje de éxito
       setSuccessMessage(`Rol actualizado correctamente para ${data.data.nombres}`);
-      
-      // Ocultar el mensaje después de 3 segundos
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 3000);
+      setTimeout(() => setSuccessMessage(""), 3000);
     } catch (e) {
-      console.error("Error al actualizar rol:", e);
-      setError("No se pudo actualizar el rol: " + (e.response?.data?.message || e.message || "Error de conexión"));
-      
-      // Ocultar el mensaje de error después de 5 segundos
-      setTimeout(() => {
-        setError("");
-      }, 5000);
+      setError("No se pudo actualizar el rol: " + (e.response?.data?.message || e.message));
+      setTimeout(() => setError(""), 5000);
     }
   };
 
@@ -110,9 +64,7 @@ const AdminUsersPage = () => {
     }
   }, [user?.rol]);
 
-  const handleRefresh = () => {
-    fetchUsers();
-  };
+  const handleRefresh = () => fetchUsers();
 
   if (user?.rol !== "administrador") {
     return (
@@ -127,10 +79,36 @@ const AdminUsersPage = () => {
     <div className="admin-users-container">
       <div className="admin-page-header">
         <h1 className="admin-title">Administración de Usuarios</h1>
+
         <button className="refresh-button" onClick={handleRefresh} disabled={loading}>
           {loading ? "Actualizando..." : "↻ Actualizar lista"}
         </button>
+
+        {/* 👇 nuevo botón para abrir filtros */}
+        <button 
+          className="filter-button" 
+          onClick={() => setShowFiltros(true)}
+        >
+          🔍 Filtros
+        </button>
       </div>
+
+            {/* Modal de filtros */}
+      {showFiltros && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Filtros de búsqueda</h2>
+            <Filtros />
+
+            <button 
+              className="close-button" 
+              onClick={() => setShowFiltros(false)}
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
       
       {loading && (
         <div className="loading-spinner">
