@@ -18,6 +18,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import AdminUsersPage from "./pages/AdminUsers/AdminUsersPage";
 import AdminApplicationsPage from "./pages/AdminApplications/AdminApplicationsPage";
+import CatalogoPage from "./pages/CatalogoPage/CatalogoPage";
 import Solicitud from "./pages/ApplicationPage/ApplicationPage";
 
 const HomePage = () => {
@@ -94,6 +95,7 @@ export default function App() {
       <Route path="/perfil" element={<PerfilPage />} />
       <Route path="/admin/usuarios" element={<AdminUsersPage />} />
       <Route path="/admin/applications" element={<AdminApplicationsPage />} />
+      <Route path="/admin/catalogos" element={<CatalogoPage />} />
       <Route path="/solicitud" element={<Solicitud />} />
     </Routes>
   );

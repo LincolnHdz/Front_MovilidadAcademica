@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/useAuth';
 import api from '../../api/axiosConfig';
+import MateriasSlider from '../../components/MateriasSlider';
 import './AdminApplicationsPage.css';
 
 const AdminApplicationsPage = () => {
@@ -135,12 +136,6 @@ const AdminApplicationsPage = () => {
         </button>
       </div>
 
-      {loading && (
-        <div className="loading-spinner">
-          <div>Cargando solicitudes...</div>
-        </div>
-      )}
-
       {error && (
         <div className="status-message error-message">
           <strong>Error:</strong> {error}
@@ -171,14 +166,14 @@ const AdminApplicationsPage = () => {
                     boxShadow: '0 2px 12px rgba(44,62,80,0.10)',
                     borderRadius: 18,
                     margin: 0,
-                    padding: '1.4rem 2.5rem 1.4rem 2rem',
+                    padding: '1rem 2rem 1rem 1.5rem',
                     minWidth: 400,
                     maxWidth: 1000,
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    gap: '2.5rem',
+                    gap: '2rem',
                   }}
                   onClick={() => {
                     setActiveApplication(app);
@@ -209,7 +204,7 @@ const AdminApplicationsPage = () => {
                             <span style={{ color: '#273746' }}>{app.email}</span>
                           </p>
                           <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '90px' }}>Facultad:</strong> 
+                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '90px' }}>Destino:</strong> 
                             <span style={{ color: '#273746' }}>{app.universidad}</span>
                           </p>
                         </div>
@@ -219,17 +214,34 @@ const AdminApplicationsPage = () => {
                             <span style={{ color: '#273746' }}>{app.carrera}</span>
                           </p>
                           <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '120px' }}>Materia:</strong> 
-                            <span style={{ color: '#273746' }}>{app.materia}</span>
-                          </p>
-                          <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
                             <strong style={{ color: '#2980b9', display: 'inline-block', width: '120px' }}>Ciclo Escolar:</strong> 
                             <span style={{ color: '#273746' }}>{app.cicloescolar}</span>
                           </p>
                         </div>
                       </div>
+                      
+                      {/* Materias de interés en un solo renglón */}
+                      <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <strong style={{ color: '#2980b9', whiteSpace: 'nowrap' }}>Materias:</strong> 
+                        <div style={{ flex: 1, maxHeight: '38px', overflow: 'hidden' }}>
+                          <MateriasSlider materias={app.materiasinteres} readOnly={true} compactMode={true} />
+                        </div>
+                      </div>
+                      
                       {/* Mostrar enlace al archivo subido si existe */}
                       {(() => {
+                        // Parsear las materias de interés si es necesario
+                        let materias = app.materiasinteres;
+                        if (materias && typeof materias === 'string') {
+                          try {
+                            app.materiasinteres = JSON.parse(materias);
+                          } catch (error) {
+                            console.error('Error al parsear materias:', error);
+                            app.materiasinteres = [];
+                          }
+                        }
+                        
+                        // Parsear el archivo si es necesario
                         let archivo = app.archivo;
                         if (archivo && typeof archivo === 'string') {
                           try {
@@ -239,8 +251,9 @@ const AdminApplicationsPage = () => {
                         return archivo && archivo.filename ? (
                           <div style={{ margin: '0.7rem 0' }}>
                             <a
-                              href={`http://localhost:3000/download/${archivo.filename}`}
-                              download={archivo.originalname || archivo.filename}
+                              href={`http://localhost:3000/uploads/${archivo.filename}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               style={{ 
                                 display: 'inline-block',
                                 color: '#fff', 
@@ -253,6 +266,7 @@ const AdminApplicationsPage = () => {
                                 marginTop: '0.5rem',
                                 boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
                               }}
+                              onClick={e => e.stopPropagation()}
                             >
                               Ver/Descargar archivo
                             </a>
@@ -283,10 +297,29 @@ const AdminApplicationsPage = () => {
 
       {/* Modal para actualizar el estado de una solicitud */}
       {activeApplication && (
-        <div className="modal-overlay" style={{ background: 'rgba(41, 128, 185, 0.18)', zIndex: 1000 }}>
-          <div className="modal-content" style={{ background: 'linear-gradient(120deg, #eaf6fb 80%, #d6eaf8 100%)', borderRadius: 18, boxShadow: '0 6px 32px rgba(44,62,80,0.18)', padding: '2.2rem', maxWidth: 440, border: '1.5px solid #3498db' }}>
+        <div className="modal-overlay" style={{ background: 'rgba(41, 128, 185, 0.18)', zIndex: 1000, position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="modal-content" style={{ background: 'linear-gradient(120deg, #eaf6fb 80%, #d6eaf8 100%)', borderRadius: 18, boxShadow: '0 6px 32px rgba(44,62,80,0.18)', padding: '2.2rem', width: '90%', maxWidth: 600, border: '1.5px solid #3498db', maxHeight: '90vh', overflowY: 'auto' }}>
             <h2 style={{ color: '#21618c', marginBottom: 8, fontWeight: 700 }}>Actualizar Estado de Solicitud</h2>
             <h3 style={{ color: '#34495e', marginBottom: 18 }}>{activeApplication.nombres} {activeApplication.apellido_paterno} {activeApplication.apellido_materno}</h3>
+            
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '18px' }}>
+                <div>
+                  <p><strong style={{ color: '#2980b9' }}>Clave:</strong> {activeApplication.user_clave}</p>
+                  <p><strong style={{ color: '#2980b9' }}>Email:</strong> {activeApplication.email}</p>
+                </div>
+                <div>
+                  <p><strong style={{ color: '#2980b9' }}>Universidad:</strong> {activeApplication.universidad}</p>
+                  <p><strong style={{ color: '#2980b9' }}>Carrera:</strong> {activeApplication.carrera}</p>
+                  <p><strong style={{ color: '#2980b9' }}>Ciclo:</strong> {activeApplication.cicloescolar}</p>
+                </div>
+              </div>
+              
+              <div>
+                <p><strong style={{ color: '#2980b9' }}>Materias de interés:</strong></p>
+                <MateriasSlider materias={activeApplication.materiasinteres} readOnly={true} />
+              </div>
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="form-group" style={{ marginBottom: 18 }}>
                 <label htmlFor="estado" style={{ color: '#2980b9', fontWeight: 600 }}>Estado:</label>

@@ -17,7 +17,7 @@ const Navigation = () => {
     <nav className="navigation">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
-          <h2>Movilidad Académica</h2>
+          <h2>MovilidadAcadémica</h2>
         </Link>
 
         <div className="nav-links">
@@ -66,6 +66,14 @@ const Navigation = () => {
                 }`}
               >
                 Solicitudes
+              </Link>
+              <Link
+                to="/admin/catalogos"
+                className={`nav-link ${
+                  location.pathname === "/admin/catalogos" ? "active" : ""
+                }`}
+              >
+                Catálogos
               </Link>
             </>
           )}

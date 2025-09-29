@@ -9,12 +9,12 @@ import ConditionalFooter from './components/ConditionalFooter.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <ConditionalHeader />
         <App />
         <ConditionalFooter />
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   </StrictMode>,
 )
