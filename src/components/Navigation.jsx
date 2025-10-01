@@ -75,6 +75,14 @@ const Navigation = () => {
               >
                 Catálogos
               </Link>
+              <Link
+                to="/admin/graficas"
+                className={`nav-link ${
+                  location.pathname === "/admin/graficas" ? "active" : ""
+                }`}
+              >
+                Gráficas
+              </Link>
             </>
           )}
 

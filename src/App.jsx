@@ -20,6 +20,7 @@ import AdminUsersPage from "./pages/AdminUsers/AdminUsersPage";
 import AdminApplicationsPage from "./pages/AdminApplications/AdminApplicationsPage";
 import CatalogoPage from "./pages/CatalogoPage/CatalogoPage";
 import Solicitud from "./pages/ApplicationPage/ApplicationPage";
+import AdminChartsPage from "./pages/AdminCharts/AdminChartsPage";
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -96,6 +97,7 @@ export default function App() {
       <Route path="/admin/usuarios" element={<AdminUsersPage />} />
       <Route path="/admin/applications" element={<AdminApplicationsPage />} />
       <Route path="/admin/catalogos" element={<CatalogoPage />} />
+      <Route path="/admin/graficas" element={<AdminChartsPage />} />
       <Route path="/solicitud" element={<Solicitud />} />
     </Routes>
   );
