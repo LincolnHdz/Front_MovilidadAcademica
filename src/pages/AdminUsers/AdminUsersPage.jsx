@@ -98,14 +98,15 @@ const AdminUsersPage = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <h2>Filtros de búsqueda</h2>
-            <Filtros />
-
-            <button 
-              className="close-button" 
-              onClick={() => setShowFiltros(false)}
-            >
-              Cerrar
-            </button>
+            <Filtros
+              onApply={(filteredUsers) => {
+                setUsers(Array.isArray(filteredUsers) ? filteredUsers : []);
+                setShowFiltros(false);
+                setSuccessMessage("Filtro aplicado");
+                setTimeout(() => setSuccessMessage(""), 3000);
+              }}
+              onClose={() => setShowFiltros(false)}
+            />
           </div>
         </div>
       )}

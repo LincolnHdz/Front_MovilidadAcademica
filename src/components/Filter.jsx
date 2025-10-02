@@ -1,15 +1,20 @@
-
 import { useEffect, useState } from "react";
 import api from "../api/axiosConfig";
 import "./Filter.css";
 
-export default function Filtros() {
+export default function Filtros({ onApply, onClose }) {
   const [universidades, setUniversidades] = useState([]);
   const [facultades, setFacultades] = useState([]);
   const [carreras, setCarreras] = useState([]);
   const [becas, setBecas] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // selecciones controladas
+  const [selUniversidad, setSelUniversidad] = useState("");
+  const [selFacultad, setSelFacultad] = useState("");
+  const [selCarrera, setSelCarrera] = useState("");
+  const [selBeca, setSelBeca] = useState("");
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,15 +44,34 @@ export default function Filtros() {
     loadData();
   }, []);
 
+  const applyFilters = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const params = {};
+      if (selUniversidad) params.universidad_id = selUniversidad;
+      if (selFacultad) params.facultad_id = selFacultad;
+      if (selCarrera) params.carrera_id = selCarrera;
+      if (selBeca) params.beca_id = selBeca;
+
+      const res = await api.get("/users/search", { params });
+      const users = res.data?.data || [];
+      if (typeof onApply === "function") onApply(users);
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Error al obtener usuarios");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="filtros-container">
-      {loading && <p>Cargando filtros...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {/* Universidad */}
       <div className="filter-item">
         <label>Universidad</label>
-        <select>
+        <select value={selUniversidad} onChange={(e) => setSelUniversidad(e.target.value)}>
+          <option value="">-- Todas --</option>
           {universidades.map((u) => (
             <option key={u.id} value={u.id}>{u.nombre}</option>
           ))}
@@ -57,7 +81,8 @@ export default function Filtros() {
       {/* Facultades */}
       <div className="filter-item">
         <label>Facultades</label>
-        <select>
+        <select value={selFacultad} onChange={(e) => setSelFacultad(e.target.value)}>
+          <option value="">-- Todas --</option>
           {facultades.map((f) => (
             <option key={f.id} value={f.id}>{f.nombre}</option>
           ))}
@@ -67,7 +92,8 @@ export default function Filtros() {
       {/* Carreras */}
       <div className="filter-item">
         <label>Carreras</label>
-        <select>
+        <select value={selCarrera} onChange={(e) => setSelCarrera(e.target.value)}>
+          <option value="">-- Todas --</option>
           {carreras.map((c) => (
             <option key={c.id} value={c.id}>{c.nombre}</option>
           ))}
@@ -77,11 +103,17 @@ export default function Filtros() {
       {/* Becas */}
       <div className="filter-item">
         <label>Becas</label>
-        <select>
+        <select value={selBeca} onChange={(e) => setSelBeca(e.target.value)}>
+          <option value="">-- Todas --</option>
           {becas.map((b) => (
             <option key={b.id} value={b.id}>{b.nombre}</option>
           ))}
         </select>
+      </div>
+
+      <div style={{ marginTop: 12 }} className="buttons">
+        <button onClick={applyFilters} disabled={loading}>Aplicar filtros</button>
+        <button onClick={onClose} style={{ marginLeft: 8 }}>Cerrar</button>
       </div>
     </div>
   );

@@ -1,19 +1,36 @@
-/* Contenedor principal en grid */
 .filtros-container {
   display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
-  gap: 24px; /* Más espacio entre campos */
-  padding: 32px; /* Más aire interno */
+  grid-template-columns: 1fr 1fr;   /* dos columnas */
+  grid-template-rows: auto auto auto; /* tres filas */
+  grid-template-areas:
+    "f1 f2"
+    "f3 f4"
+    "full full";   /* la última fila ocupa todo el ancho */
+  gap: 24px;
+  padding: 32px;
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
   font-family: "Segoe UI", Arial, sans-serif;
-
-  /* Que se vea más grande */
-  width: 90%;          /* Ocupa casi todo el ancho */
-  max-width: 1200px;   /* Límite para pantallas grandes */
-  margin: 40px auto;   /* Centrado con margen superior/inferior */
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
   box-sizing: border-box;
+}
+
+/* Asignar cada item a su área */
+.filter-item:nth-child(1) { grid-area: f1; }
+.filter-item:nth-child(2) { grid-area: f2; }
+.filter-item:nth-child(3) { grid-area: f3; }
+.filter-item:nth-child(4) { grid-area: f4; }
+
+/* El bloque de botones ocupa toda la fila */
+.buttons {
+  grid-area: full;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
 /* Cada bloque de filtro */
@@ -57,3 +74,4 @@
     padding: 20px;
   }
 }
+
