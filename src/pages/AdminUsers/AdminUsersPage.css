@@ -67,16 +67,6 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  color: #004a98;
-  margin: 24px 0;
-  font-weight: 500;
-}
-
 .users-table {
   width: 100%;
   border-collapse: collapse;
@@ -248,7 +238,6 @@
   color: #757575;
 }
 
-/* Fondo oscuro detrás del modal */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0;
@@ -260,15 +249,14 @@
   z-index: 1000;
 }
 
-/* Contenedor del modal */
 .modal-content {
   background: #fff;
   border-radius: 12px;
   padding: 30px;
-  width: 90%;          /* ocupa casi todo el ancho */
-  max-width: 1200px;   /* límite en pantallas grandes */
-  max-height: 90vh;    /* que no se salga de la pantalla */
-  overflow-y: auto;    /* scroll si hay mucho contenido */
+  width: 90%;          
+  max-width: 1200px; 
+  max-height: 90vh;    
+  overflow-y: auto;    
   box-shadow: 0 6px 20px rgba(0,0,0,0.25);
   animation: fadeIn 0.3s ease;
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
 import "./Navigation.css";
+import logoUni from "../Img/logoazul.png";
 
 const Navigation = () => {
   const location = useLocation();
@@ -17,6 +18,7 @@ const Navigation = () => {
     <nav className="navigation">
       <div className="nav-container">
         <Link to="/" className="nav-logo">
+          <img src={logoUni} alt="Logo UASLP" className="nav-logo-img" />
           <h2>MovilidadAcadémica</h2>
         </Link>
 

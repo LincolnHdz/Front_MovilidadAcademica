@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
-import Filtros from "../../components/Filter"; // 👈 importa tu componente
+import Filtros from "../../components/Filter"; 
 import "./AdminUsersPage.css";
 
 const AdminUsersPage = () => {
@@ -10,7 +10,7 @@ const AdminUsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [showFiltros, setShowFiltros] = useState(false); // 👈 estado para abrir/cerrar filtros
+  const [showFiltros, setShowFiltros] = useState(false); 
 
   const fetchUsers = async () => {
     try {
@@ -84,12 +84,12 @@ const AdminUsersPage = () => {
           {loading ? "Actualizando..." : "↻ Actualizar lista"}
         </button>
 
-        {/* 👇 nuevo botón para abrir filtros */}
-        <button 
-          className="filter-button" 
+        <button
+          style={{ backgroundColor: "#004a98" }}
+          className="filter-button"
           onClick={() => setShowFiltros(true)}
         >
-          🔍 Filtros
+          Filtros
         </button>
       </div>
 
@@ -109,14 +109,7 @@ const AdminUsersPage = () => {
             />
           </div>
         </div>
-      )}
-      
-      {loading && (
-        <div className="loading-spinner">
-          <div>Cargando usuarios...</div>
-        </div>
-      )}
-      
+      )}      
             
       {error && (
         <div className="status-message error-message">
