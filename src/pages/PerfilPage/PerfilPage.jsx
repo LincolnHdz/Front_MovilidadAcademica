@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
 import MateriasSlider from "../../components/MateriasSlider";
+import CicloEscolarSelector from "../../components/CicloEscolarSelector/CicloEscolarSelector";
 import "./PerfilPage.css";
 
 const PerfilPage = () => {
@@ -17,6 +18,11 @@ const PerfilPage = () => {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
   const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [showClaveModal, setShowClaveModal] = useState(false);
+  const [newClave, setNewClave] = useState("");
+  const [claveLoading, setClaveLoading] = useState(false);
+  const [claveError, setClaveError] = useState("");
+  const [claveSuccess, setClaveSuccess] = useState("");
 
   const [application, setApplication] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -188,11 +194,46 @@ const PerfilPage = () => {
       setPhoneLoading(false);
     }
   };
+  
+  const handleClaveChange = async () => {
+    setClaveLoading(true);
+    setClaveError("");
+
+    try {
+      const claveValue = newClave.trim();
+      console.log("Enviando clave:", claveValue, "Tipo:", typeof claveValue);
+      console.log("Payload completo:", { clave: claveValue });
+      
+      // Si está vacío, enviar null explícitamente
+      const payload = { clave: claveValue === "" ? null : claveValue };
+      
+      const response = await api.patch(`/users/${user.id}`, payload);
+      if (response.data.success) {
+        updateUser({ ...user, clave: claveValue === "" ? null : claveValue });
+        setClaveSuccess("Clave actualizada correctamente");
+        setTimeout(() => {
+          setShowClaveModal(false);
+          setNewClave("");
+          setClaveError("");
+          setClaveSuccess("");
+        }, 1500);
+      } else {
+        setClaveError(response.data.message || "No se pudo actualizar la clave");
+      }
+    } catch (err) {
+      console.error("Error al conectar con el servidor:", err);
+      setClaveError(err.response?.data?.message || "Error al conectar con el servidor");
+    } finally {
+      setClaveLoading(false);
+    }
+  };
 
   const handleFieldUpdate = async (fieldName, value) => {
     try {
       const endpoint = fieldName === 'tipo_movilidad' 
         ? `/users/${user.id}/tipo-movilidad`
+        : fieldName === 'ciclo_escolar'
+        ? `/users/${user.id}/ciclo-escolar`
         : `/users/${user.id}`;
       
       const response = await api.patch(endpoint, { [fieldName]: value });
@@ -207,8 +248,6 @@ const PerfilPage = () => {
       return false;
     }
   };
-
-  // Ya no necesitamos la función getSelectedName porque eliminamos los divs de valores seleccionados
 
   if (!user) {
     return (
@@ -238,7 +277,15 @@ const PerfilPage = () => {
         <div className="perfil-info">
           <div className="info-item">
             <span className="label">Clave:</span>
-            <span className="value">{user.clave}</span>
+            <div className="value-with-action">
+              <span className="value">{user.clave !== null && user.clave !== undefined ? user.clave : "No registrada"}</span>
+              {(user.clave === null || user.clave === "") && (
+                <button className="add-phone-btn" style={{ marginLeft: "117px" }} onClick={() => setShowClaveModal(true)}>
+                  Añadir clave
+                </button>
+              )}
+              {claveSuccess && <span className="success-message">{claveSuccess}</span>}
+            </div>
           </div>
           <div className="info-item">
             <span className="label">Correo:</span>
@@ -257,6 +304,22 @@ const PerfilPage = () => {
           <div className="info-item">
             <span className="label">Rol:</span>
             <span className="value">{user.rol}</span>
+          </div>
+
+          <div className="info-item">
+            <span className="label">Ciclo Escolar:</span>
+            <div className="perfil-ciclo-container">
+              <CicloEscolarSelector
+                value={user.ciclo_escolar || ''}
+                onChange={async (value) => {
+                  const success = await handleFieldUpdate('ciclo_escolar', value || null);
+                  if (!success) alert("Error al actualizar ciclo escolar");
+                }}
+                className="perfil-ciclo-selector"
+                showLabel={false}
+                placeholder="Selecciona tu ciclo escolar"
+              />
+            </div>
           </div>
           
           <div className="info-item">
@@ -526,6 +589,43 @@ const PerfilPage = () => {
                 {phoneLoading ? <span className="spinner"></span> : "Guardar"}
               </button>
               <button className="cancel-password-btn secondary-btn" onClick={() => setShowPhoneModal(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showClaveModal && (
+        <div className="password-modal-overlay">
+          <div className="password-modal modern-modal">
+            <div className="modal-header">
+              <h3 className="modal-title">Añadir Clave</h3>
+              <button className="modal-close-btn" onClick={() => setShowClaveModal(false)}>&times;</button>
+            </div>
+            <div className="modal-body">
+              <div className="input-group">
+                <label htmlFor="newClave">Clave del Estudiante</label>
+                <input
+                  id="newClave"
+                  type="text"
+                  placeholder="Ingrese su clave de estudiante (opcional)"
+                  value={newClave}
+                  onChange={e => setNewClave(e.target.value)}
+                  className="password-input"
+                  autoFocus
+                />
+              </div>
+              {claveError && <div className="error-message modal-error">{claveError}</div>}
+              {claveSuccess && <div className="success-message modal-success">{claveSuccess}</div>}
+            </div>
+            <div className="modal-footer">
+              <button
+                className="save-password-btn primary-btn"
+                disabled={claveLoading}
+                onClick={handleClaveChange}
+              >
+                {claveLoading ? <span className="spinner"></span> : "Guardar"}
+              </button>
+              <button className="cancel-password-btn secondary-btn" onClick={() => setShowClaveModal(false)}>Cancelar</button>
             </div>
           </div>
         </div>

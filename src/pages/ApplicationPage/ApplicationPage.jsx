@@ -3,6 +3,7 @@ import api from "../../api/axiosConfig";
 import { useAuth } from "../../context/useAuth";
 import "./ApplicationPage.css";
 import MateriasSlider from "../../components/MateriasSlider";
+import CicloEscolarSelector from "../../components/CicloEscolarSelector/CicloEscolarSelector";
 import {
   Upload,
   FileText,
@@ -34,7 +35,6 @@ const RegistroMateria = () => {
         try {
           const parsedUser = JSON.parse(storedUserData);
           console.log("Usuario cargado desde localStorage:", parsedUser);
-          // Aquí podrías actualizar el contexto si es necesario
         } catch (e) {
           console.error("Error al parsear userData de localStorage", e);
         }
@@ -49,14 +49,16 @@ const RegistroMateria = () => {
     clave: "",
     cicloEscolar: "",
     carrera: "",
-    universidad: "", // Añadiendo universidad que faltaba
+    universidad: "", 
     materiasInteres: [],
     archivo: null,
   });
   const [materias, setMaterias] = useState([]);
   const [carreras, setCarreras] = useState([]);
+  const [facultades, setFacultades] = useState([]);
+  const [selectedFacultad, setSelectedFacultad] = useState("");
+  const [carrerasFiltradas, setCarrerasFiltradas] = useState([]);
   const [existingApplication, setExistingApplication] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [errors, setErrors] = useState({general: ""});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null); 
@@ -64,73 +66,12 @@ const RegistroMateria = () => {
   const [showMateriasModal, setShowMateriasModal] = useState(false);
   const [filteredMaterias, setFilteredMaterias] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCarreraFilter, setSelectedCarreraFilter] = useState("");
   
-  // El sliderRef ya no es necesario porque se usa el componente MateriasSlider
-  
-  // Generar opciones de ciclos escolares dinámicamente
-  const generateCiclosEscolares = () => {
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth() + 1; // getMonth() devuelve 0-11
-    
-    const ciclos = [];
-    
-    // Determinar el año base del ciclo actual
-    // Si estamos en enero-julio, el ciclo actual comenzó el año anterior
-    // Si estamos en agosto-diciembre, el ciclo actual comenzó este año
-    let currentCycleStartYear = currentMonth >= 8 ? currentYear : currentYear - 1;
-    
-    // Generar ciclos desde 2 años atrás hasta 2 años adelante
-    for (let yearOffset = -2; yearOffset <= 2; yearOffset++) {
-      const startYear = currentCycleStartYear + yearOffset;
-      const endYear = startYear + 1;
-      
-      // Para el ciclo actual, determinar qué semestres mostrar
-      if (yearOffset === 0) {
-        // Ciclo actual - mostrar siempre ambos semestres
-        ciclos.push({
-          value: `${startYear}-${endYear}/I`,
-          label: `${startYear}-${endYear}/I`
-        });
-        
-        // Siempre mostrar el segundo semestre para el ciclo actual
-        ciclos.push({
-          value: `${startYear}-${endYear}/II`,
-          label: `${startYear}-${endYear}/II`
-        });
-      } else if (yearOffset < 0) {
-        // Ciclos pasados - mostrar ambos semestres
-        ciclos.push({
-          value: `${startYear}-${endYear}/I`,
-          label: `${startYear}-${endYear}/I`
-        });
-        ciclos.push({
-          value: `${startYear}-${endYear}/II`, 
-          label: `${startYear}-${endYear}/II`
-        });
-      } else {
-        // Ciclos futuros - mostrar ambos semestres
-        ciclos.push({
-          value: `${startYear}-${endYear}/I`,
-          label: `${startYear}-${endYear}/I`
-        });
-        ciclos.push({
-          value: `${startYear}-${endYear}/II`, 
-          label: `${startYear}-${endYear}/II`
-        });
-      }
-    }
-    
-    // Ordenar del más reciente al más antiguo
-    return ciclos.reverse();
-  };
-
   // Verificar si el usuario ya tiene una solicitud existente
   useEffect(() => {
     const checkExistingApplication = async () => {
       try {
         if (user && user.clave) {
-          setLoading(true);
           const response = await api.get(`/applications/all`);
           
           if (response.data && response.data.success) {
@@ -141,32 +82,34 @@ const RegistroMateria = () => {
             if (userApplication) {
               console.log("Usuario ya tiene solicitud existente:", userApplication);
               setExistingApplication(userApplication);
-              
-              // Opcional: Redirigir o mostrar mensaje
-              // window.location.href = '/perfil';
             }
           }
         }
       } catch (error) {
         console.error("Error al verificar solicitud existente:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     checkExistingApplication();
   }, [user]);
 
-  // Inicializar datos del formulario con la información del usuario
-  // Cargar catálogo de carreras y materias
+  // Cargar catálogo de facultades, carreras y materias
   useEffect(() => {
     const fetchCatalogos = async () => {
       try {
+        // Cargar facultades
+        const responseFacultades = await api.get('/catalogo/facultades');
+        if (responseFacultades.data && responseFacultades.data.success) {
+          console.log("Facultades cargadas:", responseFacultades.data.data);
+          setFacultades(responseFacultades.data.data || []);
+        }
+        
         // Cargar carreras
         const responseCarreras = await api.get('/catalogo/carreras');
         if (responseCarreras.data && responseCarreras.data.success) {
           console.log("Carreras cargadas:", responseCarreras.data.data);
           setCarreras(responseCarreras.data.data || []);
+          setCarrerasFiltradas(responseCarreras.data.data || []);
         }
         
         // Cargar materias
@@ -193,44 +136,85 @@ const RegistroMateria = () => {
     fetchCatalogos();
   }, []);
   
+  // Inicializar datos del formulario con la información del usuario
   useEffect(() => {
     if (user) {
       console.log("Datos del usuario:", user);
       
       // Función para obtener el nombre de la carrera
       const getNombreCarrera = (carreraId) => {
-        if (!carreraId || !carreras.length) return "No especificada";
+        if (!carreraId || !carreras.length) return "";
         const carrera = carreras.find(c => c.id === Number(carreraId));
-        return carrera ? carrera.nombre : "No especificada";
+        return carrera ? carrera.nombre : "";
       };
       
-      // Llenamos el formulario con los datos del usuario usando los nombres de propiedades correctos
+      // Llenamos el formulario con los datos del usuario
       setFormData((prev) => ({
         ...prev,
         nombre: user.nombres || "",
         apellidoMaterno: user.apellido_materno || "",
         apellidoPaterno: user.apellido_paterno || "",
         clave: user.clave || "",
+        cicloEscolar: user.ciclo_escolar || "",
         carrera: user.carrera_id ? getNombreCarrera(user.carrera_id) : "",
       }));
       
-      // Inicializar materias como array vacío
-      setMaterias([]);
-      console.log("Esperando materias del administrador");
+      // Si el usuario tiene una carrera, buscar su facultad
+      if (user.carrera_id && carreras.length > 0) {
+        const carreraUsuario = carreras.find(c => c.id === Number(user.carrera_id));
+        if (carreraUsuario && carreraUsuario.facultad_id) {
+          setSelectedFacultad(carreraUsuario.facultad_id.toString());
+        }
+      }
+      
+      console.log("Formulario inicializado con datos del usuario");
     } else {
       console.warn("No hay datos de usuario disponibles");
     }
   }, [user, carreras]);
 
+  // Filtrar carreras por facultad seleccionada
+  useEffect(() => {
+    if (selectedFacultad) {
+      const filtered = carreras.filter(
+        carrera => carrera.facultad_id === parseInt(selectedFacultad)
+      );
+      setCarrerasFiltradas(filtered);
+    } else {
+      setCarrerasFiltradas(carreras);
+    }
+  }, [selectedFacultad, carreras]);
+
   // Función para filtrar materias según búsqueda y carrera seleccionada
   const filterMaterias = useCallback(() => {
     let filtered = [...materias];
     
-    // Filtrar por carrera si hay una seleccionada
-    if (selectedCarreraFilter) {
-      filtered = filtered.filter(materia => 
-        materia.carrera_id === parseInt(selectedCarreraFilter)
-      );
+    // Obtener la carrera del usuario (desde perfil o formulario)
+    let carreraUsuario = null;
+    
+    // Primero intentar obtener del formulario actual
+    if (formData.carrera && carreras.length > 0) {
+      carreraUsuario = carreras.find(c => c.nombre === formData.carrera);
+    }
+    // Si no hay en el formulario, intentar desde el perfil del usuario
+    else if (user && user.carrera_id && carreras.length > 0) {
+      carreraUsuario = carreras.find(c => c.id === user.carrera_id);
+    }
+    
+    // Filtrar por carrera y facultad del usuario
+    if (carreraUsuario) {
+      filtered = filtered.filter(materia => {
+        // Filtrar por carrera específica
+        const perteneceACarrera = materia.carrera_id === carreraUsuario.id;
+        
+        // Verificar que también pertenezca a la misma facultad (doble validación)
+        let perteneceAFacultad = true;
+        if (selectedFacultad && carreraUsuario.facultad_id) {
+          perteneceAFacultad = carreraUsuario.facultad_id === parseInt(selectedFacultad);
+        }
+        
+        return perteneceACarrera && perteneceAFacultad;
+      });
     }
     
     // Filtrar por texto de búsqueda
@@ -243,7 +227,7 @@ const RegistroMateria = () => {
     }
     
     setFilteredMaterias(filtered);
-  }, [materias, selectedCarreraFilter, searchQuery]);
+  }, [materias, formData.carrera, carreras, user, selectedFacultad, searchQuery]);
   
   // Actualizar filtros cuando cambian los criterios
   useEffect(() => {
@@ -379,7 +363,7 @@ const RegistroMateria = () => {
   };
 
   const validateForm = () => {
-    const newErrors = { general: "" }; // Inicializa con general vacío
+    const newErrors = { general: "" };
 
     if (!formData.nombre.trim()) {
       newErrors.nombre = "El nombre es requerido";
@@ -397,10 +381,6 @@ const RegistroMateria = () => {
       newErrors.clave = "La clave es requerida";
     }
 
-    if (!formData.cicloEscolar.trim()) {
-      newErrors.cicloEscolar = "El ciclo escolar es requerido";
-    }
-
     if (!formData.universidad || !formData.universidad.trim()) {
       newErrors.universidad = "La universidad es requerida";
     }
@@ -408,9 +388,6 @@ const RegistroMateria = () => {
     if (!formData.carrera.trim()) {
       newErrors.carrera = "La carrera es requerida";
     }
-
-    // No requerir materias ya que las materias serán agregadas por el admin
-    // El usuario seleccionará materias si están disponibles
 
     if (!formData.archivo) {
       newErrors.archivo = "Por favor, sube un archivo";
@@ -433,7 +410,7 @@ const RegistroMateria = () => {
     // Validar el formulario primero
     if (!validateForm()) {
       console.log("Formulario no válido, se detiene el envío");
-      setSubmitStatus("error"); // Actualizar estado para mostrar mensaje de error
+      setSubmitStatus("error");
       return;
     }
 
@@ -492,12 +469,6 @@ const RegistroMateria = () => {
       }
 
       console.log("FormData preparado, enviando solicitud al servidor...");
-      console.log("URL de destino:", api.defaults.baseURL + "/applications/addApplication");
-      
-      // Agregar logs para ver todas las entradas del FormData
-      for (const pair of submitData.entries()) {
-        console.log(`FormData contiene: ${pair[0]}: ${pair[1]}`);
-      }
       
       const res = await api.post("/applications/addApplication", submitData, {
         headers: {
@@ -511,7 +482,7 @@ const RegistroMateria = () => {
       if (res.data && res.data.success) {
         console.log("Solicitud enviada exitosamente");
         setExistingApplication(res.data.data);
-        setErrors(prev => ({ ...prev, general: "" })); // Limpiar error general
+        setErrors(prev => ({ ...prev, general: "" }));
         setSubmitStatus("success");
         
         // Redirigir después de un tiempo
@@ -520,7 +491,6 @@ const RegistroMateria = () => {
           window.location.href = '/perfil';
         }, 2000);
       } else {
-        // Si hay respuesta pero no es exitosa
         console.error("Respuesta del servidor indica error:", res.data);
         setSubmitStatus("error");
         setErrors(prev => ({ 
@@ -531,17 +501,14 @@ const RegistroMateria = () => {
     } catch (error) {
       console.error("Error al enviar la solicitud:", error);
       
-      // Manejo detallado de errores
       let errorMessage = "Error al enviar la solicitud. Intenta de nuevo.";
       
       if (error.response) {
-        // El servidor respondió con un código de estado fuera del rango de 2xx
         console.error("Error de respuesta:", error.response.data);
         console.error("Código de estado:", error.response.status);
         
         if (error.response.status === 401) {
           errorMessage = "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.";
-          // Opcional: Redirigir a la página de login
           setTimeout(() => {
             window.location.href = '/login';
           }, 3000);
@@ -553,11 +520,9 @@ const RegistroMateria = () => {
           errorMessage = "Error en el servidor. Por favor, inténtalo más tarde o contacta al administrador.";
         }
       } else if (error.request) {
-        // La solicitud fue hecha pero no se recibió respuesta
         console.error("Error de solicitud (sin respuesta):", error.request);
         errorMessage = "No se recibió respuesta del servidor. Verifica tu conexión a internet.";
       } else {
-        // Algo sucedió al configurar la solicitud que desencadenó un error
         console.error("Error de configuración:", error.message);
         if (error.message.includes('Network Error')) {
           errorMessage = "Error de red. Comprueba tu conexión a internet.";
@@ -580,31 +545,6 @@ const RegistroMateria = () => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
-
-  // Mostrar cargador mientras se verifica si el usuario tiene una solicitud
-  if (loading) {
-    return (
-      <div className="form-container">
-        <header className="form-header">
-          <div className="header-content">
-            <div className="header-text">
-              <h1>Cargando...</h1>
-            </div>
-          </div>
-        </header>
-        <div className="form-layout">
-          <main className="form-main">
-            <div className="form-card">
-              <div className="loading-spinner-container" style={{display: 'flex', justifyContent: 'center', padding: '2rem'}}>
-                <div className="loading-spinner" style={{width: '40px', height: '40px', border: '4px solid #f3f3f3', borderTop: '4px solid #3498db', borderRadius: '50%', animation: 'spin 1s linear infinite'}}></div>
-              </div>
-              <p style={{textAlign: 'center'}}>Cargando información de solicitud...</p>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
-  }
 
   // Si ya existe una solicitud, mostrar información
   if (existingApplication) {
@@ -683,7 +623,6 @@ const RegistroMateria = () => {
               </div>
             )}
             
-            {/* Mostrar errores de validación generales incluso sin submitStatus */}
             {errors.general && submitStatus !== "error" && submitStatus !== "success" && (
               <div className="validation-error-message">
                 <p>{errors.general}</p>
@@ -701,10 +640,11 @@ const RegistroMateria = () => {
                     type="text"
                     id="nombre"
                     name="nombre"
-                    value={user?.nombres}
+                    value={formData.nombre}
                     onChange={handleInputChange}
                     className={`form-input ${errors.nombre ? "error" : ""}`}
                     placeholder="Ingresa tu(s) nombre(s)"
+                    disabled={!!user?.nombres}
                   />
                   {errors.nombre && (
                     <span className="error-message">{errors.nombre}</span>
@@ -724,6 +664,7 @@ const RegistroMateria = () => {
                     onChange={handleInputChange}
                     className={`form-input ${errors.apellidoPaterno ? "error" : ""}`}
                     placeholder="Ingresa tu apellido paterno"
+                    disabled={!!user?.apellido_paterno}
                   />
                   {errors.apellidoPaterno && (
                     <span className="error-message">{errors.apellidoPaterno}</span>
@@ -743,6 +684,7 @@ const RegistroMateria = () => {
                     onChange={handleInputChange}
                     className={`form-input ${errors.apellidoMaterno ? "error" : ""}`}
                     placeholder="Ingresa tu apellido materno"
+                    disabled={!!user?.apellido_materno}
                   />
                   {errors.apellidoMaterno && (
                     <span className="error-message">{errors.apellidoMaterno}</span>
@@ -762,6 +704,7 @@ const RegistroMateria = () => {
                     onChange={handleInputChange}
                     className={`form-input ${errors.clave ? "error" : ""}`}
                     placeholder="Ingresa tu clave"
+                    disabled={!!user?.clave}
                   />
                   {errors.clave && (
                     <span className="error-message">{errors.clave}</span>
@@ -769,28 +712,18 @@ const RegistroMateria = () => {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="cicloEscolar" className="form-label">
-                    <Calendar className="label-icon" />
-                    Ciclo Escolar
-                  </label>
-                  <select
-                    id="cicloEscolar"
-                    name="cicloEscolar"
+                  <CicloEscolarSelector
                     value={formData.cicloEscolar}
-                    onChange={handleInputChange}
-                    className={`form-input ${errors.cicloEscolar ? "error" : ""}`}
-                    onClick={() => console.log("Ciclo escolar dropdown clicked")}
-                  >
-                    <option value="">Selecciona ciclo escolar</option>
-                    {generateCiclosEscolares().map(ciclo => {
-                      console.log("Opción de ciclo:", ciclo);
-                      return (
-                        <option key={ciclo.value} value={ciclo.value}>
-                          {ciclo.label}
-                        </option>
-                      );
-                    })}
-                  </select>
+                    onChange={(value) => {
+                      setFormData((prev) => ({ ...prev, cicloEscolar: value }));
+                      if (errors.cicloEscolar) {
+                        setErrors((prev) => ({ ...prev, cicloEscolar: "" }));
+                      }
+                    }}
+                    className="form-ciclo-selector"
+                    showLabel={true}
+                    placeholder="Selecciona tu ciclo escolar"
+                  />
                   {errors.cicloEscolar && (
                     <span className="error-message">{errors.cicloEscolar}</span>
                   )}
@@ -831,20 +764,43 @@ const RegistroMateria = () => {
                       placeholder="Tu carrera actual"
                     />
                   ) : (
-                    <select
-                      id="carrera"
-                      name="carrera"
-                      value={formData.carrera}
-                      onChange={handleInputChange}
-                      className={`form-input ${errors.carrera ? "error" : ""}`}
-                    >
-                      <option value="">Selecciona tu carrera</option>
-                      {carreras.map(carrera => (
-                        <option key={carrera.id} value={carrera.nombre}>
-                          {carrera.nombre}
+                    <>
+                      <select
+                        id="facultad"
+                        value={selectedFacultad}
+                        onChange={(e) => {
+                          setSelectedFacultad(e.target.value);
+                          setFormData((prev) => ({ ...prev, carrera: "" }));
+                        }}
+                        className="form-input"
+                        style={{ marginBottom: '10px' }}
+                      >
+                        <option value="">Selecciona primero una facultad</option>
+                        {facultades.map(facultad => (
+                          <option key={facultad.id} value={facultad.id}>
+                            {facultad.nombre}
+                          </option>
+                        ))}
+                      </select>
+                      
+                      <select
+                        id="carrera"
+                        name="carrera"
+                        value={formData.carrera}
+                        onChange={handleInputChange}
+                        className={`form-input ${errors.carrera ? "error" : ""}`}
+                        disabled={!selectedFacultad}
+                      >
+                        <option value="">
+                          {selectedFacultad ? "Selecciona tu carrera" : "Primero selecciona una facultad"}
                         </option>
-                      ))}
-                    </select>
+                        {carrerasFiltradas.map(carrera => (
+                          <option key={carrera.id} value={carrera.nombre}>
+                            {carrera.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </>
                   )}
                   {errors.carrera && (
                     <span className="error-message">{errors.carrera}</span>
@@ -935,10 +891,6 @@ const RegistroMateria = () => {
                     <span className="error-message">{errors.archivo}</span>
                   )}
                 </div>
-
-                {errors.archivo && (
-                  <span className="error-message">{errors.archivo}</span>
-                )}
               </div>
 
               <div className="form-actions">
@@ -949,7 +901,6 @@ const RegistroMateria = () => {
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="loading-spinner"></div>
                       Enviando...
                     </>
                   ) : (
@@ -991,20 +942,34 @@ const RegistroMateria = () => {
                 />
               </div>
               
-              <div className="filter-select-container">
-                <select
-                  value={selectedCarreraFilter}
-                  onChange={(e) => setSelectedCarreraFilter(e.target.value)}
-                  className="filter-select"
-                >
-                  <option value="">Todas las carreras</option>
-                  {carreras.map(carrera => (
-                    <option key={carrera.id} value={carrera.id}>
-                      {carrera.nombre}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {(() => {
+                // Determinar la carrera a mostrar y su origen
+                let carreraAMostrar = null;
+                let origenCarrera = "";
+                
+                if (formData.carrera) {
+                  carreraAMostrar = formData.carrera;
+                  origenCarrera = "seleccionada en la solicitud";
+                } else if (user && user.carrera_id && carreras.length > 0) {
+                  const carreraPerfil = carreras.find(c => c.id === user.carrera_id);
+                  if (carreraPerfil) {
+                    carreraAMostrar = carreraPerfil.nombre;
+                    origenCarrera = "desde tu perfil";
+                  }
+                }
+                
+                return carreraAMostrar ? (
+                  <div className="filter-info">
+                    <p className="filter-info-text">
+                      📚 Mostrando materias de: <strong>{carreraAMostrar}</strong>
+                      <br />
+                      <span style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>
+                        ({origenCarrera})
+                      </span>
+                    </p>
+                  </div>
+                ) : null;
+              })()}
             </div>
             
             <div className="modal-body">
@@ -1038,7 +1003,35 @@ const RegistroMateria = () => {
                 ) : (
                   <div className="no-results-message">
                     <BookOpen size={48} />
-                    <p>No se encontraron materias con los filtros seleccionados</p>
+                    {(() => {
+                      // Determinar la carrera para el mensaje
+                      let carreraActual = null;
+                      if (formData.carrera) {
+                        carreraActual = formData.carrera;
+                      } else if (user && user.carrera_id && carreras.length > 0) {
+                        const carreraPerfil = carreras.find(c => c.id === user.carrera_id);
+                        carreraActual = carreraPerfil?.nombre;
+                      }
+                      
+                      return carreraActual ? (
+                        <div>
+                          <p>No se encontraron materias para <strong>{carreraActual}</strong></p>
+                          {searchQuery && (
+                            <p>con el término de búsqueda: "{searchQuery}"</p>
+                          )}
+                          <p className="help-text">
+                            Las materias mostradas corresponden únicamente a tu carrera y facultad
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <p>Primero selecciona una carrera para ver las materias disponibles</p>
+                          <p className="help-text">
+                            Las materias se filtran automáticamente según tu carrera y facultad
+                          </p>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </div>

@@ -75,6 +75,13 @@
   box-shadow: 0 0 0 2px #2563eb22;
   outline: none;
 }
+
+.input-help {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+  font-style: italic;
+}
 .modal-footer {
   display: flex;
   gap: 1rem;

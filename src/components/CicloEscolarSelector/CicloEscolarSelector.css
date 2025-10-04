@@ -1,0 +1,102 @@
+.ciclo-escolar-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ciclo-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.label-icon {
+  width: 16px;
+  height: 16px;
+  color: #6b7280;
+}
+
+.ciclo-select {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: white;
+  color: #1e293b;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.ciclo-select:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.ciclo-select:disabled {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.ciclo-select option {
+  padding: 0.5rem;
+  color: #1e293b;
+  background-color: white;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* Estilos para integración en perfil */
+.perfil-ciclo-selector .ciclo-label {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.perfil-ciclo-selector .ciclo-select {
+  width: 100%;
+  padding: 0.7rem 1.1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  margin-top: 0.2rem;
+}
+
+.perfil-ciclo-selector .ciclo-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px #2563eb22;
+  outline: none;
+}
+
+.perfil-ciclo-selector .ciclo-select:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+  border-color: #cbd5e1;
+  box-shadow: none;
+}
+
+.perfil-ciclo-selector .ciclo-select option {
+  color: #1e293b;
+  background-color: white;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+/* Estilos para formulario de aplicación */
+.form-ciclo-selector {
+  width: 100%;
+}
+
+.form-ciclo-selector .ciclo-select {
+  width: 100%;
+}

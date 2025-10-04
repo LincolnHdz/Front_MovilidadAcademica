@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
 import { 
@@ -8,6 +8,70 @@ import {
   Delete
 } from "lucide-react";
 import "./CatalogoPage.css";
+
+// Configuración para cada tipo de catálogo
+const catalogConfig = {
+  universidades: {
+    title: "Universidades",
+    icon: <University size={20} />,
+    endpoint: "universidades",
+    fields: [
+      { name: "nombre", label: "Nombre", type: "text", required: true },
+      { name: "pais", label: "País", type: "text", required: true }
+    ],
+    columns: ["nombre", "pais"]
+  },
+  facultades: {
+    title: "Facultades", 
+    icon: <Building size={20} />,
+    endpoint: "facultades",
+    fields: [
+      { name: "nombre", label: "Nombre", type: "text", required: true },
+      { name: "universidad_id", label: "Universidad", type: "select", required: true }
+    ],
+    columns: ["nombre", "universidad_nombre"]
+  },
+  carreras: {
+    title: "Carreras",
+    icon: <BookOpen size={20} />,
+    endpoint: "carreras", 
+    fields: [
+      { name: "nombre", label: "Nombre", type: "text", required: true },
+      { name: "facultad_id", label: "Facultad", type: "select", required: true }
+    ],
+    columns: ["nombre", "facultad_nombre", "universidad_nombre"],
+    filters: [
+      { name: "facultad_id", label: "Facultad", type: "select", options: "facultades" }
+    ]
+  },
+  materias: {
+    title: "Materias",
+    icon: <GraduationCap size={20} />,
+    endpoint: "materias",
+    fields: [
+      { name: "nombre", label: "Nombre", type: "text", required: true },
+      { name: "clave", label: "Clave", type: "text", required: true },
+      { name: "creditos", label: "Créditos", type: "number", required: true },
+      { name: "facultad_id", label: "Facultad", type: "select", required: true },
+      { name: "carrera_id", label: "Carrera", type: "select", required: true }
+    ],
+    columns: ["nombre", "clave", "creditos", "carrera_nombre", "facultad_nombre"],
+    filters: [
+      { name: "facultad_id", label: "Facultad", type: "select", options: "facultades" },
+      { name: "carrera_id", label: "Carrera", type: "select", options: "carreras" }
+    ]
+  },
+  becas: {
+    title: "Becas",
+    icon: <Award size={20} />,
+    endpoint: "becas",
+    fields: [
+      { name: "nombre", label: "Nombre de la Beca", type: "text", required: true },
+      { name: "pais", label: "País", type: "text", required: true }
+    ],
+    columns: ["nombre", "pais"]
+  }
+};
 
 const CatalogoPage = () => {
   const { user } = useAuth();
@@ -23,91 +87,81 @@ const CatalogoPage = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
-  // Datos para los selects (dependencias jerárquicas)
+  // Datos para los selects
   const [universidades, setUniversidades] = useState([]);
   const [facultades, setFacultades] = useState([]);
   const [carreras, setCarreras] = useState([]);
+  const [todasLasFacultades, setTodasLasFacultades] = useState([]);
+  const [todasLasCarreras, setTodasLasCarreras] = useState([]);
 
-  // Configuración para cada tipo de catálogo
-  const catalogConfig = {
-    universidades: {
-      title: "Universidades",
-      icon: <University size={20} />,
-      endpoint: "universidades",
-      fields: [
-        { name: "nombre", label: "Nombre", type: "text", required: true },
-        { name: "pais", label: "País", type: "text", required: true }
-      ],
-      columns: ["nombre", "pais"]
-    },
-    facultades: {
-      title: "Facultades", 
-      icon: <Building size={20} />,
-      endpoint: "facultades",
-      fields: [
-        { name: "nombre", label: "Nombre", type: "text", required: true },
-        { name: "universidad_id", label: "Universidad", type: "select", required: true }
-      ],
-      columns: ["nombre", "universidad_nombre"],
-      filters: [
-        { name: "universidad_id", label: "Universidad", type: "select", options: "universidades" }
-      ]
-    },
-    carreras: {
-      title: "Carreras",
-      icon: <BookOpen size={20} />,
-      endpoint: "carreras", 
-      fields: [
-        { name: "nombre", label: "Nombre", type: "text", required: true },
-        { name: "facultad_id", label: "Facultad", type: "select", required: true }
-      ],
-      columns: ["nombre", "facultad_nombre", "universidad_nombre"],
-      filters: [
-        { name: "universidad_id", label: "Universidad", type: "select", options: "universidades" },
-        { name: "facultad_id", label: "Facultad", type: "select", options: "facultades" }
-      ]
-    },
-    materias: {
-      title: "Materias",
-      icon: <GraduationCap size={20} />,
-      endpoint: "materias",
-      fields: [
-        { name: "nombre", label: "Nombre", type: "text", required: true },
-        { name: "clave", label: "Clave", type: "text", required: true },
-        { name: "creditos", label: "Créditos", type: "number", required: true },
-        { name: "universidad_id", label: "Universidad", type: "select", required: true },
-        { name: "facultad_id", label: "Facultad", type: "select", required: true },
-        { name: "carrera_id", label: "Carrera", type: "select", required: true }
-      ],
-      columns: ["nombre", "clave", "creditos", "carrera_nombre", "facultad_nombre", "universidad_nombre"],
-      filters: [
-        { name: "universidad_id", label: "Universidad", type: "select", options: "universidades" },
-        { name: "facultad_id", label: "Facultad", type: "select", options: "facultades" },
-        { name: "carrera_id", label: "Carrera", type: "select", options: "carreras" }
-      ]
-    },
-    becas: {
-      title: "Becas",
-      icon: <Award size={20} />,
-      endpoint: "becas",
-      fields: [
-        { name: "nombre", label: "Nombre de la Beca", type: "text", required: true },
-        { name: "pais", label: "País", type: "text", required: true }
-      ],
-      columns: ["nombre", "pais"]
+  // Estados separados para filtros vs formularios
+  const [facultadesFiltro, setFacultadesFiltro] = useState([]);
+  const [carrerasFiltro, setCarrerasFiltro] = useState([]);
+
+  // Resetear filtros
+  const resetFilters = useCallback(() => {
+    setFilters({});
+    setSearchTerm("");
+    setFacultadesFiltro([]);
+    setCarrerasFiltro([]);
+  }, []);
+
+  // Cargar datos principales
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const config = catalogConfig[activeTab];
+      if (!config) {
+        setError("Configuración no encontrada para: " + activeTab);
+        return;
+      }
+      
+      const response = await api.get(`/catalogo/${config.endpoint}`);
+      if (response.data.success) {
+        setItems(response.data.data);
+      } else {
+        setError("Error al cargar datos");
+      }
+    } catch (error) {
+      setError("Error al cargar datos: " + error.message);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [activeTab]);
 
   // Cargar datos iniciales
   useEffect(() => {
-    loadUniversidades();
+    const loadInitialData = async () => {
+      try {
+        await Promise.all([
+          loadUniversidades(),
+          loadTodasLasFacultades(),
+          loadTodasLasCarreras()
+        ]);
+      } catch (error) {
+        console.error("Error cargando datos iniciales:", error);
+      }
+    };
+    
+    loadInitialData();
   }, []);
 
   // Cargar datos cuando cambia la pestaña
   useEffect(() => {
     loadData();
     resetFilters();
-  }, [activeTab]);
+    
+    // Precargar datos para filtros según la pestaña activa
+    if (activeTab === "materias" || activeTab === "carreras") {
+      // Para filtros, usar todas las facultades
+      setFacultadesFiltro(todasLasFacultades);
+    }
+    if (activeTab === "materias") {
+      // Para filtros de materias, usar todas las carreras inicialmente
+      setCarrerasFiltro(todasLasCarreras);
+    }
+  }, [activeTab, loadData, resetFilters, todasLasFacultades, todasLasCarreras]);
 
   // Cargar universidades
   const loadUniversidades = async () => {
@@ -121,20 +175,33 @@ const CatalogoPage = () => {
     }
   };
 
-  // Cargar facultades filtradas por universidad
-  const loadFacultadesByUniversidad = async (universidadId) => {
+  // Cargar todas las facultades (para formularios)
+  const loadTodasLasFacultades = async () => {
     try {
-      const response = await api.get(`/catalogo/universidades/${universidadId}/facultades`);
+      const response = await api.get("/catalogo/facultades");
       if (response.data.success) {
-        setFacultades(response.data.data);
+        setTodasLasFacultades(response.data.data);
+        setFacultades(response.data.data); // Para formularios
       }
     } catch (error) {
-      console.error("Error cargando facultades:", error);
-      setFacultades([]);
+      console.error("Error cargando todas las facultades:", error);
     }
   };
 
-  // Cargar carreras filtradas por facultad
+  // Cargar todas las carreras (para formularios)
+  const loadTodasLasCarreras = async () => {
+    try {
+      const response = await api.get("/catalogo/carreras");
+      if (response.data.success) {
+        setTodasLasCarreras(response.data.data);
+        setCarreras(response.data.data); // Para formularios
+      }
+    } catch (error) {
+      console.error("Error cargando todas las carreras:", error);
+    }
+  };
+
+  // Cargar carreras filtradas por facultad (para formularios)
   const loadCarrerasByFacultad = async (facultadId) => {
     try {
       const response = await api.get(`/catalogo/facultades/${facultadId}/carreras`);
@@ -147,54 +214,23 @@ const CatalogoPage = () => {
     }
   };
 
-  // Cargar datos principales
-  const loadData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const config = catalogConfig[activeTab];
-      const response = await api.get(`/catalogo/${config.endpoint}`);
-      if (response.data.success) {
-        setItems(response.data.data);
-      } else {
-        setError("Error al cargar datos");
-      }
-    } catch (error) {
-      setError("Error al cargar datos: " + error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Resetear filtros
-  const resetFilters = () => {
-    setFilters({});
-    setSearchTerm("");
-    setFacultades([]);
-    setCarreras([]);
-  };
-
-  // Manejar cambios en filtros
+  // Manejar cambios en filtros - CORREGIDO
   const handleFilterChange = async (filterName, value) => {
     const newFilters = { ...filters, [filterName]: value };
     
-    // Si cambia universidad, resetear facultades y carreras
-    if (filterName === "universidad_id") {
-      newFilters.facultad_id = "";
-      newFilters.carrera_id = "";
-      setFacultades([]);
-      setCarreras([]);
-      if (value) {
-        await loadFacultadesByUniversidad(value);
-      }
-    }
-    
-    // Si cambia facultad, resetear carreras
-    if (filterName === "facultad_id") {
-      newFilters.carrera_id = "";
-      setCarreras([]);
-      if (value) {
-        await loadCarrerasByFacultad(value);
+    // Para materias: manejar dependencias de filtros
+    if (activeTab === "materias") {
+      if (filterName === "facultad_id") {
+        newFilters.carrera_id = ""; // Resetear carrera cuando cambia facultad
+        
+        if (value) {
+          // Filtrar carreras por la facultad seleccionada para el FILTRO
+          const carrerasFiltradas = todasLasCarreras.filter(c => c.facultad_id == value);
+          setCarrerasFiltro(carrerasFiltradas);
+        } else {
+          // Si no hay facultad seleccionada, mostrar todas las carreras en el FILTRO
+          setCarrerasFiltro(todasLasCarreras);
+        }
       }
     }
     
@@ -211,37 +247,42 @@ const CatalogoPage = () => {
 
     // Filtros específicos
     const matchesFilters = Object.entries(filters).every(([key, value]) => {
-      if (!value) return true;
+      if (!value || value === "") return true;
+      
+      // Para materias, verificar la estructura correcta de los datos
+      if (activeTab === "materias") {
+        if (key === "facultad_id") {
+          return item.facultad_id == value;
+        }
+        if (key === "carrera_id") {
+          return item.carrera_id == value;
+        }
+      }
+      
+      // Para otros catálogos
       return item[key] == value;
     });
 
     return matchesSearch && matchesFilters;
   });
 
-  // Abrir modal para crear/editar
+  // Abrir modal para crear/editar - CORREGIDO
   const openModal = async (item = null) => {
     setEditingItem(item);
     if (item) {
       setFormData({ ...item });
-      // Para materias, necesitamos cargar la jerarquía completa
+      
+      // Para materias, cargar dependencias del FORMULARIO
       if (activeTab === "materias") {
-        if (item.universidad_id) {
-          await loadFacultadesByUniversidad(item.universidad_id);
-          if (item.facultad_id) {
-            await loadCarrerasByFacultad(item.facultad_id);
-          }
+        if (item.facultad_id) {
+          await loadCarrerasByFacultad(item.facultad_id);
         }
       }
-      // Para carreras, necesitamos universidad y facultad
+      // Para carreras, cargar dependencias del FORMULARIO
       else if (activeTab === "carreras") {
-        if (item.universidad_id) {
-          await loadFacultadesByUniversidad(item.universidad_id);
-        }
-      }
-      // Para facultades, solo necesitamos universidad
-      else if (activeTab === "facultades") {
-        if (item.universidad_id) {
-          await loadFacultadesByUniversidad(item.universidad_id);
+        if (item.facultad_id) {
+          // Para carreras en formulario, ya tenemos todas las facultades cargadas
+          // No necesitamos cargar nada adicional
         }
       }
     } else {
@@ -251,6 +292,11 @@ const CatalogoPage = () => {
         initialData[field.name] = "";
       });
       setFormData(initialData);
+      
+      // Para nuevo registro en materias, asegurar que carreras esté vacío inicialmente en FORMULARIO
+      if (activeTab === "materias") {
+        setCarreras([]);
+      }
     }
     setShowModal(true);
   };
@@ -262,27 +308,23 @@ const CatalogoPage = () => {
     setFormData({});
   };
 
-  // Manejar cambios en el formulario
+  // Manejar cambios en el formulario - CORREGIDO
   const handleFormChange = async (name, value) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const newFormData = { ...formData, [name]: value };
     
-    // Manejar dependencias jerárquicas en el formulario
-    if (name === "universidad_id") {
-      setFormData(prev => ({ ...prev, facultad_id: "", carrera_id: "" }));
-      setFacultades([]);
-      setCarreras([]);
-      if (value) {
-        await loadFacultadesByUniversidad(value);
+    // Para materias: manejar dependencias en FORMULARIO
+    if (activeTab === "materias") {
+      if (name === "facultad_id") {
+        newFormData.carrera_id = ""; // Resetear carrera cuando cambia facultad
+        if (value) {
+          await loadCarrerasByFacultad(value);
+        } else {
+          setCarreras([]);
+        }
       }
     }
     
-    if (name === "facultad_id") {
-      setFormData(prev => ({ ...prev, carrera_id: "" }));
-      setCarreras([]);
-      if (value) {
-        await loadCarrerasByFacultad(value);
-      }
-    }
+    setFormData(newFormData);
   };
 
   // Guardar item
@@ -291,27 +333,56 @@ const CatalogoPage = () => {
       const config = catalogConfig[activeTab];
       let response;
       
+      // Validar datos requeridos
+      const requiredFields = config.fields.filter(field => field.required);
+      const missingFields = requiredFields.filter(field => !formData[field.name]);
+      
+      if (missingFields.length > 0) {
+        setError("Por favor completa todos los campos requeridos");
+        return;
+      }
+      
       if (editingItem) {
-        // Si estamos editando, enviamos todos los datos incluyendo el ID
         response = await api.put(`/catalogo/${config.endpoint}/${editingItem.id}`, formData);
       } else {
-        // Si estamos creando, eliminamos el ID del formData si existe
         const dataToSend = { ...formData };
-        delete dataToSend.id; // Eliminamos el ID para evitar conflictos
+        delete dataToSend.id;
+        
+        // Para materias, asegurar que los datos sean consistentes
+        if (activeTab === "materias") {
+          // Verificar que no exista una materia con la misma clave y carrera
+          const materiaExistente = items.find(item => 
+            item.clave === dataToSend.clave && 
+            item.carrera_id == dataToSend.carrera_id
+          );
+          
+          if (materiaExistente) {
+            setError("Ya existe una materia con esta clave en la carrera seleccionada");
+            return;
+          }
+        }
+        
         response = await api.post(`/catalogo/${config.endpoint}`, dataToSend);
       }
       
       if (response.data.success) {
         closeModal();
         await loadData();
-        // Actualizar listas de opciones si es necesario
+        
+        // Actualizar listas dependientes
         if (activeTab === "universidades") {
           await loadUniversidades();
+        } else if (activeTab === "facultades") {
+          await loadTodasLasFacultades();
+        } else if (activeTab === "carreras") {
+          await loadTodasLasCarreras();
         }
+        
+        setError(null); // Limpiar error en éxito
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message || error.message;
-      if (errorMessage.includes("duplicate key")) {
+      if (errorMessage.includes("duplicate key") || errorMessage.includes("ya existe")) {
         setError("Ya existe un registro con estos datos. Por favor, verifica la información.");
       } else {
         setError("Error al guardar: " + errorMessage);
@@ -335,10 +406,6 @@ const CatalogoPage = () => {
         setShowDeleteConfirm(false);
         setItemToDelete(null);
         await loadData();
-        // Actualizar listas de opciones si es necesario
-        if (activeTab === "universidades") {
-          await loadUniversidades();
-        }
       }
     } catch (error) {
       setError("Error al eliminar: " + (error.response?.data?.message || error.message));
@@ -393,7 +460,7 @@ const CatalogoPage = () => {
         ))}
       </div>
 
-      {/* Filtros y búsqueda */}
+      {/* Filtros y búsqueda - CORREGIDO */}
       <div className="catalog-controls">
         <div className="search-section">
           <div className="search-input">
@@ -407,7 +474,7 @@ const CatalogoPage = () => {
           </div>
         </div>
 
-        {/* Filtros jerárquicos */}
+        {/* Filtros jerárquicos - COMPLETAMENTE CORREGIDO */}
         {currentConfig.filters && (
           <div className="filters-section">
             {currentConfig.filters.map((filter) => (
@@ -421,12 +488,18 @@ const CatalogoPage = () => {
                   {filter.options === "universidades" && universidades.map(item => (
                     <option key={item.id} value={item.id}>{item.nombre}</option>
                   ))}
-                  {filter.options === "facultades" && facultades.map(item => (
-                    <option key={item.id} value={item.id}>{item.nombre}</option>
-                  ))}
-                  {filter.options === "carreras" && carreras.map(item => (
-                    <option key={item.id} value={item.id}>{item.nombre}</option>
-                  ))}
+                  {filter.options === "facultades" && 
+                    // Para FILTROS, usar facultadesFiltro
+                    facultadesFiltro.map(item => (
+                      <option key={item.id} value={item.id}>{item.nombre}</option>
+                    ))
+                  }
+                  {filter.options === "carreras" && 
+                    // Para FILTROS, usar carrerasFiltro
+                    carrerasFiltro.map(item => (
+                      <option key={item.id} value={item.id}>{item.nombre}</option>
+                    ))
+                  }
                 </select>
               </div>
             ))}
@@ -439,7 +512,17 @@ const CatalogoPage = () => {
         </button>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && (
+        <div className="error-message">
+          {error}
+          <button 
+            onClick={() => setError(null)} 
+            style={{ marginLeft: '10px', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Tabla de datos */}
       <div className="catalog-content">
@@ -486,13 +569,14 @@ const CatalogoPage = () => {
             {filteredItems.length === 0 && (
               <div className="no-data">
                 No hay {currentConfig.title.toLowerCase()} disponibles
+                {Object.values(filters).some(f => f) && " que coincidan con los filtros aplicados"}
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* Modal de formulario */}
+      {/* Modal de formulario - COMPLETAMENTE CORREGIDO */}
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -520,15 +604,24 @@ const CatalogoPage = () => {
                       required={field.required}
                     >
                       <option value="">Seleccionar...</option>
-                      {field.name === "universidad_id" && universidades.map(item => (
-                        <option key={item.id} value={item.id}>{item.nombre}</option>
-                      ))}
-                      {field.name === "facultad_id" && facultades.map(item => (
-                        <option key={item.id} value={item.id}>{item.nombre}</option>
-                      ))}
-                      {field.name === "carrera_id" && carreras.map(item => (
-                        <option key={item.id} value={item.id}>{item.nombre}</option>
-                      ))}
+                      {field.name === "universidad_id" && 
+                        // Para FORMULARIO de universidades
+                        universidades.map(item => (
+                          <option key={item.id} value={item.id}>{item.nombre}</option>
+                        ))
+                      }
+                      {field.name === "facultad_id" && 
+                        // Para FORMULARIO, usar facultades (todas las facultades)
+                        facultades.map(item => (
+                          <option key={item.id} value={item.id}>{item.nombre}</option>
+                        ))
+                      }
+                      {field.name === "carrera_id" && 
+                        // Para FORMULARIO, usar carreras (pueden estar filtradas por facultad en materias)
+                        carreras.map(item => (
+                          <option key={item.id} value={item.id}>{item.nombre}</option>
+                        ))
+                      }
                     </select>
                   ) : (
                     <input

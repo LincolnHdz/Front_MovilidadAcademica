@@ -200,6 +200,29 @@ body {
   color:#94a3b8;
 }
 
+/* Readonly form input */
+.form-input-readonly {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #f8fafc;
+  color: #475569;
+  font-family: inherit;
+  cursor: not-allowed;
+}
+
+/* Info messages */
+.info-message {
+  color: #3b82f6;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 /* Error messages */
 .error-message {
   color: #dc2626;
@@ -639,6 +662,31 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+.filter-info {
+  display: flex;
+  align-items: center;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+
+.filter-info-text {
+  font-size: 0.875rem;
+  color: #1e40af;
+  margin: 0;
+  font-weight: 500;
+}
+
+.help-text {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
 .filter-select-container {
   width: 250px;
 }
@@ -763,11 +811,15 @@ body {
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease;
+  animation: none !important;
+  transform: none !important;
 }
 
 .cancel-btn:hover {
   background: #e2e8f0;
+  animation: none !important;
+  transform: none !important;
 }
 
 .apply-btn {
@@ -902,16 +954,6 @@ body {
 .btn-icon {
   width: 20px;
   height: 20px;
-}
-
-/* Loading spinner */
-.loading-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 50%;
-  border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
 }
 
 /* Nuevo diseño para la selección de materias */
