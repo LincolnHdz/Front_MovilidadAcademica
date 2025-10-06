@@ -67,28 +67,22 @@ const PerfilPage = () => {
     fetchCatalogos();
   }, []);
   
-  // Carga de facultades cuando cambia la universidad seleccionada
+  // Carga de todas las facultades (independiente de la universidad)
   useEffect(() => {
     const fetchFacultades = async () => {
-      if (!user || !user.universidad_id) {
-        setFacultades([]);
-        return;
-      }
-      
       try {
-        const universidadId = user.universidad_id;
-        console.log(`Cargando facultades para la universidad ${universidadId}...`);
-        const response = await api.get(`/catalogo/universidades/${universidadId}/facultades`);
-        console.log("Respuesta facultades por universidad:", response.data);
+        console.log("Cargando todas las facultades...");
+        const response = await api.get("/catalogo/facultades");
+        console.log("Respuesta todas las facultades:", response.data);
         setFacultades(response.data.data || []);
       } catch (error) {
-        console.error(`Error cargando facultades:`, error.message);
+        console.error("Error cargando facultades:", error.message);
         setFacultades([]);
       }
     };
     
     fetchFacultades();
-  }, [user]);
+  }, []); // Solo se ejecuta una vez al montar el componente
   
   // Carga de carreras cuando cambia la facultad seleccionada
   useEffect(() => {
@@ -111,7 +105,7 @@ const PerfilPage = () => {
     };
     
     fetchCarreras();
-  }, [user]);
+  }, [user]); // Mantener dependencia de user para detectar cambios en facultad_id
 
   useEffect(() => {
     const fetchUserApplication = async () => {
@@ -239,7 +233,20 @@ const PerfilPage = () => {
       const response = await api.patch(endpoint, { [fieldName]: value });
       
       if (response.data.success) {
-        updateUser({ ...user, [fieldName]: value });
+        const updatedUser = { ...user, [fieldName]: value };
+        
+        // Si se cambia la facultad, resetear la carrera
+        if (fieldName === 'facultad_id') {
+          updatedUser.carrera_id = null;
+          // También actualizar la carrera en el backend
+          try {
+            await api.patch(`/users/${user.id}`, { carrera_id: null });
+          } catch (carreraError) {
+            console.error("Error al resetear carrera:", carreraError);
+          }
+        }
+        
+        updateUser(updatedUser);
         return true;
       }
       return false;

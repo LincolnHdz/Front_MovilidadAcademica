@@ -362,6 +362,19 @@ const CatalogoPage = () => {
           }
         }
         
+        // Para becas, verificar que no exista una beca con el mismo nombre y país
+        if (activeTab === "becas") {
+          const becaExistente = items.find(item => 
+            item.nombre.toLowerCase() === dataToSend.nombre.toLowerCase() && 
+            item.pais.toLowerCase() === dataToSend.pais.toLowerCase()
+          );
+          
+          if (becaExistente) {
+            setError("Ya existe una beca con este nombre en el mismo país");
+            return;
+          }
+        }
+        
         response = await api.post(`/catalogo/${config.endpoint}`, dataToSend);
       }
       
@@ -508,7 +521,7 @@ const CatalogoPage = () => {
 
         <button className="btn-primary" onClick={() => openModal()}>
           <Plus size={20} />
-          Agregar {currentConfig.title.slice(0, -1)}
+          Agregar
         </button>
       </div>
 
