@@ -7,6 +7,8 @@ export default function Filtros({ onApply, onClose }) {
   const [facultades, setFacultades] = useState([]);
   const [carreras, setCarreras] = useState([]);
   const [becas, setBecas] = useState([]);
+  const [tipoMovilidadOptions, setTipoMovilidadOptions] = useState([]);
+  const [ciclosOptions, setCiclosOptions] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -15,6 +17,8 @@ export default function Filtros({ onApply, onClose }) {
   const [selFacultad, setSelFacultad] = useState("");
   const [selCarrera, setSelCarrera] = useState("");
   const [selBeca, setSelBeca] = useState("");
+  const [selTipoMovilidad, setSelTipoMovilidad] = useState("");
+  const [selCicloEscolar, setSelCicloEscolar] = useState("");
 
   useEffect(() => {
     const loadData = async () => {
@@ -22,18 +26,28 @@ export default function Filtros({ onApply, onClose }) {
         setLoading(true);
         setError("");
 
-        // Llamadas en paralelo
-        const [u, f, c, b] = await Promise.all([
+        const [
+          uRes,
+          fRes,
+          cRes,
+          bRes,
+          tmRes,
+          ciclosRes
+        ] = await Promise.all([
           api.get("/filters/universidades"),
           api.get("/filters/facultades"),
           api.get("/filters/carreras"),
           api.get("/filters/becas"),
+          api.get("/filters/tipo-movilidad"),
+          api.get("/filters/ciclos"),
         ]);
 
-        setUniversidades(u.data);
-        setFacultades(f.data);
-        setCarreras(c.data);
-        setBecas(b.data);
+        setUniversidades(uRes.data?.data || []);
+        setFacultades(fRes.data?.data || []);
+        setCarreras(cRes.data?.data || []);
+        setBecas(bRes.data?.data || []);
+        setTipoMovilidadOptions(tmRes.data?.data || []);
+        setCiclosOptions(ciclosRes.data?.data || []);
       } catch (err) {
         setError(err.response?.data?.message || err.message || "Error de conexión");
       } finally {
@@ -53,6 +67,8 @@ export default function Filtros({ onApply, onClose }) {
       if (selFacultad) params.facultad_id = selFacultad;
       if (selCarrera) params.carrera_id = selCarrera;
       if (selBeca) params.beca_id = selBeca;
+      if (selTipoMovilidad) params.tipo_movilidad = selTipoMovilidad;
+      if (selCicloEscolar) params.ciclo_escolar = selCicloEscolar;
 
       const res = await api.get("/users/search", { params });
       const users = res.data?.data || [];
@@ -66,54 +82,86 @@ export default function Filtros({ onApply, onClose }) {
 
   return (
     <div className="filtros-container">
+      {loading && <p className="loading">Cargando filtros...</p>}
+      {error && <p className="error">{error}</p>}
 
-      {/* Universidad */}
       <div className="filter-item">
         <label>Universidad</label>
-        <select value={selUniversidad} onChange={(e) => setSelUniversidad(e.target.value)}>
-          <option value="">-- Todas --</option>
-          {universidades.map((u) => (
-            <option key={u.id} value={u.id}>{u.nombre}</option>
-          ))}
-        </select>
+        <div className="select-wrapper">
+          <select value={selUniversidad} onChange={(e) => setSelUniversidad(e.target.value)}>
+            <option value="">-- Todas --</option>
+            {universidades.map((u) => (
+              <option key={u.id} value={u.id}>{u.nombre}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Facultades */}
       <div className="filter-item">
-        <label>Facultades</label>
-        <select value={selFacultad} onChange={(e) => setSelFacultad(e.target.value)}>
-          <option value="">-- Todas --</option>
-          {facultades.map((f) => (
-            <option key={f.id} value={f.id}>{f.nombre}</option>
-          ))}
-        </select>
+        <label>Facultad</label>
+        <div className="select-wrapper">
+          <select value={selFacultad} onChange={(e) => setSelFacultad(e.target.value)}>
+            <option value="">-- Todas --</option>
+            {facultades.map((f) => (
+              <option key={f.id} value={f.id}>{f.nombre}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Carreras */}
       <div className="filter-item">
-        <label>Carreras</label>
-        <select value={selCarrera} onChange={(e) => setSelCarrera(e.target.value)}>
-          <option value="">-- Todas --</option>
-          {carreras.map((c) => (
-            <option key={c.id} value={c.id}>{c.nombre}</option>
-          ))}
-        </select>
+        <label>Carrera</label>
+        <div className="select-wrapper">
+          <select value={selCarrera} onChange={(e) => setSelCarrera(e.target.value)}>
+            <option value="">-- Todas --</option>
+            {carreras.map((c) => (
+              <option key={c.id} value={c.id}>{c.nombre}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Becas */}
       <div className="filter-item">
-        <label>Becas</label>
-        <select value={selBeca} onChange={(e) => setSelBeca(e.target.value)}>
-          <option value="">-- Todas --</option>
-          {becas.map((b) => (
-            <option key={b.id} value={b.id}>{b.nombre}</option>
-          ))}
-        </select>
+        <label>Beca</label>
+        <div className="select-wrapper">
+          <select value={selBeca} onChange={(e) => setSelBeca(e.target.value)}>
+            <option value="">-- Todas --</option>
+            {becas.map((b) => (
+              <option key={b.id} value={b.id}>{b.nombre}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      <div style={{ marginTop: 12 }} className="buttons">
-        <button onClick={applyFilters} disabled={loading}>Aplicar filtros</button>
-        <button onClick={onClose} style={{ marginLeft: 8 }}>Cerrar</button>
+      {/* Nueva fila: tipo movilidad */}
+      <div className="filter-item">
+        <label>Tipo de movilidad</label>
+        <div className="select-wrapper">
+          <select value={selTipoMovilidad} onChange={(e) => setSelTipoMovilidad(e.target.value)}>
+            <option value="">-- Todas --</option>
+            {tipoMovilidadOptions.map((t, i) => (
+              <option key={i} value={t}>{t}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Nueva fila: ciclo escolar */}
+      <div className="filter-item">
+        <label>Ciclo escolar</label>
+        <div className="select-wrapper">
+          <select value={selCicloEscolar} onChange={(e) => setSelCicloEscolar(e.target.value)}>
+            <option value="">-- Todos --</option>
+            {ciclosOptions.map((c, i) => (
+              <option key={i} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="filter-actions">
+        <button className="btn btn-secondary" onClick={onClose}>Cerrar</button>
+        <button className="btn btn-primary" onClick={applyFilters} disabled={loading}>Aplicar filtros</button>
       </div>
     </div>
   );
