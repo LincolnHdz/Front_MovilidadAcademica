@@ -26,6 +26,8 @@ export default function Filtros({ onApply, onClose }) {
         setLoading(true);
         setError("");
 
+        const cacheBuster = { params: { _: Date.now() } };
+
         const [
           uRes,
           fRes,
@@ -34,14 +36,15 @@ export default function Filtros({ onApply, onClose }) {
           tmRes,
           ciclosRes
         ] = await Promise.all([
-          api.get("/filters/universidades"),
-          api.get("/filters/facultades"),
-          api.get("/filters/carreras"),
-          api.get("/filters/becas"),
-          api.get("/filters/tipo-movilidad"),
-          api.get("/filters/ciclos"),
+          api.get("/filters/universidades", cacheBuster),
+          api.get("/filters/facultades", cacheBuster),
+          api.get("/filters/carreras", cacheBuster),
+          api.get("/filters/becas", cacheBuster),
+          api.get("/filters/tipo-movilidad", cacheBuster),
+          api.get("/filters/ciclos", cacheBuster),
         ]);
 
+        // En caso de 304 axios aún resuelve; fallback a [] si no hay body
         setUniversidades(uRes.data?.data || []);
         setFacultades(fRes.data?.data || []);
         setCarreras(cRes.data?.data || []);
