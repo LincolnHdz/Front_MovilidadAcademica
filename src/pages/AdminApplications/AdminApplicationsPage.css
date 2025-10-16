@@ -234,113 +234,6 @@
   margin: 0;
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: white;
-  border-radius: 8px;
-  padding: 24px;
-  width: 500px;
-  max-width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: modalFadeIn 0.3s ease;
-}
-
-@keyframes modalFadeIn {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.modal-content h2 {
-  color: #004a98;
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.modal-content h3 {
-  margin-top: 0;
-  color: #424242;
-  font-size: 16px;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 500;
-  color: #616161;
-}
-
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
-}
-
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: #004a98;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 74, 152, 0.2);
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.cancel-button {
-  background-color: #f5f5f5;
-  color: #616161;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.cancel-button:hover {
-  background-color: #e0e0e0;
-}
-
-.submit-button {
-  background-color: #004a98;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 16px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.submit-button:hover {
-  background-color: #003a78;
-}
-
 .access-denied {
   display: flex;
   flex-direction: column;
@@ -359,4 +252,140 @@
 .access-denied p {
   font-size: 18px;
   color: #757575;
+}
+
+/* Estilos para el grid de aplicaciones */
+.applications-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Wrapper para control total del tamaño */
+.admin-card-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Control total sobre las tarjetas en admin */
+.admin-cards-container .admin-card-wrapper .application-card {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 100% !important;
+  min-height: 360px !important;
+  height: 360px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  flex-direction: row !important;
+  gap: 2rem !important;
+  padding: 1.5rem 2rem 1.5rem 1.5rem !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Hover mejorado para tarjetas de admin */
+.admin-cards-container .admin-card-wrapper .application-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 20px rgba(44,62,80,0.15) !important;
+  background: linear-gradient(90deg, #eaf6fb 60%, #d6eaf8 100%) !important;
+}
+
+/* Evitar efectos raros en elementos internos */
+.admin-cards-container .admin-card-wrapper .application-card * {
+  pointer-events: none !important;
+}
+
+.admin-cards-container .admin-card-wrapper .application-card {
+  pointer-events: all !important;
+}
+
+/* Control del contenido interno */
+.admin-cards-container .admin-card-wrapper .application-card > div:first-child {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  height: 100% !important;
+  overflow: visible !important;
+}
+
+/* Header de la aplicación */
+.admin-cards-container .application-header {
+  margin-bottom: 1rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* Información principal */
+.admin-cards-container .application-info {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  min-height: 0 !important;
+}
+
+/* Grid de información */
+.admin-cards-container .application-info > div:first-child {
+  margin-bottom: 1rem !important;
+}
+
+/* Materias */
+.admin-cards-container .application-info > div[style*="margin-top"] {
+  margin-top: 0.8rem !important;
+  margin-bottom: 1rem !important;
+  flex-shrink: 0 !important;
+}
+
+/* Botón de descarga */
+.admin-cards-container .application-info > div:last-child {
+  margin-top: auto !important;
+  flex-shrink: 0 !important;
+}
+
+/* Badge de estado posicionamiento mejorado */
+.admin-cards-container .application-card .status-badge {
+  position: absolute !important;
+  top: 1.5rem !important;
+  right: 2rem !important;
+  z-index: 10 !important;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .applications-grid {
+    padding: 0 0.5rem;
+  }
+  
+  .admin-card-wrapper {
+    min-height: auto !important;
+  }
+  
+  .admin-cards-container .admin-card-wrapper .application-card {
+    min-width: auto !important;
+    min-height: auto !important;
+    height: auto !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+    padding: 1rem !important;
+    overflow: visible !important;
+  }
+  
+  .admin-cards-container .admin-card-wrapper .application-card > div:first-child {
+    overflow: visible !important;
+  }
+  
+  .admin-cards-container .application-card .status-badge {
+    position: static !important;
+    margin-bottom: 1rem !important;
+    align-self: flex-start !important;
+  }
 }

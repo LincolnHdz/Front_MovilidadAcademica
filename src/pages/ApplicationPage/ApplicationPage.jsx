@@ -4,6 +4,7 @@ import { useAuth } from "../../context/useAuth";
 import "./ApplicationPage.css";
 import MateriasSlider from "../../components/MateriasSlider";
 import CicloEscolarSelector from "../../components/CicloEscolarSelector/CicloEscolarSelector";
+import CountrySelector from "../../components/CountrySelector/CountrySelector";
 import {
   Upload,
   FileText,
@@ -50,6 +51,7 @@ const RegistroMateria = () => {
     cicloEscolar: "",
     carrera: "",
     universidad: "", 
+    paisDestino: "",
     materiasInteres: [],
     archivo: null,
   });
@@ -385,6 +387,10 @@ const RegistroMateria = () => {
       newErrors.universidad = "La universidad es requerida";
     }
 
+    if (!formData.paisDestino || !formData.paisDestino.trim()) {
+      newErrors.paisDestino = "El país destino es requerido";
+    }
+
     if (!formData.carrera.trim()) {
       newErrors.carrera = "La carrera es requerida";
     }
@@ -440,6 +446,7 @@ const RegistroMateria = () => {
       submitData.append("clave", formData.clave);
       submitData.append("cicloEscolar", formData.cicloEscolar);
       submitData.append("universidad", formData.universidad);
+      submitData.append("paisDestino", formData.paisDestino);
       submitData.append("carrera", formData.carrera);
       
       // Convertir los objetos de materia a un formato adecuado para enviar
@@ -745,6 +752,25 @@ const RegistroMateria = () => {
                   />
                   {errors.universidad && (
                     <span className="error-message">{errors.universidad}</span>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <CountrySelector
+                    value={formData.paisDestino}
+                    onChange={(value) => {
+                      setFormData((prev) => ({ ...prev, paisDestino: value }));
+                      if (errors.paisDestino) {
+                        setErrors((prev) => ({ ...prev, paisDestino: "" }));
+                      }
+                    }}
+                    className="form-country-selector"
+                    showLabel={true}
+                    placeholder="Selecciona el país destino"
+                    error={!!errors.paisDestino}
+                  />
+                  {errors.paisDestino && (
+                    <span className="error-message">{errors.paisDestino}</span>
                   )}
                 </div>
 

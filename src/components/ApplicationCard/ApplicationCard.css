@@ -1,0 +1,91 @@
+.application-card {
+  background: linear-gradient(90deg, #eaf6fb 60%, #d6eaf8 100%);
+  box-shadow: 0 2px 12px rgba(44,62,80,0.10);
+  border-radius: 18px;
+  margin: 0;
+  padding: 1.5rem 2rem 1.5rem 1.5rem;
+  min-width: 400px;
+  max-width: 1000px;
+  width: 100%;
+  min-height: 200px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.application-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(44,62,80,0.15);
+}
+
+.application-card .application-header h3 {
+  transition: color 0.2s ease;
+}
+
+.application-card:hover .application-header h3 {
+  color: #1a4b72;
+}
+
+.status-badge {
+  transition: all 0.2s ease;
+}
+
+.status-badge:hover {
+  transform: scale(1.05);
+}
+
+.application-info strong {
+  transition: color 0.2s ease;
+}
+
+.application-card:hover .application-info strong {
+  color: #1a4b72;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .application-card {
+    min-width: auto;
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .application-info > div {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .application-info > div > div {
+    flex: 1 1 100%;
+    min-width: auto;
+  }
+  
+  /* Badge responsivo en móvil */
+  .status-badge {
+    position: static !important;
+    margin-bottom: 0.5rem;
+    display: inline-block;
+  }
+}
+
+/* Estados de la aplicación */
+.application-card.pendiente {
+  border-left-color: #3498db;
+}
+
+.application-card.en_revision {
+  border-left-color: #f57c00;
+}
+
+.application-card.aceptada {
+  border-left-color: #2e7d32;
+}
+
+.application-card.rechazada {
+  border-left-color: #c62828;
+}

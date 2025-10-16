@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/useAuth';
 import api from '../../api/axiosConfig';
-import MateriasSlider from '../../components/MateriasSlider';
+import ApplicationCard from '../../components/ApplicationCard/ApplicationCard';
+import AdminModalApplication from '../../components/AdminModalApplication/AdminModalApplication';
 import './AdminApplicationsPage.css';
 
 const AdminApplicationsPage = () => {
@@ -155,131 +156,22 @@ const AdminApplicationsPage = () => {
               <p>No hay solicitudes de registro pendientes.</p>
             </div>
           ) : (
-            <div className="applications-grid" style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', alignItems: 'center', width: '100%' }}>
+            <div className="applications-grid admin-cards-container">
               {applications.map(app => (
-                <div
-                  key={app.id}
-                  className={`application-card ${app.estado}`}
-                  style={{
-                    borderLeft: `8px solid ${app.estado === 'aceptada' ? '#2e7d32' : app.estado === 'rechazada' ? '#c62828' : '#3498db'}`,
-                    background: 'linear-gradient(90deg, #eaf6fb 60%, #d6eaf8 100%)',
-                    boxShadow: '0 2px 12px rgba(44,62,80,0.10)',
-                    borderRadius: 18,
-                    margin: 0,
-                    padding: '1rem 2rem 1rem 1.5rem',
-                    minWidth: 400,
-                    maxWidth: 1000,
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    gap: '2rem',
-                  }}
-                  onClick={() => {
-                    setActiveApplication(app);
-                    setStatusForm({
-                      estado: ['en_revision', 'aceptada', 'rechazada'].includes(app.estado) ? app.estado : 'en_revision',
-                      comentarios: app.comentarios || ''
-                    });
-                  }}
-                >
-                  <div style={{ flex: 1 }}>
-                    <div className="application-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <h3 style={{ color: '#21618c', margin: 0, fontWeight: 700, letterSpacing: 0.5 }}>{app.nombres} {app.apellido_paterno} {app.apellido_materno}</h3>
-                      <span className={`status-badge ${app.estado}`} style={{ fontWeight: 700, fontSize: '1rem', borderRadius: 16, padding: '0.3rem 1.2rem', background: app.estado === 'aceptada' ? '#2e7d32' : app.estado === 'rechazada' ? '#c62828' : '#3498db', color: '#fff', boxShadow: '0 2px 8px rgba(44,62,80,0.07)' }}>
-                        {app.estado === 'en_revision' && 'En Revisión'}
-                        {app.estado === 'aceptada' && 'Aceptada'}
-                        {app.estado === 'rechazada' && 'Rechazada'}
-                      </span>
-                    </div>
-                    <div className="application-info" style={{ marginTop: '1rem', color: '#34495e', fontSize: '1.05rem' }}>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem 2rem' }}>
-                        <div style={{ flex: '1 1 45%', minWidth: '200px' }}>
-                          <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '90px' }}>Clave:</strong> 
-                            <span style={{ color: '#273746', fontWeight: 600 }}>{app.user_clave}</span>
-                          </p>
-                          <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '90px' }}>Email:</strong> 
-                            <span style={{ color: '#273746' }}>{app.email}</span>
-                          </p>
-                          <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '90px' }}>Destino:</strong> 
-                            <span style={{ color: '#273746' }}>{app.universidad}</span>
-                          </p>
-                        </div>
-                        <div style={{ flex: '1 1 45%', minWidth: '200px' }}>
-                          <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '120px' }}>Carrera:</strong> 
-                            <span style={{ color: '#273746' }}>{app.carrera}</span>
-                          </p>
-                          <p style={{ marginTop: '0.5rem', marginBottom: '0.5rem' }}>
-                            <strong style={{ color: '#2980b9', display: 'inline-block', width: '120px' }}>Ciclo Escolar:</strong> 
-                            <span style={{ color: '#273746' }}>{app.cicloescolar}</span>
-                          </p>
-                        </div>
-                      </div>
-                      
-                      {/* Materias de interés en un solo renglón */}
-                      <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <strong style={{ color: '#2980b9', whiteSpace: 'nowrap' }}>Materias:</strong> 
-                        <div style={{ flex: 1, maxHeight: '38px', overflow: 'hidden' }}>
-                          <MateriasSlider materias={app.materiasinteres} readOnly={true} compactMode={true} />
-                        </div>
-                      </div>
-                      
-                      {/* Mostrar enlace al archivo subido si existe */}
-                      {(() => {
-                        // Parsear las materias de interés si es necesario
-                        let materias = app.materiasinteres;
-                        if (materias && typeof materias === 'string') {
-                          try {
-                            app.materiasinteres = JSON.parse(materias);
-                          } catch (error) {
-                            console.error('Error al parsear materias:', error);
-                            app.materiasinteres = [];
-                          }
-                        }
-                        
-                        // Parsear el archivo si es necesario
-                        let archivo = app.archivo;
-                        if (archivo && typeof archivo === 'string') {
-                          try {
-                            archivo = JSON.parse(archivo);
-                          } catch { archivo = null; }
-                        }
-                        return archivo && archivo.filename ? (
-                          <div style={{ margin: '0.7rem 0' }}>
-                            <a
-                              href={`http://localhost:3000/uploads/${archivo.filename}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ 
-                                display: 'inline-block',
-                                color: '#fff', 
-                                background: '#004A98',
-                                padding: '0.5rem 1rem',
-                                borderRadius: '4px',
-                                textDecoration: 'none', 
-                                fontWeight: 600, 
-                                fontSize: '0.95rem',
-                                marginTop: '0.5rem',
-                                boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
-                              }}
-                              onClick={e => e.stopPropagation()}
-                            >
-                              Ver/Descargar archivo
-                            </a>
-                          </div>
-                        ) : null;
-                      })()}
-                    </div>
-                    {app.comentarios && (
-                      <div className="application-comments" style={{ background: '#f8f9fa', borderRadius: 8, padding: '0.7rem 1.2rem', marginTop: '0.7rem', color: '#7f8c8d', borderLeft: '4px solid #3498db' }}>
-                        <p style={{ margin: 0 }}><strong>Comentarios:</strong> {app.comentarios}</p>
-                      </div>
-                    )}
-                  </div>
+                <div className="admin-card-wrapper">
+                  <ApplicationCard
+                    key={app.id}
+                    application={app}
+                    isAdminView={true}
+                    showStatus={true}
+                    onApplicationClick={(application) => {
+                      setActiveApplication(application);
+                      setStatusForm({
+                        estado: ['en_revision', 'aceptada', 'rechazada'].includes(application.estado) ? application.estado : 'en_revision',
+                        comentarios: application.comentarios || ''
+                      });
+                    }}
+                  />
                 </div>
               ))}
             </div>
@@ -296,71 +188,14 @@ const AdminApplicationsPage = () => {
       )}
 
       {/* Modal para actualizar el estado de una solicitud */}
-      {activeApplication && (
-        <div className="modal-overlay" style={{ background: 'rgba(41, 128, 185, 0.18)', zIndex: 1000, position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="modal-content" style={{ background: 'linear-gradient(120deg, #eaf6fb 80%, #d6eaf8 100%)', borderRadius: 18, boxShadow: '0 6px 32px rgba(44,62,80,0.18)', padding: '2.2rem', width: '90%', maxWidth: 600, border: '1.5px solid #3498db', maxHeight: '90vh', overflowY: 'auto' }}>
-            <h2 style={{ color: '#21618c', marginBottom: 8, fontWeight: 700 }}>Actualizar Estado de Solicitud</h2>
-            <h3 style={{ color: '#34495e', marginBottom: 18 }}>{activeApplication.nombres} {activeApplication.apellido_paterno} {activeApplication.apellido_materno}</h3>
-            
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '18px' }}>
-                <div>
-                  <p><strong style={{ color: '#2980b9' }}>Clave:</strong> {activeApplication.user_clave}</p>
-                  <p><strong style={{ color: '#2980b9' }}>Email:</strong> {activeApplication.email}</p>
-                </div>
-                <div>
-                  <p><strong style={{ color: '#2980b9' }}>Universidad:</strong> {activeApplication.universidad}</p>
-                  <p><strong style={{ color: '#2980b9' }}>Carrera:</strong> {activeApplication.carrera}</p>
-                  <p><strong style={{ color: '#2980b9' }}>Ciclo:</strong> {activeApplication.cicloescolar}</p>
-                </div>
-              </div>
-              
-              <div>
-                <p><strong style={{ color: '#2980b9' }}>Materias de interés:</strong></p>
-                <MateriasSlider materias={activeApplication.materiasinteres} readOnly={true} />
-              </div>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group" style={{ marginBottom: 18 }}>
-                <label htmlFor="estado" style={{ color: '#2980b9', fontWeight: 600 }}>Estado:</label>
-                <select 
-                  id="estado"
-                  name="estado"
-                  value={statusForm.estado}
-                  onChange={handleStatusChange}
-                  required
-                  style={{ width: '100%', padding: '0.6rem', borderRadius: 8, border: '1.5px solid #85c1e9', marginTop: 4, background: '#fff', color: '#21618c', fontWeight: 500 }}
-                >
-                  <option value="">Seleccionar estado</option>
-                  <option value="en_revision">En Revisión</option>
-                  <option value="aceptada">Aceptada</option>
-                  <option value="rechazada">Rechazada</option>
-                </select>
-              </div>
-              <div className="form-group" style={{ marginBottom: 18 }}>
-                <label htmlFor="comentarios" style={{ color: '#2980b9', fontWeight: 600 }}>Comentarios:</label>
-                <textarea
-                  id="comentarios"
-                  name="comentarios"
-                  value={statusForm.comentarios}
-                  onChange={handleStatusChange}
-                  rows={4}
-                  placeholder="Añade comentarios para el solicitante..."
-                  style={{ width: '100%', padding: '0.6rem', borderRadius: 8, border: '1.5px solid #85c1e9', marginTop: 4, background: '#fff', color: '#21618c', fontWeight: 500 }}
-                ></textarea>
-              </div>
-              <div className="modal-buttons" style={{ display: 'flex', justifyContent: 'flex-end', gap: 14 }}>
-                <button type="button" onClick={() => setActiveApplication(null)} className="cancel-button" style={{ background: '#c62828', color: '#fff', border: 'none', borderRadius: 8, padding: '0.6rem 1.4rem', fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(198,40,40,0.08)' }}>
-                  Cancelar
-                </button>
-                <button type="submit" className="submit-button" style={{ background: '#3498db', color: '#fff', border: 'none', borderRadius: 8, padding: '0.6rem 1.4rem', fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(57,73,171,0.08)' }}>
-                  Actualizar Estado
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AdminModalApplication
+        application={activeApplication}
+        statusForm={statusForm}
+        onClose={() => setActiveApplication(null)}
+        onSubmit={handleSubmit}
+        onChange={handleStatusChange}
+        isVisible={!!activeApplication}
+      />
     </div>
   );
 };

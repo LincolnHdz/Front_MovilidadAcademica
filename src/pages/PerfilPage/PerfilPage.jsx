@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
-import MateriasSlider from "../../components/MateriasSlider";
+import ApplicationCard from "../../components/ApplicationCard/ApplicationCard";
 import CicloEscolarSelector from "../../components/CicloEscolarSelector/CicloEscolarSelector";
+import VisitanteInfoForm from "../../components/VisitanteInfoForm/VisitanteInfoForm";
 import "./PerfilPage.css";
 
 const PerfilPage = () => {
@@ -425,6 +426,9 @@ const PerfilPage = () => {
         </div>
       </div>
 
+      {/* Formulario de información adicional para visitantes */}
+      <VisitanteInfoForm />
+
       {showPasswordModal && (
         <div className="password-modal-overlay">
           <div className="password-modal modern-modal">
@@ -480,81 +484,13 @@ const PerfilPage = () => {
             <p>Cargando solicitud...</p>
           </div>
         ) : application ? (
-          <div className="application-card">
-            <h3>Mi Solicitud de Movilidad</h3>
-            <div className="application-status">
-              <span className={`status-badge ${application.estado}`}>
-                {application.estado || "Pendiente"}
-              </span>
-            </div>
-            <div className="application-details">
-              <div className="detail-item">
-                <span className="label">Universidad destino:</span>
-                <span className="value">{application.universidad}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Carrera:</span>
-                <span className="value">{application.carrera}</span>
-              </div>
-              <div className="detail-item full-width">
-                <span className="label">Materias de Interés:</span>
-                <div className="materias-container">
-                  {application.materiasinteres ? (
-                    <MateriasSlider materias={application.materiasinteres} readOnly={true} />
-                  ) : (
-                    <span className="value">No hay materias seleccionadas</span>
-                  )}
-                </div>
-              </div>
-              <div className="detail-item">
-                <span className="label">Ciclo Escolar:</span>
-                <span className="value">{application.cicloescolar}</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">Fecha de Solicitud:</span>
-                <span className="value">
-                  {new Date(application.created_at).toLocaleDateString()}
-                </span>
-              </div>
-              {application.archivo && application.archivo.filename && (
-                <div className="detail-item">
-                  <span className="label">Archivo de Solicitud:</span>
-                  {(() => {
-                    let archivo = application.archivo;
-                    if (archivo && typeof archivo === 'string') {
-                      try { archivo = JSON.parse(archivo); } catch { archivo = null; }
-                    }
-                    return archivo && archivo.filename ? (
-                      <a
-                        href={`http://localhost:3000/uploads/${archivo.filename}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="archivo-link"
-                      >
-                        Descargar archivo
-                      </a>
-                    ) : <span style={{color: 'red'}}>Archivo no disponible</span>;
-                  })()}
-                </div>
-              )}
-              <div className="application-comments-section">
-                <h4>Comentarios de la solicitud</h4>
-                {Array.isArray(application.comentarios) && application.comentarios.length > 0 ? (
-                  application.comentarios.map((comentario, idx) => (
-                    <div className="application-comment" key={idx}>
-                      {comentario}
-                    </div>
-                  ))
-                ) : (typeof application.comentarios === 'string' && application.comentarios.trim() !== '' ? (
-                  <div className="application-comment">{application.comentarios}</div>
-                ) : (
-                  <div className="application-comment" style={{color: '#e74c3c'}}>
-                    No hay comentarios para esta solicitud.
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ApplicationCard
+            application={application}
+            isAdminView={false}
+            showStatus={true}
+            showTitle={true}
+            title="Mi Solicitud de Movilidad"
+          />
         ) : (
           <div className="no-application">
             <p>No has realizado ninguna solicitud de movilidad.</p>
