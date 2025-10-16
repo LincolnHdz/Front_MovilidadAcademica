@@ -31,54 +31,29 @@ ChartJS.register(
 );
 
 const chartTypes = [
-  { key: "bar", label: "Barras" },
-  { key: "pie", label: "Pastel" },
-  { key: "doughnut", label: "Dona" },
-  { key: "line", label: "Línea" },
+  { key: "bar", label: "Barras", icon: "📊" },
+  { key: "pie", label: "Pastel", icon: "🥧" },
+  { key: "doughnut", label: "Dona", icon: "🍩" },
+  { key: "line", label: "Línea", icon: "📈" },
 ];
 
-const datasets = [
+// Gráficas Generales - Actividad y uso de la plataforma
+const generalDatasets = [
   {
-    key: "universidad",
-    label: "Por Universidad",
-    endpoint: "/stats/users/by-universidad",
-    tipo: "users",
-    agrupacion: "universidad",
-  },
-  {
-    key: "facultad",
-    label: "Por Facultad",
-    endpoint: "/stats/users/by-facultad",
-    tipo: "users",
-    agrupacion: "facultad",
-  },
-  {
-    key: "carrera",
-    label: "Por Carrera",
-    endpoint: "/stats/users/by-carrera",
-    tipo: "users",
-    agrupacion: "carrera",
-  },
-  {
-    key: "tipo_movilidad",
-    label: "Por Tipo de Movilidad",
-    endpoint: "/stats/users/by-tipo-movilidad",
-    tipo: "users",
-    agrupacion: "tipo_movilidad",
-  },
-  {
-    key: "estado_aplicaciones",
+    key: "aplicaciones_estado",
     label: "Aplicaciones por Estado",
     endpoint: "/stats/applications/by-estado",
     tipo: "applications",
     agrupacion: "estado",
+    categoria: "general",
   },
   {
-    key: "ciclo_escolar",
-    label: "Aplicaciones por Ciclo",
+    key: "aplicaciones_ciclo",
+    label: "Aplicaciones por Ciclo Escolar",
     endpoint: "/stats/applications/by-ciclo",
     tipo: "applications",
     agrupacion: "ciclo",
+    categoria: "general",
   },
   {
     key: "aplicaciones_mes",
@@ -86,13 +61,15 @@ const datasets = [
     endpoint: "/stats/applications/by-month",
     tipo: "applications",
     agrupacion: "mes",
+    categoria: "general",
   },
   {
-    key: "usuarios_mes",
+    key: "usuarios_registrados_mes",
     label: "Usuarios Registrados por Mes",
     endpoint: "/stats/users/by-month",
     tipo: "users",
     agrupacion: "mes",
+    categoria: "general",
   },
   {
     key: "paginas_visitadas",
@@ -100,6 +77,7 @@ const datasets = [
     endpoint: "/stats/visitors/pages",
     tipo: "visitors",
     agrupacion: "pages",
+    categoria: "general",
   },
   {
     key: "visitas_periodo",
@@ -107,6 +85,7 @@ const datasets = [
     endpoint: "/stats/visitors/period",
     tipo: "visitors",
     agrupacion: "period",
+    categoria: "general",
   },
   {
     key: "visitas_horario",
@@ -114,8 +93,40 @@ const datasets = [
     endpoint: "/stats/visitors/hourly",
     tipo: "visitors",
     agrupacion: "hourly",
+    categoria: "general",
   },
 ];
+
+// Gráficas Académicas - Datos específicos de universidades, facultades, carreras
+const academicDatasets = [
+  {
+    key: "universidad",
+    label: "Usuarios por Universidad",
+    endpoint: "/stats/users/by-universidad",
+    tipo: "users",
+    agrupacion: "universidad",
+    categoria: "academico",
+  },
+  {
+    key: "carrera",
+    label: "Usuarios por Carrera",
+    endpoint: "/stats/users/by-carrera",
+    tipo: "users",
+    agrupacion: "carrera",
+    categoria: "academico",
+  },
+  {
+    key: "tipo_movilidad",
+    label: "Usuarios por Tipo de Movilidad",
+    endpoint: "/stats/users/by-tipo-movilidad",
+    tipo: "users",
+    agrupacion: "tipo_movilidad",
+    categoria: "academico",
+  },
+];
+
+// Combinar datasets (solo académicos, excluyendo "Usuarios por Universidad")
+const datasets = academicDatasets.filter((d) => d.key !== "universidad");
 
 const colorPalette = [
   "#004A98",
@@ -137,15 +148,17 @@ const AdminChartsPage = () => {
 
   // Track visitor
   useVisitorTracking("/admin/charts", "admin_charts_view");
-  const [selectedDataset, setSelectedDataset] = useState(datasets[0].key);
+  const [selectedDataset, setSelectedDataset] = useState(
+    datasets[0]?.key || "carrera"
+  );
   const [selectedChartType, setSelectedChartType] = useState(chartTypes[0].key);
   const [dataRows, setDataRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const chartsRef = useRef(null);
 
-  // Estados para filtros avanzados
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  // Estados para filtros avanzados (siempre visible)
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(true);
   const [filterOptions, setFilterOptions] = useState({
     universidades: [],
     facultades: [],
@@ -171,12 +184,23 @@ const AdminChartsPage = () => {
     [selectedDataset]
   );
 
+  // Datasets ya están filtrados para mostrar solo los académicos
+
   const fetchData = async () => {
     try {
       setLoading(true);
       setError("");
       const token = localStorage.getItem("token");
-      if (!token) throw new Error("No autenticado");
+      if (!token) {
+        setError("No autenticado. Por favor, inicia sesión nuevamente.");
+        return;
+      }
+
+      if (!currentDataset) {
+        setError("No hay dataset seleccionado");
+        return;
+      }
+
       const config = { headers: { Authorization: `Bearer ${token}` } };
 
       // Si hay filtros activos, usar el endpoint filtrado
@@ -199,7 +223,12 @@ const AdminChartsPage = () => {
         setDataRows(res.data.data || []);
       }
     } catch (e) {
-      setError(e.response?.data?.message || e.message || "Error de conexión");
+      if (e.response?.status === 401) {
+        setError("Token expirado. Por favor, inicia sesión nuevamente.");
+        localStorage.removeItem("token");
+      } else {
+        setError(e.response?.data?.message || e.message || "Error de conexión");
+      }
     } finally {
       setLoading(false);
     }
@@ -208,14 +237,23 @@ const AdminChartsPage = () => {
   const fetchFilterOptions = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return;
+      if (!token) {
+        console.error("No hay token para cargar opciones de filtros");
+        return;
+      }
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const res = await api.get("/stats/filter-options", config);
       if (res.data?.success) {
         setFilterOptions(res.data.data);
+      } else {
+        console.error("Error en respuesta del servidor:", res.data?.message);
       }
     } catch (e) {
       console.error("Error cargando opciones de filtros:", e);
+      if (e.response?.status === 401) {
+        console.error("Token expirado al cargar filtros");
+        localStorage.removeItem("token");
+      }
     }
   };
 
@@ -240,6 +278,15 @@ const AdminChartsPage = () => {
       fetchVisitorSummary();
     }
   }, [user?.rol, currentDataset, filters]);
+
+  // Cargar opciones de filtros al montar el componente
+  useEffect(() => {
+    if (user?.rol === "administrador") {
+      fetchFilterOptions();
+    }
+  }, [user?.rol]);
+
+  // Sin selección de categoría; siempre académicos
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({
@@ -425,37 +472,24 @@ const AdminChartsPage = () => {
       <div className="admin-page-header">
         <h1 className="admin-title">Gráficas</h1>
         <div className="chart-controls">
-          <select
-            value={selectedDataset}
-            onChange={(e) => setSelectedDataset(e.target.value)}
-            className="chart-select"
-            title="Seleccionar agrupación"
-          >
-            {datasets.map((d) => (
-              <option key={d.key} value={d.key}>
-                {d.label}
-              </option>
-            ))}
-          </select>
-          <select
-            value={selectedChartType}
-            onChange={(e) => setSelectedChartType(e.target.value)}
-            className="chart-select"
-            title="Seleccionar tipo de gráfica"
-          >
-            {chartTypes.map((t) => (
-              <option key={t.key} value={t.key}>
-                {t.label}
-              </option>
-            ))}
-          </select>
-          <button
-            className={`filter-button ${showAdvancedFilters ? "active" : ""}`}
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            title="Filtros avanzados"
-          >
-            🔍 Filtros {hasActiveFilters && "●"}
-          </button>
+          <div className="chart-type-selector">
+            
+            <div className="chart-type-buttons">
+              {chartTypes.map((t) => (
+                <button
+                  key={t.key}
+                  className={`chart-type-button ${
+                    selectedChartType === t.key ? "active" : ""
+                  }`}
+                  onClick={() => setSelectedChartType(t.key)}
+                  title={t.label}
+                >
+                  <span className="chart-type-icon">{t.icon}</span>
+                  <span className="chart-type-text">{t.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
           <button
             className="refresh-button"
             onClick={fetchData}
@@ -469,145 +503,119 @@ const AdminChartsPage = () => {
         </div>
       </div>
 
-      {/* Panel de filtros avanzados */}
-      {showAdvancedFilters && (
-        <div className="advanced-filters-panel">
-          <div className="filters-header">
-            <h3>Filtros Avanzados</h3>
-            <button className="clear-filters-button" onClick={clearFilters}>
-              Limpiar Filtros
-            </button>
+      {/* Panel de filtros avanzados: siempre visible */}
+      <div className="advanced-filters-panel">
+        <div className="filters-header">
+          <h3>Filtros Avanzados</h3>
+          <button className="clear-filters-button" onClick={clearFilters}>
+            Limpiar Filtros
+          </button>
+        </div>
+        <div className="filters-grid">
+          <div className="filter-group">
+            <label>Universidad:</label>
+            <select
+              value={filters.universidad_id}
+              onChange={(e) =>
+                handleFilterChange("universidad_id", e.target.value)
+              }
+              className="filter-select"
+            >
+              <option value="">Todas</option>
+              {filterOptions.universidades.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.nombre}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="filters-grid">
-            <div className="filter-group">
-              <label>Fecha Inicio:</label>
-              <input
-                type="date"
-                value={filters.fecha_inicio}
-                onChange={(e) =>
-                  handleFilterChange("fecha_inicio", e.target.value)
-                }
-                className="filter-input"
-              />
-            </div>
-            <div className="filter-group">
-              <label>Fecha Fin:</label>
-              <input
-                type="date"
-                value={filters.fecha_fin}
-                onChange={(e) =>
-                  handleFilterChange("fecha_fin", e.target.value)
-                }
-                className="filter-input"
-              />
-            </div>
-            <div className="filter-group">
-              <label>Universidad:</label>
-              <select
-                value={filters.universidad_id}
-                onChange={(e) =>
-                  handleFilterChange("universidad_id", e.target.value)
-                }
-                className="filter-select"
-              >
-                <option value="">Todas</option>
-                {filterOptions.universidades.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Facultad:</label>
-              <select
-                value={filters.facultad_id}
-                onChange={(e) =>
-                  handleFilterChange("facultad_id", e.target.value)
-                }
-                className="filter-select"
-              >
-                <option value="">Todas</option>
-                {filterOptions.facultades.map((f) => (
-                  <option key={f.id} value={f.id}>
-                    {f.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Carrera:</label>
-              <select
-                value={filters.carrera_id}
-                onChange={(e) =>
-                  handleFilterChange("carrera_id", e.target.value)
-                }
-                className="filter-select"
-              >
-                <option value="">Todas</option>
-                {filterOptions.carreras.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.nombre}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Tipo de Movilidad:</label>
-              <select
-                value={filters.tipo_movilidad}
-                onChange={(e) =>
-                  handleFilterChange("tipo_movilidad", e.target.value)
-                }
-                className="filter-select"
-              >
-                <option value="">Todos</option>
-                {filterOptions.tiposMovilidad.map((tipo) => (
-                  <option key={tipo} value={tipo}>
-                    {tipo
-                      .replace(/_/g, " ")
-                      .replace(/\b\w/g, (l) => l.toUpperCase())}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Estado de Aplicación:</label>
-              <select
-                value={filters.estado_aplicacion}
-                onChange={(e) =>
-                  handleFilterChange("estado_aplicacion", e.target.value)
-                }
-                className="filter-select"
-              >
-                <option value="">Todos</option>
-                {filterOptions.estadosAplicacion.map((estado) => (
-                  <option key={estado} value={estado}>
-                    {estado.charAt(0).toUpperCase() + estado.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="filter-group">
-              <label>Ciclo Escolar:</label>
-              <select
-                value={filters.ciclo_escolar}
-                onChange={(e) =>
-                  handleFilterChange("ciclo_escolar", e.target.value)
-                }
-                className="filter-select"
-              >
-                <option value="">Todos</option>
-                {filterOptions.ciclosEscolares.map((ciclo) => (
-                  <option key={ciclo} value={ciclo}>
-                    {ciclo}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div className="filter-group">
+            <label>Facultad:</label>
+            <select
+              value={filters.facultad_id}
+              onChange={(e) =>
+                handleFilterChange("facultad_id", e.target.value)
+              }
+              className="filter-select"
+            >
+              <option value="">Todas</option>
+              {filterOptions.facultades.map((f) => (
+                <option key={f.id} value={f.id}>
+                  {f.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Carrera:</label>
+            <select
+              value={filters.carrera_id}
+              onChange={(e) => handleFilterChange("carrera_id", e.target.value)}
+              className="filter-select"
+            >
+              <option value="">Todas</option>
+              {filterOptions.carreras.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Tipo de Movilidad:</label>
+            <select
+              value={filters.tipo_movilidad}
+              onChange={(e) =>
+                handleFilterChange("tipo_movilidad", e.target.value)
+              }
+              className="filter-select"
+            >
+              <option value="">Todos</option>
+              {filterOptions.tiposMovilidad.map((tipo) => (
+                <option key={tipo} value={tipo}>
+                  {tipo
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (l) => l.toUpperCase())}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Estado de Aplicación:</label>
+            <select
+              value={filters.estado_aplicacion}
+              onChange={(e) =>
+                handleFilterChange("estado_aplicacion", e.target.value)
+              }
+              className="filter-select"
+            >
+              <option value="">Todos</option>
+              {filterOptions.estadosAplicacion.map((estado) => (
+                <option key={estado} value={estado}>
+                  {estado.charAt(0).toUpperCase() + estado.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Ciclo Escolar:</label>
+            <select
+              value={filters.ciclo_escolar}
+              onChange={(e) =>
+                handleFilterChange("ciclo_escolar", e.target.value)
+              }
+              className="filter-select"
+            >
+              <option value="">Todos</option>
+              {filterOptions.ciclosEscolares.map((ciclo) => (
+                <option key={ciclo} value={ciclo}>
+                  {ciclo}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
+      </div>
 
       {error && (
         <div className="status-message error-message">
