@@ -7,13 +7,13 @@
     "title": "Programas de Movilidad",
     "description": "Conoce nuestras oportunidades de intercambio y convenios con universidades en todo el mundo.",
     "cards": {
-      "intercambio": {
-        "title": "Intercambio Académico",
-        "text": "Convenios con universidades de América, Europa y Asia."
+      "movilidadVirtual": {
+        "title": "Movilidad Virtual",
+        "text": "Participa en programas académicos internacionales desde cualquier lugar. Conecta con universidades de todo el mundo y enriquece tu formación sin fronteras."
       },
-      "investigacion": {
-        "title": "Movilidad de Investigación",
-        "text": "Colabora en proyectos de ingeniería con instituciones de prestigio internacional."
+      "movilidadNacional": {
+        "title": "Movilidad Nacional",
+        "text": "Explora instituciones educativas en todo el país. Amplía tu red académica y descubre nuevas perspectivas en diferentes regiones de México."
       },
       "practicas": {
         "title": "Prácticas Profesionales",
@@ -25,8 +25,8 @@
     "title": "Experiencias de Estudiantes",
     "cards": [
       {
-        "text": "\"Mi experiencia en Alemania fue increíble. Aprendí mucho sobre ingeniería y conocí personas de todo el mundo.\"",
-        "author": "— Ana Pérez, Ingeniería Mecánica"
+        "text": "\"Mi estancia, CityU me abrió un panorama multicultural en el área de trabajo y estudio\"",
+        "author": "— Ana Cristina Martínez Aguirre"
       },
       {
         "text": "\"El intercambio en Argentina me ayudó a crecer académica y personalmente dentro de mi carrera.\"",
