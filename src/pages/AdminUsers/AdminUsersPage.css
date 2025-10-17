@@ -277,3 +277,87 @@
 .close-button:hover {
   background-color: #003a78;
 }
+
+.skeleton-row {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #e0e0e0 20%,
+    #f0f0f0 40%,
+    #f0f0f0 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.skeleton-text {
+  height: 16px;
+  margin: 4px 0;
+}
+
+.skeleton-id {
+  width: 40px;
+}
+
+.skeleton-name {
+  width: 180px;
+}
+
+.skeleton-email {
+  width: 200px;
+}
+
+.skeleton-clave {
+  width: 100px;
+}
+
+.skeleton-badge {
+  height: 28px;
+  width: 100px;
+  border-radius: 16px;
+}
+
+.skeleton-select {
+  height: 38px;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.skeleton-stat-title {
+  width: 200px;
+  height: 20px;
+  margin-bottom: 12px;
+}
+
+.skeleton-stat {
+  width: 120px;
+  height: 18px;
+}
+
+/* Evitar hover effect en skeleton rows */
+.skeleton-row:hover {
+  background-color: transparent !important;
+}

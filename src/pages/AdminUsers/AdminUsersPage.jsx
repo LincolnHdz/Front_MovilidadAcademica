@@ -2,7 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
 import Filtros from "../../components/Filter"; 
+
 import "./AdminUsersPage.css";
+
+// Componente Skeleton Loading
+const SkeletonRow = () => (
+  <tr className="skeleton-row">
+    <td><div className="skeleton skeleton-text skeleton-id"></div></td>
+    <td><div className="skeleton skeleton-text skeleton-name"></div></td>
+    <td><div className="skeleton skeleton-text skeleton-email"></div></td>
+    <td><div className="skeleton skeleton-text skeleton-clave"></div></td>
+    <td><div className="skeleton skeleton-badge"></div></td>
+    <td><div className="skeleton skeleton-select"></div></td>
+  </tr>
+);
 
 const AdminUsersPage = () => {
   const { user } = useAuth();
@@ -123,90 +136,106 @@ const AdminUsersPage = () => {
         </div>
       )}
       
-      {!loading && !error && (
-        <>
-          <div className="table-container">
-            <table className="users-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Nombre completo</th>
-                  <th>Correo electrónico</th>
-                  <th>Clave</th>
-                  <th>Rol</th>
-                  <th>Acciones</th>
+      <div className="table-container">
+        <table className="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre completo</th>
+              <th>Correo electrónico</th>
+              <th>Clave</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              // Mostrar skeleton mientras carga
+              <>
+                {[...Array(8)].map((_, index) => (
+                  <SkeletonRow key={index} />
+                ))}
+              </>
+            ) : !Array.isArray(users) ? (
+              <tr>
+                <td colSpan="6" className="empty-state">
+                  No hay datos de usuarios disponibles
+                </td>
+              </tr>
+            ) : users.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="empty-state">
+                  No se encontraron usuarios
+                </td>
+              </tr>
+            ) : (
+              users.map((u) => (
+                <tr key={u.id}>
+                  <td>{u.id}</td>
+                  <td>
+                    <strong>{u.nombres} {u.apellido_paterno} {u.apellido_materno || ''}</strong>
+                  </td>
+                  <td>{u.email}</td>
+                  <td>{u.clave}</td>
+                  <td>
+                    <span className={`user-role role-${u.rol}`}>
+                      {u.rol}
+                    </span>
+                  </td>
+                  <td>
+                    <div className="action-container">
+                      <select
+                        className="select-role"
+                        value={u.rol}
+                        onChange={(e) => handleChangeRole(u.id, e.target.value)}
+                        title="Cambiar rol de usuario"
+                      >
+                        <option value="alumno">Alumno</option>
+                        <option value="becarios">Becario</option>
+                        <option value="administrador">Administrador</option>
+                      </select>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {!Array.isArray(users) ? (
-                  <tr>
-                    <td colSpan="6" className="empty-state">
-                      No hay datos de usuarios disponibles
-                    </td>
-                  </tr>
-                ) : users.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="empty-state">
-                      No se encontraron usuarios
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((u) => (
-                    <tr key={u.id}>
-                      <td>{u.id}</td>
-                      <td>
-                        <strong>{u.nombres} {u.apellido_paterno} {u.apellido_materno || ''}</strong>
-                      </td>
-                      <td>{u.email}</td>
-                      <td>{u.clave}</td>
-                      <td>
-                        <span className={`user-role role-${u.rol}`}>
-                          {u.rol}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="action-container">
-                          <select
-                            className="select-role"
-                            value={u.rol}
-                            onChange={(e) => handleChangeRole(u.id, e.target.value)}
-                            title="Cambiar rol de usuario"
-                          >
-                            <option value="alumno">Alumno</option>
-                            <option value="becarios">Becario</option>
-                            <option value="administrador">Administrador</option>
-                          </select>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-          <div className="users-stats">
-            <p className="total-users">
-              <span>Total de usuarios:</span> 
-              <strong>{Array.isArray(users) ? users.length : 0}</strong>
-            </p>
-            {Array.isArray(users) && users.length > 0 && (
-              <div className="role-stats">
-                <div className="role-stat">
-                  <span>Alumnos:</span>
-                  <strong>{users.filter(u => u.rol === 'alumno').length}</strong>
-                </div>
-                <div className="role-stat">
-                  <span>Becarios:</span>
-                  <strong>{users.filter(u => u.rol === 'becarios').length}</strong>
-                </div>
-                <div className="role-stat">
-                  <span>Administradores:</span>
-                  <strong>{users.filter(u => u.rol === 'administrador').length}</strong>
-                </div>
-              </div>
+              ))
             )}
+          </tbody>
+        </table>
+      </div>
+      
+      {loading ? (
+        // Skeleton para las estadísticas
+        <div className="users-stats">
+          <div className="skeleton skeleton-text skeleton-stat-title"></div>
+          <div className="role-stats">
+            <div className="skeleton skeleton-text skeleton-stat"></div>
+            <div className="skeleton skeleton-text skeleton-stat"></div>
+            <div className="skeleton skeleton-text skeleton-stat"></div>
           </div>
-        </>
+        </div>
+      ) : (
+        <div className="users-stats">
+          <p className="total-users">
+            <span>Total de usuarios:</span> 
+            <strong>{Array.isArray(users) ? users.length : 0}</strong>
+          </p>
+          {Array.isArray(users) && users.length > 0 && (
+            <div className="role-stats">
+              <div className="role-stat">
+                <span>Alumnos:</span>
+                <strong>{users.filter(u => u.rol === 'alumno').length}</strong>
+              </div>
+              <div className="role-stat">
+                <span>Becarios:</span>
+                <strong>{users.filter(u => u.rol === 'becarios').length}</strong>
+              </div>
+              <div className="role-stat">
+                <span>Administradores:</span>
+                <strong>{users.filter(u => u.rol === 'administrador').length}</strong>
+              </div>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
