@@ -1,0 +1,37 @@
+{
+  "hero": {
+    "title": "Movilidad Académica - Facultad de Ingeniería",
+    "subtitle": "Impulsando experiencias internacionales para estudiantes y docentes de Ingeniería."
+  },
+  "programas": {
+    "title": "Programas de Movilidad",
+    "description": "Conoce nuestras oportunidades de intercambio y convenios con universidades en todo el mundo.",
+    "cards": {
+      "intercambio": {
+        "title": "Intercambio Académico",
+        "text": "Convenios con universidades de América, Europa y Asia."
+      },
+      "investigacion": {
+        "title": "Movilidad de Investigación",
+        "text": "Colabora en proyectos de ingeniería con instituciones de prestigio internacional."
+      },
+      "practicas": {
+        "title": "Prácticas Profesionales",
+        "text": "Realiza prácticas en empresas y organismos internacionales de ingeniería."
+      }
+    }
+  },
+  "experiencias": {
+    "title": "Experiencias de Estudiantes",
+    "cards": [
+      {
+        "text": "\"Mi experiencia en Alemania fue increíble. Aprendí mucho sobre ingeniería y conocí personas de todo el mundo.\"",
+        "author": "— Ana Pérez, Ingeniería Mecánica"
+      },
+      {
+        "text": "\"El intercambio en Argentina me ayudó a crecer académica y personalmente dentro de mi carrera.\"",
+        "author": "— Luis Hernández, Ingeniería en Sistemas"
+      }
+    ]
+  }
+}

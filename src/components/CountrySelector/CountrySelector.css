@@ -1,0 +1,51 @@
+.country-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.country-selector .form-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+}
+
+.country-selector .label-icon {
+  width: 1rem;
+  height: 1rem;
+  color: #6b7280;
+}
+
+.country-selector .form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: #fff;
+}
+
+.country-selector .form-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.country-selector .form-input:disabled {
+  background-color: #f9fafb;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+
+.country-selector .form-input.error {
+  border-color: #ef4444;
+}
+
+.country-selector .form-input.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}

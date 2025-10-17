@@ -1,0 +1,178 @@
+/* Estilos para el slider de materias */
+.materias-slider-container {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.slider-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.slider-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.slider-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.slider-btn:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.materias-slider {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #2563eb #e2e8f0;
+}
+
+.materias-slider::-webkit-scrollbar {
+  height: 8px;
+}
+
+.materias-slider::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 4px;
+}
+
+.materias-slider::-webkit-scrollbar-thumb {
+  background-color: #2563eb;
+  border-radius: 4px;
+}
+
+.materias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.slider-item {
+  flex: 0 0 auto;
+  width: 250px;
+}
+
+.materia-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  gap: 0.75rem;
+}
+
+.materia-icon {
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.materia-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.materia-name {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.materia-code {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.remove-materia-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.remove-materia-btn:hover {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.05);
+}
+
+.no-materias-message {
+  text-align: center;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #e2e8f0;
+  color: #64748b;
+  font-size: 0.875rem;
+}
+
+/* Estilos para el modo compacto */
+.compact-mode {
+  margin-top: 0;
+}
+
+.compact-slider {
+  padding: 0;
+  gap: 0.5rem;
+  height: 38px;
+}
+
+.compact-item {
+  padding: 0.25rem 0.5rem;
+  background-color: #edf5fd !important;
+  border: 1px solid #d0e1fd !important;
+  height: 38px;
+  width: auto !important;
+  min-width: 160px;
+}
+
+.compact-item .materia-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.compact-item .materia-name {
+  font-size: 0.75rem;
+  margin-bottom: 0;
+  line-height: 1.2;
+}
+
+.compact-item .materia-code {
+  display: none;
+}
+
+.compact-slider::-webkit-scrollbar {
+  height: 4px;
+}

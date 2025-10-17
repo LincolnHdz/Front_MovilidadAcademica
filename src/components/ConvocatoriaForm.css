@@ -1,0 +1,319 @@
+.convocatoria-form-container {
+  background: linear-gradient(to bottom right, #f8fafc, #eef2ff);
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  padding: 2.5rem;
+  margin: 2rem auto;
+  max-width: 700px;
+  position: relative;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.convocatoria-form-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #2563eb, #4f46e5);
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  position: relative;
+}
+
+.form-header h3 {
+  color: #1e40af;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-left: 1rem;
+}
+
+.form-header h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10%;
+  height: 80%;
+  width: 4px;
+  background: #2563eb;
+  border-radius: 2px;
+}
+
+.cancel-btn {
+  background: linear-gradient(to bottom, #f9fafb, #f3f4f6);
+  color: #bd2626;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+.cancel-btn:hover {
+  background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+  color: #a51313;
+  transform: rotate(90deg);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+}
+
+.convocatoria-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-group label {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-input,
+.form-textarea {
+  padding: 1rem 1.25rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  background: #f8fafc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  color: #000000; /* Cambiamos el color del texto a negro */
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: #ffffff;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 150px;
+  line-height: 1.6;
+  color: #000000; /* Cambiamos el color del texto a negro */
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #94a3b8;
+  font-style: italic;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus::placeholder,
+.form-textarea:focus::placeholder {
+  opacity: 0.5;
+}
+
+.input-focused {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  background: #ffffff !important;
+}
+
+.form-hint {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-top: 0.4rem;
+  font-style: italic;
+}
+
+.error-message {
+  background-color: #fef2f2;
+  border-left: 4px solid #ef4444;
+  color: #b91c1c;
+  padding: 1.2rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  animation: fadeInUp 0.4s ease forwards;
+  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-message p {
+  margin: 0;
+  font-weight: 500;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1.2rem;
+  margin-top: 1rem;
+  justify-content: flex-end;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.submit-btn {
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -1px rgba(37, 99, 235, 0.1);
+  min-width: 140px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.submit-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: width 0.3s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3), 0 4px 6px -2px rgba(37, 99, 235, 0.1);
+}
+
+.submit-btn:hover::before {
+  width: 100%;
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 5px 8px -1px rgba(37, 99, 235, 0.2);
+}
+
+.submit-btn:disabled {
+  background: linear-gradient(to right, #94a3b8, #cbd5e1);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cancel-form-btn {
+  background: linear-gradient(to right, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 140px;
+  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2), 0 2px 4px -1px rgba(239, 68, 68, 0.1);
+}
+
+.cancel-form-btn:hover {
+  background: linear-gradient(to right, #dc2626, #b91c1c);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.3), 0 4px 6px -2px rgba(239, 68, 68, 0.1);
+}
+
+.cancel-form-btn:active {
+  transform: translateY(1px);
+  background: linear-gradient(to right, #b91c1c, #991b1b);
+  box-shadow: 0 3px 5px -1px rgba(239, 68, 68, 0.2);
+}
+
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .convocatoria-form-container {
+    padding: 2rem;
+    margin: 1.5rem 1rem;
+    border-radius: 12px;
+  }
+  
+  .form-header h3 {
+    font-size: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 1rem;
+  }
+  
+  .submit-btn,
+  .cancel-form-btn {
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .convocatoria-form-container {
+    padding: 1.5rem;
+    margin: 1rem;
+    border-radius: 10px;
+  }
+  
+  .form-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-input, 
+  .form-textarea {
+    padding: 0.875rem 1rem;
+  }
+}

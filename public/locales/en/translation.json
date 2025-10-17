@@ -1,0 +1,37 @@
+{
+  "hero": {
+    "title": "Academic Mobility - Faculty of Engineering",
+    "subtitle": "Promoting international experiences for Engineering students and faculty."
+  },
+  "programas": {
+    "title": "Mobility Programs",
+    "description": "Discover our exchange opportunities and agreements with universities around the world.",
+    "cards": {
+      "intercambio": {
+        "title": "Academic Exchange",
+        "text": "Agreements with universities in the Americas, Europe, and Asia."
+      },
+      "investigacion": {
+        "title": "Research Mobility",
+        "text": "Collaborate on engineering projects with prestigious international institutions."
+      },
+      "practicas": {
+        "title": "Professional Internships",
+        "text": "Complete internships in international engineering companies and organizations."
+      }
+    }
+  },
+  "experiencias": {
+    "title": "Student Experiences",
+    "cards": [
+      {
+        "text": "\"My experience in Germany was amazing. I learned a lot about engineering and met people from all over the world.\"",
+        "author": "— Ana Pérez, Mechanical Engineering"
+      },
+      {
+        "text": "\"The exchange in Argentina helped me grow academically and personally within my career.\"",
+        "author": "— Luis Hernández, Computer Systems Engineering"
+      }
+    ]
+  }
+}

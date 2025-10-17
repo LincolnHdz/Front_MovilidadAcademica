@@ -1,0 +1,104 @@
+.movilidad-container {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #333;
+  background: #fff;
+  
+}
+
+/* Hero */
+
+
+
+
+
+/* Info */
+.info {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.info h3 {
+  color: #004b87;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+.info h4 {
+  margin-top: 40px;
+  font-size: 22px;
+  color: #004b87;
+}
+
+.info ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+}
+
+.info ul li {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Formatos */
+.formatos {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #eee;
+  padding: 24px;
+  border-radius: 12px;
+  width: 250px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card img {
+  width: 80px;
+  height: auto;
+  margin-bottom: 15px;
+}
+
+.card h5 {
+  font-size: 18px;
+  color: #004b87;
+}
+
+/* Contacto */
+.contacto {
+  max-width: 800px;
+  margin: 60px auto;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.contacto h3 {
+  font-size: 26px;
+  color: #004b87;
+  margin-bottom: 20px;
+}
+
+.contacto p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+

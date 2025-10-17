@@ -1,35 +1,104 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import facultad from "./Img/facultad.png";
+import "./App.css";
+import "./i18n";
+import PerfilPage from "./pages/PerfilPage/PerfilPage";
+import { useTranslation } from "react-i18next";
+import Navigation from "./components/Navigation";
+import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
+import ConvocatoriasPage from "./pages/ConvocatoriasPage/ConvocatoriasPage";
+import MovilidadPresencial from "./pages/MovilidadPresencial/MovilidadPresencial";
+import MovilidadVirtual from "./pages/MovilidadVirtual/MovilidadVirtual";
+import MovAcadFormatos from "./pages/MovAcadFormatos/MovAcadFormatos";
+import DeptoRelInter from "./pages/DptoRelInt/DeptoRelInter";
+import DobleTitulacion from "./pages/DobleTitulacion/DobleTitulacion";
+import BecasParaFrancia from "./pages/BecasParaFrancia/BecasParaFrancia";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import AdminUsersPage from "./pages/AdminUsers/AdminUsersPage";
+import AdminApplicationsPage from "./pages/AdminApplications/AdminApplicationsPage";
+import CatalogoPage from "./pages/CatalogoPage/CatalogoPage";
+import Solicitud from "./pages/ApplicationPage/ApplicationPage";
+import AdminChartsPage from "./pages/AdminCharts/AdminChartsPage";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+const HomePage = () => {
+  const { t } = useTranslation();
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div>
+      {/* Hero */}
+      <section
+        className="hero"
+        style={{
+          backgroundImage: `url(${facultad})`,
+        }}
+      >
+        <div className="overlay">
+          <h2>{t("hero.title")}</h2>
+          <p>{t("hero.subtitle")}</p>
+        </div>
+      </section>
 
-export default App
+      {/* Programas */}
+      <section id="programas" className="section">
+        <h3>{t("programas.title")}</h3>
+        <p>{t("programas.description")}</p>
+        <div className="cards">
+          <div className="card">
+            <h4>{t("programas.cards.intercambio.title")}</h4>
+            <p>{t("programas.cards.intercambio.text")}</p>
+          </div>
+          <div className="card">
+            <h4>{t("programas.cards.investigacion.title")}</h4>
+            <p>{t("programas.cards.investigacion.text")}</p>
+          </div>
+          <div className="card">
+            <h4>{t("programas.cards.practicas.title")}</h4>
+            <p>{t("programas.cards.practicas.text")}</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="convocatorias" className="section">
+        <ConvocatoriasSlider />
+      </section>
+
+      <section id="experiencias" className="section">
+        <h3>{t("experiencias.title")}</h3>
+        <div className="cards">
+          <div className="card">
+            <p>{t("experiencias.cards.0.text")}</p>
+            <span>{t("experiencias.cards.0.author")}</span>
+          </div>
+          <div className="card">
+            <p>{t("experiencias.cards.1.text")}</p>
+            <span>{t("experiencias.cards.1.author")}</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<HomePage />} />
+      <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
+      <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
+      <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
+      <Route path="/MovAcadFormatos" element={<MovAcadFormatos />} />
+      <Route path="/deptoRelInter" element={<DeptoRelInter />} />
+      <Route path="/doble-titulacion" element={<DobleTitulacion />} />
+      <Route path="/becas-Francia" element={<BecasParaFrancia />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/perfil" element={<PerfilPage />} />
+      <Route path="/admin/usuarios" element={<AdminUsersPage />} />
+      <Route path="/admin/applications" element={<AdminApplicationsPage />} />
+      <Route path="/admin/catalogos" element={<CatalogoPage />} />
+      <Route path="/admin/graficas" element={<AdminChartsPage />} />
+      <Route path="/solicitud" element={<Solicitud />} />
+    </Routes>
+  );
+}
