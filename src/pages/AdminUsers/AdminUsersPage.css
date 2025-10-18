@@ -361,3 +361,44 @@
 .skeleton-row:hover {
   background-color: transparent !important;
 }
+
+
+/* Estilos para las pestañas */
+.tabs-container {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  bottom: -2px;
+}
+
+.tab-button:hover {
+  color: #004a98;
+  background-color: #f5f5f5;
+}
+
+.tab-button.active {
+  color: #004a98;
+  border-bottom-color: #004a98;
+  font-weight: 600;
+}
+
+.tab-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+

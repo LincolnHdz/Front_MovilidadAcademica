@@ -4,8 +4,8 @@ import api from "../../api/axiosConfig";
 import Filtros from "../../components/Filter"; 
 
 import "./AdminUsersPage.css";
+import UserDetailsModal from "./UserDetailModal/UserDetailsModal";
 
-// Componente Skeleton Loading
 const SkeletonRow = () => (
   <tr className="skeleton-row">
     <td><div className="skeleton skeleton-text skeleton-id"></div></td>
@@ -23,7 +23,10 @@ const AdminUsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [showFiltros, setShowFiltros] = useState(false); 
+  const [showFiltros, setShowFiltros] = useState(false);
+  const [activeTab, setActiveTab] = useState("todos");
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showUserModal, setShowUserModal] = useState(false);
 
   const fetchUsers = async () => {
     try {
@@ -77,7 +80,53 @@ const AdminUsersPage = () => {
     }
   }, [user?.rol]);
 
+  useEffect(() => {
+    if (showUserModal || showFiltros) {
+      document.body.classList.add("no-scroll");
+    } else {
+      document.body.classList.remove("no-scroll");
+    }
+
+    return () => {
+      document.body.classList.remove("no-scroll");
+    };
+  }, [showUserModal, showFiltros]);
+
   const handleRefresh = () => fetchUsers();
+
+  const getFilteredUsers = () => {
+    if (!Array.isArray(users)) return [];
+
+    switch (activeTab) {
+      case "movilidad":
+        return users.filter(u => 
+          u.tipo_movilidad === "movilidad_virtual" || 
+          u.tipo_movilidad === "movilidad_internacional"
+        );
+      
+      case "visitantes":
+        return users.filter(u => 
+          u.tipo_movilidad === "visitante_nacional" || 
+          u.tipo_movilidad === "visitante_internacional"
+        );
+      
+      case "todos":
+      default:
+        return users;
+    }
+  };
+
+  const filteredUsers = getFilteredUsers();
+
+  const handleUserDoubleClick = (user) => {
+    setSelectedUser(user);
+    setShowUserModal(true);
+  };
+
+  const closeUserModal = () => {
+    setShowUserModal(false);
+    setSelectedUser(null);
+  };
 
   if (user?.rol !== "administrador") {
     return (
@@ -106,7 +155,27 @@ const AdminUsersPage = () => {
         </button>
       </div>
 
-            {/* Modal de filtros */}
+      <div className="tabs-container">
+        <button
+          className={`tab-button ${activeTab === "todos" ? "active" : ""}`}
+          onClick={() => setActiveTab("todos")}
+        >
+          Todos los usuarios
+        </button>
+        <button
+          className={`tab-button ${activeTab === "movilidad" ? "active" : ""}`}
+          onClick={() => setActiveTab("movilidad")}
+        >
+          Movilidad Virtual e Internacional
+        </button>
+        <button
+          className={`tab-button ${activeTab === "visitantes" ? "active" : ""}`}
+          onClick={() => setActiveTab("visitantes")}
+        >
+          Visitantes Nacionales e Internacionales
+        </button>
+      </div>
+
       {showFiltros && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -150,27 +219,31 @@ const AdminUsersPage = () => {
           </thead>
           <tbody>
             {loading ? (
-              // Mostrar skeleton mientras carga
               <>
                 {[...Array(8)].map((_, index) => (
                   <SkeletonRow key={index} />
                 ))}
               </>
-            ) : !Array.isArray(users) ? (
+            ) : !Array.isArray(filteredUsers) ? (
               <tr>
                 <td colSpan="6" className="empty-state">
                   No hay datos de usuarios disponibles
                 </td>
               </tr>
-            ) : users.length === 0 ? (
+            ) : filteredUsers.length === 0 ? (
               <tr>
                 <td colSpan="6" className="empty-state">
-                  No se encontraron usuarios
+                  No se encontraron usuarios en esta categoría
                 </td>
               </tr>
             ) : (
-              users.map((u) => (
-                <tr key={u.id}>
+              filteredUsers.map((u) => (
+                <tr 
+                  key={u.id} 
+                  onDoubleClick={() => handleUserDoubleClick(u)}
+                  style={{ cursor: 'pointer' }}
+                  title="Doble click para ver detalles"
+                >
                   <td>{u.id}</td>
                   <td>
                     <strong>{u.nombres} {u.apellido_paterno} {u.apellido_materno || ''}</strong>
@@ -202,9 +275,16 @@ const AdminUsersPage = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modal de detalles usando el componente */}
+      {showUserModal && selectedUser && (
+        <UserDetailsModal
+          user={selectedUser} 
+          onClose={closeUserModal} 
+        />
+      )}
       
       {loading ? (
-        // Skeleton para las estadísticas
         <div className="users-stats">
           <div className="skeleton skeleton-text skeleton-stat-title"></div>
           <div className="role-stats">
@@ -216,22 +296,22 @@ const AdminUsersPage = () => {
       ) : (
         <div className="users-stats">
           <p className="total-users">
-            <span>Total de usuarios:</span> 
-            <strong>{Array.isArray(users) ? users.length : 0}</strong>
+            <span>Total de usuarios {activeTab !== "todos" ? "filtrados" : ""}:</span> 
+            <strong>{Array.isArray(filteredUsers) ? filteredUsers.length : 0}</strong>
           </p>
-          {Array.isArray(users) && users.length > 0 && (
+          {Array.isArray(filteredUsers) && filteredUsers.length > 0 && (
             <div className="role-stats">
               <div className="role-stat">
                 <span>Alumnos:</span>
-                <strong>{users.filter(u => u.rol === 'alumno').length}</strong>
+                <strong>{filteredUsers.filter(u => u.rol === 'alumno').length}</strong>
               </div>
               <div className="role-stat">
                 <span>Becarios:</span>
-                <strong>{users.filter(u => u.rol === 'becarios').length}</strong>
+                <strong>{filteredUsers.filter(u => u.rol === 'becarios').length}</strong>
               </div>
               <div className="role-stat">
                 <span>Administradores:</span>
-                <strong>{users.filter(u => u.rol === 'administrador').length}</strong>
+                <strong>{filteredUsers.filter(u => u.rol === 'administrador').length}</strong>
               </div>
             </div>
           )}
