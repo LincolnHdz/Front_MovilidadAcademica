@@ -8,12 +8,12 @@
     "description": "Discover our exchange opportunities and agreements with universities around the world.",
     "cards": {
       "intercambio": {
-        "title": "Academic Exchange",
-        "text": "Agreements with universities in the Americas, Europe, and Asia."
+        "title": "Virtual Mobility",
+        "text": "Participate in international academic programs from anywhere. Connect with universities around the world and enrich your education without borders."
       },
       "investigacion": {
-        "title": "Research Mobility",
-        "text": "Collaborate on engineering projects with prestigious international institutions."
+        "title": "National Mobility",
+        "text": "Explore educational institutions across the country. Expand your academic network and discover new perspectives in different regions of Mexico."
       },
       "practicas": {
         "title": "Professional Internships",
@@ -25,8 +25,8 @@
     "title": "Student Experiences",
     "cards": [
       {
-        "text": "\"My experience in Germany was amazing. I learned a lot about engineering and met people from all over the world.\"",
-        "author": "— Ana Pérez, Mechanical Engineering"
+        "text": "\"My stay at CityU opened up a multicultural panorama for me in the area of ​​work and study.\"",
+        "author": "— Ana Cristina Martínez Aguirre"
       },
       {
         "text": "\"The exchange in Argentina helped me grow academically and personally within my career.\"",
