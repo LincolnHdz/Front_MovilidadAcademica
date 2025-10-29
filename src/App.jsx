@@ -45,16 +45,12 @@ const HomePage = () => {
         <p>{t("programas.description")}</p>
         <div className="cards">
           <div className="card">
-            <h4>{t("programas.cards.intercambio.title")}</h4>
-            <p>{t("programas.cards.intercambio.text")}</p>
+            <h4>{t("programas.cards.movilidadVirtual.title")}</h4>
+            <p>{t("programas.cards.movilidadVirtual.text")}</p>
           </div>
           <div className="card">
-            <h4>{t("programas.cards.investigacion.title")}</h4>
-            <p>{t("programas.cards.investigacion.text")}</p>
-          </div>
-          <div className="card">
-            <h4>{t("programas.cards.practicas.title")}</h4>
-            <p>{t("programas.cards.practicas.text")}</p>
+            <h4>{t("programas.cards.movilidadNacional.title")}</h4>
+            <p>{t("programas.cards.movilidadNacional.text")}</p>
           </div>
         </div>
       </section>

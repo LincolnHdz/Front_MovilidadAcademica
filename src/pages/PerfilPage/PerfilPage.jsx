@@ -229,6 +229,8 @@ const PerfilPage = () => {
         ? `/users/${user.id}/tipo-movilidad`
         : fieldName === 'ciclo_escolar'
         ? `/users/${user.id}/ciclo-escolar`
+        : fieldName.includes('ciclo_escolar')
+        ? `/users/${user.id}/ciclo-escolar`
         : `/users/${user.id}`;
       
       const response = await api.patch(endpoint, { [fieldName]: value });
@@ -318,14 +320,18 @@ const PerfilPage = () => {
             <span className="label">Ciclo Escolar:</span>
             <div className="perfil-ciclo-container">
               <CicloEscolarSelector
-                value={user.ciclo_escolar || ''}
-                onChange={async (value) => {
-                  const success = await handleFieldUpdate('ciclo_escolar', value || null);
-                  if (!success) alert("Error al actualizar ciclo escolar");
+                valueInicio={user.ciclo_escolar_inicio || ''}
+                valueFinal={user.ciclo_escolar_final || ''}
+                onChangeInicio={async (value) => {
+                  const success = await handleFieldUpdate('ciclo_escolar_inicio', value || null);
+                  if (!success) alert("Error al actualizar ciclo escolar de inicio");
+                }}
+                onChangeFinal={async (value) => {
+                  const success = await handleFieldUpdate('ciclo_escolar_final', value || null);
+                  if (!success) alert("Error al actualizar ciclo escolar final");
                 }}
                 className="perfil-ciclo-selector"
                 showLabel={false}
-                placeholder="Selecciona tu ciclo escolar"
               />
             </div>
           </div>
