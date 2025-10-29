@@ -156,7 +156,7 @@ const ApplicationCard = ({
                 <strong style={{ color: '#2980b9', display: 'inline-block', width: '120px' }}>Ciclo Escolar:</strong> 
                 <span style={{ color: '#273746' }}>
                   {app.cicloescolarinicio && app.cicloescolarfinal 
-                    ? `${app.cicloescolarinicio}-${app.cicloescolarfinal}`
+                    ? `${app.cicloescolarinicio} - ${app.cicloescolarfinal}`
                     : app.cicloescolar || 'N/A'
                   }
                 </span>
