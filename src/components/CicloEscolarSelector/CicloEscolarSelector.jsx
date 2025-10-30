@@ -3,12 +3,13 @@ import { Calendar } from "lucide-react";
 import "./CicloEscolarSelector.css";
 
 const CicloEscolarSelector = ({ 
-  value, 
-  onChange, 
+  valueInicio, 
+  valueFinal,
+  onChangeInicio,
+  onChangeFinal,
   className = "", 
   disabled = false, 
-  showLabel = true, 
-  placeholder = "Selecciona ciclo escolar" 
+  showLabel = true 
 }) => {
   // Generar opciones de ciclos escolares dinámicamente
   const generateCiclosEscolares = () => {
@@ -21,84 +22,84 @@ const CicloEscolarSelector = ({
     // Si estamos en enero-julio, el ciclo actual comenzó el año anterior
     // Si estamos en agosto-diciembre, el ciclo actual comenzó este año
     let currentCycleStartYear = currentMonth >= 8 ? currentYear : currentYear - 1;
-    
-    // Generar ciclos desde 2 años atrás hasta 2 años adelante
-    for (let yearOffset = -2; yearOffset <= 2; yearOffset++) {
+    // Generar ciclos desde 1 año atrás hasta 3 años adelante
+    for (let yearOffset = -1; yearOffset <= 3; yearOffset++) {
       const startYear = currentCycleStartYear + yearOffset;
-      const endYear = startYear + 1;
       
-      // Para el ciclo actual, determinar qué semestres mostrar
-      if (yearOffset === 0) {
-        // Ciclo actual - mostrar siempre ambos semestres
-        ciclos.push({
-          value: `${startYear}-${endYear}/I`,
-          label: `${startYear}-${endYear}/I`
-        });
-        
-        // Siempre mostrar el segundo semestre para el ciclo actual
-        ciclos.push({
-          value: `${startYear}-${endYear}/II`,
-          label: `${startYear}-${endYear}/II`
-        });
-      } else {
-        // Para otros ciclos, mostrar ambos semestres
-        ciclos.push({
-          value: `${startYear}-${endYear}/I`,
-          label: `${startYear}-${endYear}/I`
-        });
-        ciclos.push({
-          value: `${startYear}-${endYear}/II`,
-          label: `${startYear}-${endYear}/II`
-        });
-      }
+      // Agregar ambos semestres para cada año
+      ciclos.push({
+        value: `${startYear}/I`,
+        label: `${startYear}/I`,
+        year: startYear,
+        semester: 'I'
+      });
+      ciclos.push({
+        value: `${startYear}/II`,
+        label: `${startYear}/II`,
+        year: startYear,
+        semester: 'II'
+      });
     }
     
-    // Ordenar por año y semestre
+    // Ordenar por año y luego por semestre (más reciente primero)
     return ciclos.sort((a, b) => {
-      const [yearA, semA] = a.value.split('/');
-      const [yearB, semB] = b.value.split('/');
-      const [startYearA] = yearA.split('-').map(Number);
-      const [startYearB] = yearB.split('-').map(Number);
-      
-      if (startYearA !== startYearB) {
-        return startYearB - startYearA; // Más reciente primero
+      if (a.year !== b.year) {
+        return b.year - a.year; // Más reciente primero
       }
-      return semB.localeCompare(semA); // II antes que I para el mismo año
+      return a.semester === 'I' ? 1 : -1; // Semestre II antes que I en el mismo año
     });
   };
 
-  const handleChange = (e) => {
-    const selectedValue = e.target.value;
-    if (onChange) {
-      onChange(selectedValue);
-    }
-  };
-
-  const ciclosOptions = generateCiclosEscolares();
+  const ciclosEscolares = generateCiclosEscolares();
 
   return (
     <div className={`ciclo-escolar-selector ${className}`}>
       {showLabel && (
-        <label htmlFor="cicloEscolar" className="ciclo-label">
+        <label className="ciclo-label">
           <Calendar className="label-icon" />
           Ciclo Escolar
         </label>
       )}
-      <select
-        id="cicloEscolar"
-        name="cicloEscolar"
-        value={value || ""}
-        onChange={handleChange}
-        className="ciclo-select"
-        disabled={disabled}
-      >
-        <option value="">{placeholder}</option>
-        {ciclosOptions.map(ciclo => (
-          <option key={ciclo.value} value={ciclo.value}>
-            {ciclo.label}
-          </option>
-        ))}
-      </select>
+      
+      <div className="ciclo-inputs-container">
+        <div className="ciclo-input-group">
+          <select
+            id="cicloInicio"
+            name="cicloInicio"
+            value={valueInicio || ''}
+            onChange={(e) => onChangeInicio(e.target.value)}
+            className="ciclo-select"
+            disabled={disabled}
+          >
+            <option value="">Inicio</option>
+            {ciclosEscolares.map(ciclo => (
+              <option key={`inicio-${ciclo.value}`} value={ciclo.value}>
+                {ciclo.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="ciclo-separator">-</div>
+
+        <div className="ciclo-input-group">
+          <select
+            id="cicloFinal"
+            name="cicloFinal"
+            value={valueFinal || ''}
+            onChange={(e) => onChangeFinal(e.target.value)}
+            className="ciclo-select"
+            disabled={disabled}
+          >
+            <option value="">Final</option>
+            {ciclosEscolares.map(ciclo => (
+              <option key={`final-${ciclo.value}`} value={ciclo.value}>
+                {ciclo.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
     </div>
   );
 };

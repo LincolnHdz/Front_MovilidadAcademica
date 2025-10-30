@@ -154,7 +154,12 @@ const ApplicationCard = ({
               </p>
               <p style={{ margin: '0.3rem 0' }}>
                 <strong style={{ color: '#2980b9', display: 'inline-block', width: '120px' }}>Ciclo Escolar:</strong> 
-                <span style={{ color: '#273746' }}>{app.cicloescolar}</span>
+                <span style={{ color: '#273746' }}>
+                  {app.cicloescolarinicio && app.cicloescolarfinal 
+                    ? `${app.cicloescolarinicio} - ${app.cicloescolarfinal}`
+                    : app.cicloescolar || 'N/A'
+                  }
+                </span>
               </p>
             </div>
           </div>

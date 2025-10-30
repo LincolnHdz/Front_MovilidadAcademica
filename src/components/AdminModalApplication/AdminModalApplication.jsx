@@ -32,7 +32,11 @@ const AdminModalApplication = ({
             </div>
             <div>
               <p><strong style={{ color: '#2980b9' }}>Carrera:</strong> {application.carrera}</p>
-              <p><strong style={{ color: '#2980b9' }}>Ciclo:</strong> {application.cicloescolar}</p>
+              <p><strong style={{ color: '#2980b9' }}>Ciclo:</strong> {
+                application.cicloescolarinicio && application.cicloescolarfinal 
+                  ? `${application.cicloescolarinicio} - ${application.cicloescolarfinal}`
+                  : application.cicloescolar || 'N/A'
+              }</p>
               {application.paisdestino && (
                 <p><strong style={{ color: '#2980b9' }}>País Destino:</strong> {application.paisdestino}</p>
               )}

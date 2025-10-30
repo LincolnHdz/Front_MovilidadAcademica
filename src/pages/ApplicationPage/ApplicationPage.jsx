@@ -48,7 +48,8 @@ const RegistroMateria = () => {
     apellidoMaterno: "",
     apellidoPaterno: "",
     clave: "",
-    cicloEscolar: "",
+    cicloEscolarInicio: "",
+    cicloEscolarFinal: "",
     carrera: "",
     universidad: "", 
     paisDestino: "",
@@ -157,7 +158,8 @@ const RegistroMateria = () => {
         apellidoMaterno: user.apellido_materno || "",
         apellidoPaterno: user.apellido_paterno || "",
         clave: user.clave || "",
-        cicloEscolar: user.ciclo_escolar || "",
+        cicloEscolarInicio: user.ciclo_escolar_inicio || "",
+        cicloEscolarFinal: user.ciclo_escolar_final || "",
         carrera: user.carrera_id ? getNombreCarrera(user.carrera_id) : "",
       }));
       
@@ -395,6 +397,14 @@ const RegistroMateria = () => {
       newErrors.carrera = "La carrera es requerida";
     }
 
+    if (!formData.cicloEscolarInicio.trim()) {
+      newErrors.cicloEscolarInicio = "El ciclo escolar de inicio es requerido";
+    }
+
+    if (!formData.cicloEscolarFinal.trim()) {
+      newErrors.cicloEscolarFinal = "El ciclo escolar final es requerido";
+    }
+
     if (!formData.archivo) {
       newErrors.archivo = "Por favor, sube un archivo";
     }
@@ -444,7 +454,8 @@ const RegistroMateria = () => {
       submitData.append("apellidoMaterno", formData.apellidoMaterno);
       submitData.append("apellidoPaterno", formData.apellidoPaterno);
       submitData.append("clave", formData.clave);
-      submitData.append("cicloEscolar", formData.cicloEscolar);
+      submitData.append("cicloEscolarInicio", formData.cicloEscolarInicio);
+      submitData.append("cicloEscolarFinal", formData.cicloEscolarFinal);
       submitData.append("universidad", formData.universidad);
       submitData.append("paisDestino", formData.paisDestino);
       submitData.append("carrera", formData.carrera);
@@ -720,19 +731,27 @@ const RegistroMateria = () => {
 
                 <div className="form-group">
                   <CicloEscolarSelector
-                    value={formData.cicloEscolar}
-                    onChange={(value) => {
-                      setFormData((prev) => ({ ...prev, cicloEscolar: value }));
-                      if (errors.cicloEscolar) {
-                        setErrors((prev) => ({ ...prev, cicloEscolar: "" }));
+                    valueInicio={formData.cicloEscolarInicio}
+                    valueFinal={formData.cicloEscolarFinal}
+                    onChangeInicio={(value) => {
+                      setFormData((prev) => ({ ...prev, cicloEscolarInicio: value }));
+                      if (errors.cicloEscolarInicio) {
+                        setErrors((prev) => ({ ...prev, cicloEscolarInicio: "" }));
+                      }
+                    }}
+                    onChangeFinal={(value) => {
+                      setFormData((prev) => ({ ...prev, cicloEscolarFinal: value }));
+                      if (errors.cicloEscolarFinal) {
+                        setErrors((prev) => ({ ...prev, cicloEscolarFinal: "" }));
                       }
                     }}
                     className="form-ciclo-selector"
                     showLabel={true}
-                    placeholder="Selecciona tu ciclo escolar"
                   />
-                  {errors.cicloEscolar && (
-                    <span className="error-message">{errors.cicloEscolar}</span>
+                  {(errors.cicloEscolarInicio || errors.cicloEscolarFinal) && (
+                    <span className="error-message">
+                      {errors.cicloEscolarInicio || errors.cicloEscolarFinal}
+                    </span>
                   )}
                 </div>
 
