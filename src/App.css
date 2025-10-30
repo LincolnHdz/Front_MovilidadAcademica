@@ -159,3 +159,6 @@ html, #root {
   color: #004b87;
 }
 
+body.no-scroll {
+  overflow: hidden !important;
+}
