@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
-import Filtros from "../../components/Filter"; 
-
+import Filtros from "../../components/Filter";
 import "./AdminUsersPage.css";
 import UserDetailsModal from "./UserDetailModal/UserDetailsModal";
 
@@ -27,6 +26,8 @@ const AdminUsersPage = () => {
   const [activeTab, setActiveTab] = useState("todos");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
 
   const fetchUsers = async () => {
     try {
@@ -34,7 +35,7 @@ const AdminUsersPage = () => {
       setError("");
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No autenticado");
-      
+
       const config = { headers: { Authorization: `Bearer ${token}` } };
       const response = await api.get("/users/all", config);
 
@@ -99,17 +100,19 @@ const AdminUsersPage = () => {
 
     switch (activeTab) {
       case "movilidad":
-        return users.filter(u => 
-          u.tipo_movilidad === "movilidad_virtual" || 
-          u.tipo_movilidad === "movilidad_internacional"
+        return users.filter(
+          (u) =>
+            u.tipo_movilidad === "movilidad_virtual" ||
+            u.tipo_movilidad === "movilidad_internacional"
         );
-      
+
       case "visitantes":
-        return users.filter(u => 
-          u.tipo_movilidad === "visitante_nacional" || 
-          u.tipo_movilidad === "visitante_internacional"
+        return users.filter(
+          (u) =>
+            u.tipo_movilidad === "visitante_nacional" ||
+            u.tipo_movilidad === "visitante_internacional"
         );
-      
+
       case "todos":
       default:
         return users;
@@ -118,8 +121,17 @@ const AdminUsersPage = () => {
 
   const filteredUsers = getFilteredUsers();
 
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  const handlePageChange = (page) => {
+    if (page > 0 && page <= totalPages) setCurrentPage(page);
+  };
+
   const handleUserDoubleClick = (user) => {
-    setSelectedUser(user);
+    setSelectedUser(user.id);
     setShowUserModal(true);
   };
 
@@ -198,7 +210,7 @@ const AdminUsersPage = () => {
           <strong>Error:</strong> {error}
         </div>
       )}
-      
+
       {successMessage && (
         <div className="status-message success-message">
           <strong>Éxito:</strong> {successMessage}
@@ -230,30 +242,30 @@ const AdminUsersPage = () => {
                   No hay datos de usuarios disponibles
                 </td>
               </tr>
-            ) : filteredUsers.length === 0 ? (
+            ) : currentUsers.length === 0 ? (
               <tr>
                 <td colSpan="6" className="empty-state">
                   No se encontraron usuarios en esta categoría
                 </td>
               </tr>
             ) : (
-              filteredUsers.map((u) => (
-                <tr 
-                  key={u.id} 
+              currentUsers.map((u) => (
+                <tr
+                  key={u.id}
                   onDoubleClick={() => handleUserDoubleClick(u)}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                   title="Doble click para ver detalles"
                 >
                   <td>{u.id}</td>
                   <td>
-                    <strong>{u.nombres} {u.apellido_paterno} {u.apellido_materno || ''}</strong>
+                    <strong>
+                      {u.nombres} {u.apellido_paterno} {u.apellido_materno || ""}
+                    </strong>
                   </td>
                   <td>{u.email}</td>
                   <td>{u.clave}</td>
                   <td>
-                    <span className={`user-role role-${u.rol}`}>
-                      {u.rol}
-                    </span>
+                    <span className={`user-role role-${u.rol}`}>{u.rol}</span>
                   </td>
                   <td>
                     <div className="action-container">
@@ -274,12 +286,37 @@ const AdminUsersPage = () => {
             )}
           </tbody>
         </table>
+
+        {/* 👇 PAGINACIÓN */}
+        {totalPages > 1 && (
+          <div className="pagination-container">
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              ⬅ Anterior
+            </button>
+
+            <span className="pagination-info">
+              Página {currentPage} de {totalPages}
+            </span>
+
+            <button
+              className="pagination-btn"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              Siguiente ➡
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Modal de detalles usando el componente */}
       {showUserModal && selectedUser && (
         <UserDetailsModal
-          user={selectedUser} 
+          userId={selectedUser}
           onClose={closeUserModal} 
         />
       )}
@@ -296,22 +333,24 @@ const AdminUsersPage = () => {
       ) : (
         <div className="users-stats">
           <p className="total-users">
-            <span>Total de usuarios {activeTab !== "todos" ? "filtrados" : ""}:</span> 
+            <span>
+              Total de usuarios {activeTab !== "todos" ? "filtrados" : ""}:
+            </span>
             <strong>{Array.isArray(filteredUsers) ? filteredUsers.length : 0}</strong>
           </p>
           {Array.isArray(filteredUsers) && filteredUsers.length > 0 && (
             <div className="role-stats">
               <div className="role-stat">
                 <span>Alumnos:</span>
-                <strong>{filteredUsers.filter(u => u.rol === 'alumno').length}</strong>
+                <strong>{filteredUsers.filter((u) => u.rol === "alumno").length}</strong>
               </div>
               <div className="role-stat">
                 <span>Becarios:</span>
-                <strong>{filteredUsers.filter(u => u.rol === 'becarios').length}</strong>
+                <strong>{filteredUsers.filter((u) => u.rol === "becarios").length}</strong>
               </div>
               <div className="role-stat">
                 <span>Administradores:</span>
-                <strong>{filteredUsers.filter(u => u.rol === 'administrador').length}</strong>
+                <strong>{filteredUsers.filter((u) => u.rol === "administrador").length}</strong>
               </div>
             </div>
           )}

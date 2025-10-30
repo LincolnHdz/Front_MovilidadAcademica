@@ -12,8 +12,8 @@
 .user-modal-content {
   background: #fff;
   border-radius: 12px;
-  width: 95%;
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1500px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;

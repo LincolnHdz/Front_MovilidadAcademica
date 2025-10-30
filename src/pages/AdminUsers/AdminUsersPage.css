@@ -402,3 +402,44 @@
   opacity: 0.5;
 }
 
+/* === PAGINACIÓN === */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 10px;
+  font-family: inherit;
+}
+
+.pagination-btn {
+  background-color: #004a98;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover {
+  background-color: #003a78;
+  transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+  background-color: #b0bec5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-info {
+  font-size: 15px;
+  color: #004a98;
+  font-weight: 500;
+  background-color: #f5f8fb;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
