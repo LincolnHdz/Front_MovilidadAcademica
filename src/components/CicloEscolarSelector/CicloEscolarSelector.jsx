@@ -25,17 +25,18 @@ const CicloEscolarSelector = ({
     // Generar ciclos desde 1 año atrás hasta 3 años adelante
     for (let yearOffset = -1; yearOffset <= 3; yearOffset++) {
       const startYear = currentCycleStartYear + yearOffset;
+      const endYear = startYear + 1;
       
-      // Agregar ambos semestres para cada año
+      // Agregar ambos semestres para cada año con formato YYYY-YYYY/I o YYYY-YYYY/II
       ciclos.push({
-        value: `${startYear}/I`,
-        label: `${startYear}/I`,
+        value: `${startYear}-${endYear}/I`,
+        label: `${startYear}-${endYear}/I`,
         year: startYear,
         semester: 'I'
       });
       ciclos.push({
-        value: `${startYear}/II`,
-        label: `${startYear}/II`,
+        value: `${startYear}-${endYear}/II`,
+        label: `${startYear}-${endYear}/II`,
         year: startYear,
         semester: 'II'
       });

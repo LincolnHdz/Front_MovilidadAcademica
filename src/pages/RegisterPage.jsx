@@ -37,7 +37,7 @@ const RegisterPage = () => {
     const res = await api.post("/auth/register", {
       nombres,
       apellido_paterno,
-      apellido_materno,
+      apellido_materno: apellido_materno || null,
       clave: clave || null,
       email,
       password

@@ -158,6 +158,7 @@
 table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
 th {
@@ -175,8 +176,17 @@ th {
 td {
   padding: 1rem;
   color: #475569;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 0.5px solid #e2e8f0;
   font-size: 0.95rem;
+  vertical-align: middle; 
+  height: 61px;
+  min-height: 61px; 
+  max-height: 61px;
+  line-height: 1.4; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 tr:hover td {

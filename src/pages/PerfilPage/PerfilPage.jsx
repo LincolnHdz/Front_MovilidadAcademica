@@ -175,7 +175,10 @@ const PerfilPage = () => {
     setPhoneLoading(true);
     setPhoneError("");
     try {
-      const response = await api.patch(`/users/${user.id}`, { telefono: newPhone });
+      const response = await api.patch(`/users/${user.id}/field`, { 
+        field: 'telefono', 
+        value: newPhone 
+      });
       if (response.data.success) {
         updateUser({ ...user, telefono: newPhone });
         setPhoneSuccess("Teléfono actualizado correctamente");
@@ -197,12 +200,11 @@ const PerfilPage = () => {
     try {
       const claveValue = newClave.trim();
       console.log("Enviando clave:", claveValue, "Tipo:", typeof claveValue);
-      console.log("Payload completo:", { clave: claveValue });
       
-      // Si está vacío, enviar null explícitamente
-      const payload = { clave: claveValue === "" ? null : claveValue };
-      
-      const response = await api.patch(`/users/${user.id}`, payload);
+      const response = await api.patch(`/users/${user.id}/field`, { 
+        field: 'clave', 
+        value: claveValue === "" ? null : claveValue 
+      });
       if (response.data.success) {
         updateUser({ ...user, clave: claveValue === "" ? null : claveValue });
         setClaveSuccess("Clave actualizada correctamente");
@@ -225,15 +227,10 @@ const PerfilPage = () => {
 
   const handleFieldUpdate = async (fieldName, value) => {
     try {
-      const endpoint = fieldName === 'tipo_movilidad' 
-        ? `/users/${user.id}/tipo-movilidad`
-        : fieldName === 'ciclo_escolar'
-        ? `/users/${user.id}/ciclo-escolar`
-        : fieldName.includes('ciclo_escolar')
-        ? `/users/${user.id}/ciclo-escolar`
-        : `/users/${user.id}`;
-      
-      const response = await api.patch(endpoint, { [fieldName]: value });
+      const response = await api.patch(`/users/${user.id}/field`, { 
+        field: fieldName, 
+        value: value 
+      });
       
       if (response.data.success) {
         const updatedUser = { ...user, [fieldName]: value };
@@ -243,7 +240,10 @@ const PerfilPage = () => {
           updatedUser.carrera_id = null;
           // También actualizar la carrera en el backend
           try {
-            await api.patch(`/users/${user.id}`, { carrera_id: null });
+            await api.patch(`/users/${user.id}/field`, { 
+              field: 'carrera_id', 
+              value: null 
+            });
           } catch (carreraError) {
             console.error("Error al resetear carrera:", carreraError);
           }
@@ -290,7 +290,7 @@ const PerfilPage = () => {
             <div className="value-with-action">
               <span className="value">{user.clave !== null && user.clave !== undefined ? user.clave : "No registrada"}</span>
               {(user.clave === null || user.clave === "") && (
-                <button className="add-phone-btn" style={{ marginLeft: "117px" }} onClick={() => setShowClaveModal(true)}>
+                <button className="add-phone-btn" onClick={() => setShowClaveModal(true)}>
                   Añadir clave
                 </button>
               )}
