@@ -41,6 +41,21 @@
   background-color: #003a78;
 }
 
+.filter-button {
+  background-color: #004a98;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 18px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.filter-button:hover {
+  background-color: #003a78;
+}
+
 .status-message {
   margin: 16px 0;
   padding: 12px;

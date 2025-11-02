@@ -1,10 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useAuth } from "../../context/useAuth";
 import api from "../../api/axiosConfig";
-import Filtros from "../../components/Filter";
+import StatsFilters from "../../components/Filter";
+import { INITIAL_FILTERS } from "../../components/filterConstants";
 import "./AdminUsersPage.css";
+import "../../components/Filter.css";
 import UserDetailsModal from "./UserDetailModal/UserDetailsModal";
 
+// Constants
+const USERS_PER_PAGE = 10;
+const ROLES = ["alumno", "becario", "administrador"];
+const TAB_FILTERS = {
+  movilidad: ["movilidad_virtual", "movilidad_internacional"],
+  visitantes: ["visitante_nacional", "visitante_internacional"],
+};
+const TABS = [
+  { id: "todos", label: "Todos los usuarios" },
+  { id: "movilidad", label: "Movilidad Virtual e Internacional" },
+  { id: "visitantes", label: "Visitantes Nacionales e Internacionales" },
+];
+
+// Helper Components
 const SkeletonRow = () => (
   <tr className="skeleton-row">
     <td><div className="skeleton skeleton-text skeleton-id"></div></td>
@@ -18,6 +34,8 @@ const SkeletonRow = () => (
 
 const AdminUsersPage = () => {
   const { user } = useAuth();
+  
+  // State
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,9 +45,18 @@ const AdminUsersPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
+  const [filters, setFilters] = useState(INITIAL_FILTERS);
+  const [filterOptions, setFilterOptions] = useState({
+    universidades: [],
+    facultades: [],
+    carreras: [],
+    becas: [],
+    ciclosEscolares: [],
+    tiposMovilidad: []
+  });
 
-  const fetchUsers = async () => {
+  // API Calls
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
@@ -40,21 +67,33 @@ const AdminUsersPage = () => {
       const response = await api.get("/users/all", config);
 
       const { data } = response;
-      if (!data || !data.success) throw new Error(data?.message || "Error en la respuesta");
+      if (!data?.success) throw new Error(data?.message || "Error en la respuesta");
 
-      if (!Array.isArray(data.data)) {
-        setUsers([]);
-        return;
-      }
-      setUsers(data.data);
+      setUsers(Array.isArray(data.data) ? data.data : []);
     } catch (e) {
       setError(e.response?.data?.message || e.message || "Error de conexión");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleChangeRole = async (userId, rol) => {
+  const fetchFilterOptions = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+
+      const res = await api.get("/stats/filter-options", config);
+      
+      if (res.data?.success) {
+        setFilterOptions(res.data.data);
+      }
+    } catch (e) {
+      console.error("Error al cargar opciones de filtros:", e);
+    }
+  }, []);
+
+  const handleChangeRole = useCallback(async (userId, rol) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No autenticado");
@@ -71,18 +110,79 @@ const AdminUsersPage = () => {
       setError("No se pudo actualizar el rol: " + (e.response?.data?.message || e.message));
       setTimeout(() => setError(""), 5000);
     }
-  };
+  }, []);
 
+  // Filter Logic with useMemo
+  const filteredUsers = useMemo(() => {
+    if (!Array.isArray(users)) return [];
+
+    let filtered = users;
+
+    // Apply tab-based filtering
+    if (activeTab === "movilidad") {
+      filtered = filtered.filter((u) => TAB_FILTERS.movilidad.includes(u.tipo_movilidad));
+    } else if (activeTab === "visitantes") {
+      filtered = filtered.filter((u) => TAB_FILTERS.visitantes.includes(u.tipo_movilidad));
+    }
+
+    // Apply advanced filters
+    const filterKeys = [
+      { key: 'universidad_id', parseValue: true },
+      { key: 'facultad_id', parseValue: true },
+      { key: 'carrera_id', parseValue: true },
+      { key: 'beca_id', parseValue: true },
+      { key: 'tipo_movilidad', parseValue: false },
+      { key: 'ciclo_escolar_inicio', parseValue: false },
+      { key: 'ciclo_escolar_final', parseValue: false },
+    ];
+
+    filterKeys.forEach(({ key, parseValue }) => {
+      if (filters[key]) {
+        filtered = filtered.filter((u) => {
+          if (!u[key]) return false;
+          return parseValue 
+            ? u[key] === parseInt(filters[key])
+            : u[key] === filters[key];
+        });
+      }
+    });
+
+    return filtered;
+  }, [users, activeTab, filters]);
+
+  // Pagination
+  const { currentUsers, totalPages } = useMemo(() => {
+    const indexOfLastUser = currentPage * USERS_PER_PAGE;
+    const indexOfFirstUser = indexOfLastUser - USERS_PER_PAGE;
+    const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+    const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
+    
+    return { currentUsers, totalPages };
+  }, [filteredUsers, currentPage]);
+
+  // Role Statistics
+  const roleStats = useMemo(() => {
+    if (!Array.isArray(filteredUsers)) return { alumno: 0, becarios: 0, administrador: 0 };
+    
+    return {
+      alumno: filteredUsers.filter((u) => u.rol === "alumno").length,
+      becario: filteredUsers.filter((u) => u.rol === "becario").length,
+      administrador: filteredUsers.filter((u) => u.rol === "administrador").length,
+    };
+  }, [filteredUsers]);
+
+  // Effects
   useEffect(() => {
     if (user?.rol === "administrador") {
       fetchUsers();
+      fetchFilterOptions();
     } else {
       setLoading(false);
     }
-  }, [user?.rol]);
+  }, [user?.rol, fetchUsers, fetchFilterOptions]);
 
   useEffect(() => {
-    if (showUserModal || showFiltros) {
+    if (showUserModal) {
       document.body.classList.add("no-scroll");
     } else {
       document.body.classList.remove("no-scroll");
@@ -91,40 +191,16 @@ const AdminUsersPage = () => {
     return () => {
       document.body.classList.remove("no-scroll");
     };
-  }, [showUserModal, showFiltros]);
+  }, [showUserModal]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, activeTab]);
+
+  // Event Handlers
   const handleRefresh = () => fetchUsers();
-
-  const getFilteredUsers = () => {
-    if (!Array.isArray(users)) return [];
-
-    switch (activeTab) {
-      case "movilidad":
-        return users.filter(
-          (u) =>
-            u.tipo_movilidad === "movilidad_virtual" ||
-            u.tipo_movilidad === "movilidad_internacional"
-        );
-
-      case "visitantes":
-        return users.filter(
-          (u) =>
-            u.tipo_movilidad === "visitante_nacional" ||
-            u.tipo_movilidad === "visitante_internacional"
-        );
-
-      case "todos":
-      default:
-        return users;
-    }
-  };
-
-  const filteredUsers = getFilteredUsers();
-
-  const indexOfLastUser = currentPage * usersPerPage;
-  const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
-  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+  
+  const clearFilters = () => setFilters(INITIAL_FILTERS);
 
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) setCurrentPage(page);
@@ -159,52 +235,41 @@ const AdminUsersPage = () => {
         </button>
 
         <button
-          style={{ backgroundColor: "#004a98" }}
           className="filter-button"
-          onClick={() => setShowFiltros(true)}
+          onClick={() => setShowFiltros(!showFiltros)}
         >
-          Filtros
-        </button>
-      </div>
-
-      <div className="tabs-container">
-        <button
-          className={`tab-button ${activeTab === "todos" ? "active" : ""}`}
-          onClick={() => setActiveTab("todos")}
-        >
-          Todos los usuarios
-        </button>
-        <button
-          className={`tab-button ${activeTab === "movilidad" ? "active" : ""}`}
-          onClick={() => setActiveTab("movilidad")}
-        >
-          Movilidad Virtual e Internacional
-        </button>
-        <button
-          className={`tab-button ${activeTab === "visitantes" ? "active" : ""}`}
-          onClick={() => setActiveTab("visitantes")}
-        >
-          Visitantes Nacionales e Internacionales
+          {showFiltros ? "Ocultar Filtros" : "Mostrar Filtros"}
         </button>
       </div>
 
       {showFiltros && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Filtros de búsqueda</h2>
-            <Filtros
-              onApply={(filteredUsers) => {
-                setUsers(Array.isArray(filteredUsers) ? filteredUsers : []);
-                setShowFiltros(false);
-                setSuccessMessage("Filtro aplicado");
-                setTimeout(() => setSuccessMessage(""), 3000);
-              }}
-              onClose={() => setShowFiltros(false)}
-            />
+        <div className="advanced-filters-panel">
+          <div className="filters-header">
+            <h3>Filtros Avanzados</h3>
+            <button className="clear-filters-button" onClick={clearFilters}>
+              Limpiar Filtros
+            </button>
           </div>
+          <StatsFilters
+            filters={filters}
+            onFilterChange={setFilters}
+            filterOptions={filterOptions}
+          />
         </div>
-      )}      
-            
+      )}
+
+      <div className="tabs-container">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`tab-button ${activeTab === tab.id ? "active" : ""}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {error && (
         <div className="status-message error-message">
           <strong>Error:</strong> {error}
@@ -275,9 +340,11 @@ const AdminUsersPage = () => {
                         onChange={(e) => handleChangeRole(u.id, e.target.value)}
                         title="Cambiar rol de usuario"
                       >
-                        <option value="alumno">Alumno</option>
-                        <option value="becarios">Becario</option>
-                        <option value="administrador">Administrador</option>
+                        {ROLES.map((role) => (
+                          <option key={role} value={role}>
+                            {role.charAt(0).toUpperCase() + role.slice(1)}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   </td>
@@ -336,21 +403,21 @@ const AdminUsersPage = () => {
             <span>
               Total de usuarios {activeTab !== "todos" ? "filtrados" : ""}:
             </span>
-            <strong>{Array.isArray(filteredUsers) ? filteredUsers.length : 0}</strong>
+            <strong>{filteredUsers.length}</strong>
           </p>
-          {Array.isArray(filteredUsers) && filteredUsers.length > 0 && (
+          {filteredUsers.length > 0 && (
             <div className="role-stats">
               <div className="role-stat">
                 <span>Alumnos:</span>
-                <strong>{filteredUsers.filter((u) => u.rol === "alumno").length}</strong>
+                <strong>{roleStats.alumno}</strong>
               </div>
               <div className="role-stat">
                 <span>Becarios:</span>
-                <strong>{filteredUsers.filter((u) => u.rol === "becarios").length}</strong>
+                <strong>{roleStats.becario}</strong>
               </div>
               <div className="role-stat">
                 <span>Administradores:</span>
-                <strong>{filteredUsers.filter((u) => u.rol === "administrador").length}</strong>
+                <strong>{roleStats.administrador}</strong>
               </div>
             </div>
           )}
