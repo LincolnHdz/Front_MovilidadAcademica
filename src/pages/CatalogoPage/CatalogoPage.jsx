@@ -19,7 +19,7 @@ const catalogConfig = {
       { name: "nombre", label: "Nombre", type: "text", required: true },
       { name: "pais", label: "País", type: "text", required: true }
     ],
-    columns: ["nombre", "pais"]
+    columns: ["id", "nombre", "pais"]
   },
   facultades: {
     title: "Facultades", 
@@ -29,7 +29,7 @@ const catalogConfig = {
       { name: "nombre", label: "Nombre", type: "text", required: true },
       { name: "universidad_id", label: "Universidad", type: "select", required: true }
     ],
-    columns: ["nombre", "universidad_nombre"]
+    columns: ["id", "nombre", "universidad_nombre"]
   },
   carreras: {
     title: "Carreras",
@@ -39,7 +39,7 @@ const catalogConfig = {
       { name: "nombre", label: "Nombre", type: "text", required: true },
       { name: "facultad_id", label: "Facultad", type: "select", required: true }
     ],
-    columns: ["nombre", "facultad_nombre", "universidad_nombre"],
+    columns: ["id", "nombre", "facultad_nombre", "universidad_nombre"],
     filters: [
       { name: "facultad_id", label: "Facultad", type: "select", options: "facultades" }
     ]
@@ -55,7 +55,7 @@ const catalogConfig = {
       { name: "facultad_id", label: "Facultad", type: "select", required: true },
       { name: "carrera_id", label: "Carrera", type: "select", required: true }
     ],
-    columns: ["nombre", "clave", "creditos", "carrera_nombre", "facultad_nombre"],
+    columns: ["id", "nombre", "clave", "creditos", "carrera_nombre", "facultad_nombre"],
     filters: [
       { name: "facultad_id", label: "Facultad", type: "select", options: "facultades" },
       { name: "carrera_id", label: "Carrera", type: "select", options: "carreras" }
@@ -69,7 +69,7 @@ const catalogConfig = {
       { name: "nombre", label: "Nombre de la Beca", type: "text", required: true },
       { name: "pais", label: "País", type: "text", required: true }
     ],
-    columns: ["nombre", "pais"]
+    columns: ["id", "nombre", "pais"]
   }
 };
 
@@ -428,6 +428,7 @@ const CatalogoPage = () => {
   // Función helper para formatear headers de columnas
   const formatColumnHeader = (column) => {
     const headers = {
+      id: "ID",
       nombre: "Nombre",
       pais: "País",
       universidad_nombre: "Universidad",

@@ -1,9 +1,8 @@
 import React, { useMemo } from "react";
 import "./Filter.css";
 
-// Componente reutilizable para un select de filtro
-const FilterSelect = ({ label, value, onChange, options = [], emptyLabel = "Todos" }) => (
-  <div className="filter-group">
+const FilterSelect = ({ label, value, onChange, options = [], emptyLabel = "Todos", className = "" }) => (
+  <div className={`filter-group ${className}`}>
     <label>{label}:</label>
     <select value={value} onChange={(e) => onChange(e.target.value)} className="filter-select">
       <option value="">{emptyLabel}</option>
@@ -70,6 +69,7 @@ const StatsFilters = ({ filters, onFilterChange, filterOptions = {} }) => {
         onChange={(val) => handleChange('beca_id', val)}
         options={filterOptions.becas}
         emptyLabel="Todas"
+        className="ciclo-escolar"
       />
 
       <FilterSelect
@@ -86,6 +86,7 @@ const StatsFilters = ({ filters, onFilterChange, filterOptions = {} }) => {
         onChange={(val) => handleChange('ciclo_escolar_inicio', val)}
         options={filterOptions.ciclosEscolares}
         emptyLabel="Todos"
+        className="ciclo-escolar"
       />
 
       <FilterSelect
@@ -94,6 +95,7 @@ const StatsFilters = ({ filters, onFilterChange, filterOptions = {} }) => {
         onChange={(val) => handleChange('ciclo_escolar_final', val)}
         options={filterOptions.ciclosEscolares}
         emptyLabel="Todos"
+        className="ciclo-escolar"
       />
     </div>
   );

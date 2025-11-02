@@ -106,8 +106,12 @@ const UserDetailsModal = ({ userId, onClose }) => {
                   </span>
                 </div>
                 <div className="user-modal-item">
-                  <span className="user-modal-label">Ciclo Escolar:</span>
-                  <span className="user-modal-value">{user.ciclo_escolar || "N/A"}</span>
+                  <span className="user-modal-label">Ciclo Escolar Inicio:</span>
+                  <span className="user-modal-value">{user.ciclo_escolar_inicio || "N/A"}</span>
+                </div>
+                <div className="user-modal-item">
+                  <span className="user-modal-label">Ciclo Escolar Final:</span>
+                  <span className="user-modal-value">{user.ciclo_escolar_final || "N/A"}</span>
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Universidad:</span>
