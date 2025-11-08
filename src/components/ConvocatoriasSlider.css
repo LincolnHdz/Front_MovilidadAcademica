@@ -78,6 +78,10 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.clickable-card {
+  cursor: pointer;
+}
+
 .convocatoria-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
@@ -174,7 +178,9 @@
   transform: scale(1.1);
 }
 
-.loading, .error, .no-convocatorias {
+.loading,
+.error,
+.no-convocatorias {
   text-align: center;
   padding: 2rem;
   background-color: #f8f9fa;
@@ -182,7 +188,8 @@
   margin: 1rem 0;
 }
 
-.loading p, .no-convocatorias p {
+.loading p,
+.no-convocatorias p {
   color: #6c757d;
   font-size: 1.1rem;
 }
@@ -198,55 +205,55 @@
   .convocatorias-slider-container {
     padding: 1rem;
   }
-  
+
   .slider-header {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
   }
-  
+
   .slider-header h3 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-  
+
   .ver-todas-btn {
     width: 100%;
   }
-  
+
   .slider-container {
     height: 350px;
   }
-  
+
   .slider-slide {
     padding: 1rem;
   }
-  
+
   .convocatoria-card {
     padding: 1.5rem;
   }
-  
+
   .convocatoria-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .convocatoria-header h4 {
     font-size: 1.3rem;
     min-width: auto;
     margin-bottom: 0.5rem;
   }
-  
+
   .slider-btn {
     width: 40px;
     height: 40px;
     font-size: 1.2rem;
   }
-  
+
   .prev-btn {
     left: 10px;
   }
-  
+
   .next-btn {
     right: 10px;
   }
@@ -256,23 +263,23 @@
   .convocatorias-slider-container {
     padding: 0.5rem;
   }
-  
+
   .slider-container {
     height: 300px;
   }
-  
+
   .slider-slide {
     padding: 0.5rem;
   }
-  
+
   .convocatoria-card {
     padding: 1rem;
   }
-  
+
   .convocatoria-header h4 {
     font-size: 1.1rem;
   }
-  
+
   .convocatoria-content p {
     font-size: 1rem;
   }

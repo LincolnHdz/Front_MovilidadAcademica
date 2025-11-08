@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ConvocatoriasSlider.css";
-import api from "../api/axiosConfig"; 
+import api from "../api/axiosConfig";
 
 const ConvocatoriasSlider = () => {
   const [convocatorias, setConvocatorias] = useState([]);
@@ -43,13 +43,13 @@ const ConvocatoriasSlider = () => {
   };
 
   const nextSlide = () => {
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === convocatorias.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prevIndex) => 
+    setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? convocatorias.length - 1 : prevIndex - 1
     );
   };
@@ -60,6 +60,10 @@ const ConvocatoriasSlider = () => {
 
   const handleVerTodas = () => {
     navigate("/convocatorias-lista");
+  };
+
+  const handleCardClick = (convocatoriaId) => {
+    navigate(`/convocatoria/${convocatoriaId}`);
   };
 
   if (loading) {
@@ -112,7 +116,10 @@ const ConvocatoriasSlider = () => {
           >
             {convocatorias.map((convocatoria) => (
               <div key={convocatoria.id} className="slider-slide">
-                <div className="convocatoria-card">
+                <div
+                  className="convocatoria-card clickable-card"
+                  onClick={() => handleCardClick(convocatoria.id)}
+                >
                   <div className="convocatoria-header">
                     <h4>{convocatoria.titulo}</h4>
                     <span className="convocatoria-fecha">

@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import Navigation from "./components/Navigation";
 import ConvocatoriasSlider from "./components/ConvocatoriasSlider";
 import ConvocatoriasPage from "./pages/ConvocatoriasPage/ConvocatoriasPage";
+import ConvocatoriaDetailPage from "./pages/ConvocatoriaDetailPage/ConvocatoriaDetailPage";
 import MovilidadPresencial from "./pages/MovilidadPresencial/MovilidadPresencial";
 import MovilidadVirtual from "./pages/MovilidadVirtual/MovilidadVirtual";
 import MovAcadFormatos from "./pages/MovAcadFormatos/MovAcadFormatos";
@@ -81,6 +82,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/convocatorias-lista" element={<ConvocatoriasPage />} />
+      <Route path="/convocatoria/:id" element={<ConvocatoriaDetailPage />} />
       <Route path="/movilidad-presencial" element={<MovilidadPresencial />} />
       <Route path="/movilidad-virtual" element={<MovilidadVirtual />} />
       <Route path="/MovAcadFormatos" element={<MovAcadFormatos />} />

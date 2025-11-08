@@ -1,0 +1,245 @@
+.convocatoria-detail-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 2rem 0;
+}
+
+.convocatoria-detail-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-bottom: 2rem;
+}
+
+.back-button:hover {
+  background: #2980b9;
+  transform: translateY(-1px);
+}
+
+.back-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.convocatoria-detail-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 16px;
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1),
+    0 4px 6px -2px rgba(37, 99, 235, 0.07);
+  padding: 2.5rem;
+  border-left: 6px solid #2563eb;
+}
+
+.convocatoria-detail-image-container {
+  width: 100%;
+  margin-bottom: 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.convocatoria-detail-image {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+  object-fit: cover;
+  display: block;
+}
+
+.convocatoria-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.convocatoria-detail-header h1 {
+  color: #2563eb;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  flex: 1;
+  min-width: 300px;
+  line-height: 1.2;
+}
+
+.convocatoria-detail-fecha {
+  background-color: #dbeafe;
+  color: #2563eb;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.convocatoria-detail-content {
+  margin-bottom: 2rem;
+}
+
+.convocatoria-detail-description h2 {
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.convocatoria-detail-description p {
+  color: #1e293b;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  text-align: justify;
+  margin: 0;
+}
+
+.convocatoria-detail-footer {
+  padding-top: 1.5rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.convocatoria-detail-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.convocatoria-id,
+.convocatoria-created {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.loading p,
+.error p {
+  color: #6c757d;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.back-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.back-btn:hover {
+  background: #2980b9;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .convocatoria-detail-page {
+    padding: 1rem 0;
+  }
+
+  .convocatoria-detail-container {
+    padding: 1rem;
+  }
+
+  .convocatoria-detail-card {
+    padding: 1.5rem;
+  }
+
+  .convocatoria-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .convocatoria-detail-header h1 {
+    font-size: 2rem;
+    min-width: auto;
+  }
+
+  .convocatoria-detail-fecha {
+    align-self: flex-start;
+  }
+
+  .convocatoria-detail-description h2 {
+    font-size: 1.3rem;
+  }
+
+  .convocatoria-detail-description p {
+    font-size: 1rem;
+  }
+
+  .convocatoria-detail-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .convocatoria-detail-container {
+    padding: 0.5rem;
+  }
+
+  .convocatoria-detail-card {
+    padding: 1rem;
+  }
+
+  .convocatoria-detail-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .convocatoria-detail-fecha {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+
+  .convocatoria-detail-description h2 {
+    font-size: 1.2rem;
+  }
+
+  .convocatoria-detail-description p {
+    font-size: 0.95rem;
+  }
+
+  .back-button {
+    width: 100%;
+    justify-content: center;
+  }
+}

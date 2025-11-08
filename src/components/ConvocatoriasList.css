@@ -78,45 +78,47 @@
 
 .convocatorias-grid {
   display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
 }
-
 
 .convocatoria-card {
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 16px;
-  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.10),
+  box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1),
     0 4px 6px -2px rgba(37, 99, 235, 0.07);
-    max-width: 500px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 2rem 1.5rem;
-    min-height: 420px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  /* Imagen de convocatoria tamaño uniforme */
-  .convocatoria-img {
-    display: block;
-    margin: 0 auto 1rem auto;
-    width: 370px;
-    height: 270px;
-    object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border-left: 6px solid #2563eb;
 }
 
+.clickable-card {
+  cursor: pointer;
+}
+
+/* Imagen de convocatoria tamaño uniforme */
+.convocatoria-img {
+  display: block;
+  margin: 0 auto 1rem auto;
+  width: 370px;
+  height: 270px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
 
 .convocatoria-card:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 16px 24px -6px rgba(37, 99, 235, 0.15),
-    0 8px 12px -4px rgba(37, 99, 235, 0.10);
+    0 8px 12px -4px rgba(37, 99, 235, 0.1);
 }
 
 .convocatoria-header {
@@ -128,7 +130,6 @@
   gap: 0.5rem;
 }
 
-
 .convocatoria-header h4 {
   color: #2563eb;
   font-size: 1.35rem;
@@ -137,7 +138,6 @@
   flex: 1;
   min-width: 200px;
 }
-
 
 .convocatoria-fecha {
   background-color: #dbeafe;
@@ -152,7 +152,6 @@
 .convocatoria-content {
   margin-bottom: 1rem;
 }
-
 
 .convocatoria-content p {
   color: #1e293b;
@@ -214,7 +213,6 @@
 .delete-btn:hover svg {
   color: #e74c3c;
 }
-
 
 .convocatoria-id {
   color: #64748b;
@@ -289,14 +287,14 @@
   .convocatoria-content p {
     font-size: 0.9rem;
   }
-  
+
   .edit-btn,
   .delete-btn {
     width: 28px;
     height: 28px;
     padding: 0.3rem;
   }
-  
+
   .edit-btn svg,
   .delete-btn svg {
     width: 14px;
