@@ -68,9 +68,9 @@
 
 /* Controls section */
 .catalog-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1.5rem;
   margin-bottom: 2rem;
   padding: 1.5rem;
   background: #ffffff;
@@ -80,7 +80,6 @@
 }
 
 .search-section {
-  flex: 1;
   min-width: 250px;
 }
 
@@ -110,14 +109,15 @@
 /* Filters */
 .filters-section {
   display: flex;
-  flex-wrap: wrap;
   gap: 1rem;
+  align-items: center;
 }
 
 .filter-group {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.5rem;
+  min-width: 200px;
 }
 
 .filter-group label {
@@ -136,6 +136,7 @@
   cursor: pointer;
   outline: none;
   transition: all 0.2s ease;
+  width: 100%;
 }
 
 .filter-group select:hover {
@@ -187,6 +188,24 @@ td {
   text-overflow: ellipsis;
   white-space: nowrap;
   box-sizing: border-box;
+}
+
+th:first-child,
+td:first-child {
+  width: 60px;
+  max-width: 60px;
+  text-align: center;
+  font-weight: 600;
+  color: #64748b;
+}
+
+th:last-child,
+td:last-child {
+  width: 120px;
+  max-width: 120px;
+  text-align: center;
+  font-weight: 600;
+  color: #64748b;
 }
 
 tr:hover td {
@@ -478,19 +497,16 @@ tr:hover td {
   }
 
   .catalog-controls {
-    flex-direction: column;
-    align-items: stretch;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .filters-section {
     flex-direction: column;
-  }
-
-  .filter-group {
     width: 100%;
   }
 
-  .filter-group select {
+  .filter-group {
     width: 100%;
   }
 

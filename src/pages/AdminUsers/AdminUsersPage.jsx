@@ -6,6 +6,7 @@ import { INITIAL_FILTERS } from "../../components/filterConstants";
 import "./AdminUsersPage.css";
 import "../../components/Filter.css";
 import UserDetailsModal from "./UserDetailModal/UserDetailsModal";
+import ImportUsersModal from "../../components/ImportUsersModal/ImportUsersModal";
 
 // Constants
 const USERS_PER_PAGE = 10;
@@ -44,6 +45,7 @@ const AdminUsersPage = () => {
   const [activeTab, setActiveTab] = useState("todos");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [filterOptions, setFilterOptions] = useState({
@@ -182,7 +184,7 @@ const AdminUsersPage = () => {
   }, [user?.rol, fetchUsers, fetchFilterOptions]);
 
   useEffect(() => {
-    if (showUserModal) {
+    if (showUserModal || showImportModal) {
       document.body.classList.add("no-scroll");
     } else {
       document.body.classList.remove("no-scroll");
@@ -191,7 +193,7 @@ const AdminUsersPage = () => {
     return () => {
       document.body.classList.remove("no-scroll");
     };
-  }, [showUserModal]);
+  }, [showUserModal, showImportModal]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -216,6 +218,26 @@ const AdminUsersPage = () => {
     setSelectedUser(null);
   };
 
+  const handleImportUsers = () => {
+    setShowImportModal(true);
+  };
+
+  const handleImportSuccess = (results) => {
+    if (results.successful > 0) {
+      setSuccessMessage(`Se importaron ${results.successful} usuarios exitosamente`);
+      setTimeout(() => setSuccessMessage(""), 5000);
+      fetchUsers(); // Recargar la lista de usuarios
+    }
+    if (results.failed > 0) {
+      setError(`${results.failed} usuarios no se pudieron importar. Revisa los detalles.`);
+      setTimeout(() => setError(""), 5000);
+    }
+  };
+
+  const closeImportModal = () => {
+    setShowImportModal(false);
+  };
+
   if (user?.rol !== "administrador") {
     return (
       <div className="access-denied">
@@ -232,6 +254,14 @@ const AdminUsersPage = () => {
 
         <button className="refresh-button" onClick={handleRefresh} disabled={loading}>
           {loading ? "Actualizando..." : "↻ Actualizar lista"}
+        </button>
+
+        <button
+          className="import-button"
+          onClick={handleImportUsers}
+          title="Importar usuarios desde archivo"
+        >
+          Importar Usuarios
         </button>
 
         <button
@@ -385,6 +415,14 @@ const AdminUsersPage = () => {
         <UserDetailsModal
           userId={selectedUser}
           onClose={closeUserModal} 
+        />
+      )}
+
+      {/* Modal de importación de usuarios */}
+      {showImportModal && (
+        <ImportUsersModal
+          onClose={closeImportModal}
+          onSuccess={handleImportSuccess}
         />
       )}
       

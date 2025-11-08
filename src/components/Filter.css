@@ -1,19 +1,30 @@
-/* Estilos para el componente StatsFilters - VERSION MEJORADA */
-
 .filters-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
   align-items: end;
   width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
-  width: 100%;
-  min-width: 0; /* Permite que se ajuste al contenedor */
+  flex: 1 1 160px; 
+  min-width: 140px;
+}
+
+.filter-group.ciclo-escolar {
+  flex: 0 1 150px; 
+  min-width: 130px;
+  max-width: 170px;
+}
+
+.filter-group.ciclo-escolar .filter-select {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.4rem;
 }
 
 .filter-group label {
