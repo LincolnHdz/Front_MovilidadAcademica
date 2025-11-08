@@ -97,7 +97,7 @@ const ImportUsersModal = ({ onClose, onSuccess }) => {
       return;
     }
 
-    console.log("✓ Archivo válido, estableciendo estado");
+    console.log(" Archivo válido, estableciendo estado");
     setFile(selectedFile);
   };
 

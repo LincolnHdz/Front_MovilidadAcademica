@@ -3,7 +3,9 @@ import { useAuth } from '../../context/useAuth';
 import api from '../../api/axiosConfig';
 import ApplicationCard from '../../components/ApplicationCard/ApplicationCard';
 import AdminModalApplication from '../../components/AdminModalApplication/AdminModalApplication';
+import StatsFilters from '../../components/Filter';
 import './AdminApplicationsPage.css';
+import '../../components/Filter.css';
 
 const AdminApplicationsPage = () => {
   const { user } = useAuth();
@@ -17,16 +19,67 @@ const AdminApplicationsPage = () => {
     comentarios: ''
   });
 
-  // Cargar todas las solicitudes cuando el componente se monta
-  useEffect(() => {
-    if (user?.rol === 'administrador') {
-      fetchApplications();
-    } else {
-      setLoading(false);
-    }
-  }, [user?.rol]);
+  // Estado para mostrar/ocultar filtros
+  const [showFiltros, setShowFiltros] = useState(false);
 
-  // Función para cargar las solicitudes desde la API
+  // Estados para filtros
+  const [filters, setFilters] = useState({
+    facultad_id: '',
+    carrera_id: '',
+    universidad_id: '',
+    beca_id: '',
+    tipo_movilidad: '',
+    ciclo_escolar_inicio: '',
+    ciclo_escolar_final: ''
+  });
+
+  // Estados para opciones de filtros
+  const [filterOptions, setFilterOptions] = useState({
+    universidades: [],
+    facultades: [],
+    carreras: [],
+    becas: [],
+    tiposMovilidad: [],
+    ciclosEscolares: []
+  });
+
+  // Cargar opciones de filtros al montar el componente
+  useEffect(() => {
+    const loadFilterOptions = async () => {
+      try {
+        const [universidades, facultades, carreras, becas] = await Promise.all([
+          api.get('/catalogo/universidades'),
+          api.get('/catalogo/facultades'),
+          api.get('/catalogo/carreras'),
+          api.get('/catalogo/becas')
+        ]);
+
+        setFilterOptions({
+          universidades: universidades.data?.data || [],
+          facultades: facultades.data?.data || [],
+          carreras: carreras.data?.data || [],
+          becas: becas.data?.data || [],
+          tiposMovilidad: [
+            { id: 'movilidad_internacional', nombre: 'Movilidad Internacional' },
+            { id: 'movilidad_virtual', nombre: 'Movilidad Virtual' },
+            { id: 'visitante_nacional', nombre: 'Visitante Nacional' },
+            { id: 'visitante_internacional', nombre: 'Visitante Internacional' }
+          ],
+          ciclosEscolares: [
+            { id: '2023-2024', nombre: '2023-2024' },
+            { id: '2024-2025', nombre: '2024-2025' },
+            { id: '2025-2026', nombre: '2025-2026' }
+          ]
+        });
+      } catch (error) {
+        console.error('Error al cargar opciones de filtros:', error);
+      }
+    };
+
+    loadFilterOptions();
+  }, []);
+
+  // Función para cargar las solicitudes desde la API con filtros
   const fetchApplications = async () => {
     try {
       setLoading(true);
@@ -40,7 +93,22 @@ const AdminApplicationsPage = () => {
         }
       };
 
-  const response = await api.get('/applications/admin/all', config);
+      // Construir query params con los filtros activos
+      const queryParams = new URLSearchParams();
+      Object.keys(filters).forEach(key => {
+        if (filters[key]) {
+          queryParams.append(key, filters[key]);
+        }
+      });
+
+      const queryString = queryParams.toString();
+      const url = queryString 
+        ? `/applications/admin/all?${queryString}` 
+        : '/applications/admin/all';
+
+      console.log('Fetching applications with URL:', url);
+
+      const response = await api.get(url, config);
       
       if (!response.data.success) {
         throw new Error(response.data.message || 'Error al cargar solicitudes');
@@ -54,6 +122,29 @@ const AdminApplicationsPage = () => {
       setLoading(false);
     }
   };
+
+  // Función para limpiar filtros
+  const clearFilters = () => {
+    setFilters({
+      facultad_id: '',
+      carrera_id: '',
+      universidad_id: '',
+      beca_id: '',
+      tipo_movilidad: '',
+      ciclo_escolar_inicio: '',
+      ciclo_escolar_final: ''
+    });
+  };
+
+  // Cargar solicitudes cuando cambian los filtros o el usuario
+  useEffect(() => {
+    if (user?.rol === 'administrador') {
+      fetchApplications();
+    } else {
+      setLoading(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.rol, filters]);
 
   // Función para actualizar el estado de una solicitud
   const updateApplicationStatus = async (id, formData) => {
@@ -135,7 +226,30 @@ const AdminApplicationsPage = () => {
         <button className="refresh-button" onClick={fetchApplications} disabled={loading}>
           {loading ? 'Actualizando...' : '↻ Actualizar lista'}
         </button>
+
+        <button
+          className="filter-button"
+          onClick={() => setShowFiltros(!showFiltros)}
+        >
+          {showFiltros ? "Ocultar Filtros" : "Mostrar Filtros"}
+        </button>
       </div>
+
+      {showFiltros && (
+        <div className="advanced-filters-panel">
+          <div className="filters-header">
+            <h3>Filtros Avanzados</h3>
+            <button className="clear-filters-button" onClick={clearFilters}>
+              Limpiar Filtros
+            </button>
+          </div>
+          <StatsFilters
+            filters={filters}
+            onFilterChange={setFilters}
+            filterOptions={filterOptions}
+          />
+        </div>
+      )}
 
       {error && (
         <div className="status-message error-message">
