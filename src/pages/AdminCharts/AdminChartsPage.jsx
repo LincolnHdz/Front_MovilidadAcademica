@@ -69,6 +69,124 @@ const SummaryCard = ({ number, label }) => (
   </div>
 );
 
+// Modal Component
+const EmailPdfModal = ({ isOpen, onClose, pdfBlob, onSendEmail }) => {
+  const [email, setEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  const [message, setMessage] = useState("");
+  const [pdfUrl, setPdfUrl] = useState("");
+
+  useEffect(() => {
+    if (pdfBlob) {
+      const url = URL.createObjectURL(pdfBlob);
+      setPdfUrl(url);
+      return () => URL.revokeObjectURL(url);
+    }
+  }, [pdfBlob]);
+
+  const handleSend = async () => {
+    if (!email.trim()) {
+      setMessage("Por favor ingresa un correo electrónico");
+      return;
+    }
+
+    // Validación básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setMessage("Por favor ingresa un correo electrónico válido");
+      return;
+    }
+
+    setSending(true);
+    setMessage("");
+    
+    try {
+      await onSendEmail(email, pdfBlob);
+      setMessage("✓ Correo enviado exitosamente");
+      setTimeout(() => {
+        onClose();
+        setEmail("");
+        setMessage("");
+      }, 2000);
+    } catch (error) {
+      setMessage("✗ Error al enviar el correo: " + (error.message || "Intenta de nuevo"));
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleClose = () => {
+    setEmail("");
+    setMessage("");
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={handleClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Enviar Gráficas por Correo</h2>
+          <button className="modal-close-button" onClick={handleClose}>
+            ✕
+          </button>
+        </div>
+        
+        <div className="modal-body">
+          {/* Preview del PDF */}
+          <div className="pdf-preview-container">
+            <h3>Vista Previa del PDF</h3>
+            {pdfUrl ? (
+              <iframe
+                src={pdfUrl}
+                className="pdf-iframe"
+                title="Vista previa del PDF"
+              />
+            ) : (
+              <div className="pdf-loading">Generando vista previa...</div>
+            )}
+          </div>
+
+          {/* Input de correo */}
+          <div className="email-input-container">
+            <label htmlFor="email-input">Correo Electrónico:</label>
+            <input
+              id="email-input"
+              type="email"
+              className="email-input"
+              placeholder="ejemplo@correo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={sending}
+            />
+          </div>
+
+          {/* Mensaje de estado */}
+          {message && (
+            <div className={`modal-message ${message.includes("✓") ? "success" : "error"}`}>
+              {message}
+            </div>
+          )}
+        </div>
+
+        <div className="modal-footer">
+          <button className="modal-button cancel" onClick={handleClose} disabled={sending}>
+            Cancelar
+          </button>
+          <button 
+            className="modal-button send" 
+            onClick={handleSend}
+            disabled={sending || !email.trim()}
+          >
+            {sending ? "Enviando..." : "Enviar"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const AdminChartsPage = () => {
   const { user } = useAuth();
   const chartsRef = useRef(null);
@@ -92,6 +210,10 @@ const AdminChartsPage = () => {
   });
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [visitorSummary, setVisitorSummary] = useState(null);
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [pdfBlob, setPdfBlob] = useState(null);
 
   // Memoized values
   const currentDataset = useMemo(
@@ -276,6 +398,56 @@ const AdminChartsPage = () => {
     await generateChartPdf(chartsRef, currentDataset, filters, filterOptions, filteredDataRows);
   };
 
+  const handleOpenEmailModal = async () => {
+    try {
+      // Generar el PDF como blob
+      const blob = await generateChartPdf(
+        chartsRef, 
+        currentDataset, 
+        filters, 
+        filterOptions, 
+        filteredDataRows,
+        true // Parámetro para retornar blob en lugar de descargar
+      );
+      
+      setPdfBlob(blob);
+      setIsModalOpen(true);
+    } catch (error) {
+      setError("Error al generar el PDF: " + error.message);
+    }
+  };
+
+  const handleSendEmail = async (email, pdfBlob) => {
+    console.log(pdfBlob)
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No autenticado");
+    }
+
+    const formData = new FormData();
+    formData.append("email", email);
+    formData.append("pdf", pdfBlob, "graficas.pdf");
+    
+    // Agregar información adicional si es necesario
+    formData.append("dataset", currentDataset.label);
+    formData.append("filters", JSON.stringify(filters));
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    const response = await api.post("/stats/send-pdf-email", formData, config);
+    
+    if (!response.data?.success) {
+      throw new Error(response.data?.message || "Error al enviar el correo");
+    }
+
+    return response.data;
+  };
+
   if (user?.rol !== "administrador") {
     return (
       <div className="access-denied">
@@ -314,6 +486,9 @@ const AdminChartsPage = () => {
           </button>
           <button className="pdf-button" onClick={handleDownloadPdf}>
             Descargar Gráficas PDF
+          </button>
+          <button className="pdf-button" onClick={handleOpenEmailModal}>
+            ✉ Enviar Gráficas por Correo
           </button>
         </div>
       </div>
@@ -384,6 +559,14 @@ const AdminChartsPage = () => {
           </tfoot>
         </table>
       </div>
+
+      {/* Modal para enviar PDF por correo */}
+      <EmailPdfModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        pdfBlob={pdfBlob}
+        onSendEmail={handleSendEmail}
+      />
     </div>
   );
 };

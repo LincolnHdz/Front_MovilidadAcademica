@@ -22,7 +22,8 @@ const UserDetailsModal = ({ userId, onClose }) => {
         const response = await api.get(`/users/${userId}`, config);
 
         const { data } = response;
-        if (!data.success) throw new Error(data.message || "Error al obtener usuario");
+        if (!data.success)
+          throw new Error(data.message || "Error al obtener usuario");
 
         setUser(data.data);
       } catch (e) {
@@ -45,7 +46,12 @@ const UserDetailsModal = ({ userId, onClose }) => {
         </div>
 
         {loading ? (
-          <p>Cargando información del usuario...</p>
+          /* ===== Skeleton Loading ===== */
+          <div className="skeleton-container">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="skeleton-item"></div>
+            ))}
+          </div>
         ) : error ? (
           <p className="error-message">Error: {error}</p>
         ) : !user ? (
@@ -66,11 +72,15 @@ const UserDetailsModal = ({ userId, onClose }) => {
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Apellido Paterno:</span>
-                  <span className="user-modal-value">{user.apellido_paterno}</span>
+                  <span className="user-modal-value">
+                    {user.apellido_paterno}
+                  </span>
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Apellido Materno:</span>
-                  <span className="user-modal-value">{user.apellido_materno || "N/A"}</span>
+                  <span className="user-modal-value">
+                    {user.apellido_materno || "N/A"}
+                  </span>
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Clave:</span>
@@ -78,7 +88,9 @@ const UserDetailsModal = ({ userId, onClose }) => {
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Teléfono:</span>
-                  <span className="user-modal-value">{user.telefono || "N/A"}</span>
+                  <span className="user-modal-value">
+                    {user.telefono || "N/A"}
+                  </span>
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Email:</span>
@@ -86,7 +98,9 @@ const UserDetailsModal = ({ userId, onClose }) => {
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Rol:</span>
-                  <span className={`user-role role-${user.rol}`}>{user.rol}</span>
+                  <span className={`user-role role-${user.rol}`}>
+                    {user.rol}
+                  </span>
                 </div>
               </div>
             </div>
@@ -107,16 +121,22 @@ const UserDetailsModal = ({ userId, onClose }) => {
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Ciclo Escolar Inicio:</span>
-                  <span className="user-modal-value">{user.ciclo_escolar_inicio || "N/A"}</span>
+                  <span className="user-modal-value">
+                    {user.ciclo_escolar_inicio || "N/A"}
+                  </span>
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Ciclo Escolar Final:</span>
-                  <span className="user-modal-value">{user.ciclo_escolar_final || "N/A"}</span>
+                  <span className="user-modal-value">
+                    {user.ciclo_escolar_final || "N/A"}
+                  </span>
                 </div>
                 <div className="user-modal-item">
                   <span className="user-modal-label">Universidad:</span>
                   <span className="user-modal-value">
-                    {user.universidad?.nombre || user.universidad_id || "N/A"}
+                    {user.universidad?.nombre ||
+                      user.universidad_id ||
+                      "N/A"}
                   </span>
                 </div>
                 <div className="user-modal-item">
@@ -153,7 +173,9 @@ const UserDetailsModal = ({ userId, onClose }) => {
                   </span>
                 </div>
                 <div className="user-modal-item">
-                  <span className="user-modal-label">Última Actualización:</span>
+                  <span className="user-modal-label">
+                    Última Actualización:
+                  </span>
                   <span className="user-modal-value">
                     {user.updated_at
                       ? new Date(user.updated_at).toLocaleString("es-MX")
