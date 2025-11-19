@@ -16,7 +16,10 @@ import {
 } from "chart.js";
 import StatsFilters from "../../components/Filter";
 import { INITIAL_FILTERS } from "../../components/filterConstants";
-import { generateChartPdf } from "../../components/PdfGenerator";
+import { 
+  generateChartPdf, 
+  generateDetailedReportPdf 
+} from "../../components/PdfGenerator";
 import "./AdminChartsPage.css";
 
 ChartJS.register(
@@ -210,6 +213,7 @@ const AdminChartsPage = () => {
   });
   const [filters, setFilters] = useState(INITIAL_FILTERS);
   const [visitorSummary, setVisitorSummary] = useState(null);
+  const [showInfoBanner, setShowInfoBanner] = useState(false);
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -384,6 +388,18 @@ const AdminChartsPage = () => {
     }
   }, [user?.rol, fetchFilterOptions]);
 
+  useEffect(() => {
+    if (filters.tipo_movilidad) {
+      setShowInfoBanner(true);
+      const timer = setTimeout(() => {
+        setShowInfoBanner(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowInfoBanner(false);
+    }
+  }, [filters.tipo_movilidad]);
+
   // Handlers
   const clearFilters = () => setFilters(INITIAL_FILTERS);
 
@@ -448,6 +464,49 @@ const AdminChartsPage = () => {
     return response.data;
   };
 
+  // === REPORTE DETALLADO ===
+  const handleDownloadDetailedReport = async () => {
+    try {
+      // Validar que haya tipo de movilidad seleccionado
+      if (!filters.tipo_movilidad) {
+        alert("⚠️ Debes seleccionar un Tipo de Movilidad en los filtros para generar el reporte detallado");
+        return;
+      }
+
+      setLoading(true);
+      setError(""); // Limpiar errores previos
+      
+      const token = localStorage.getItem("token");
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      
+      const tipoMovilidad = filters.tipo_movilidad;
+      const isVisitante = tipoMovilidad === "visitante_nacional" || tipoMovilidad === "visitante_internacional";
+      const endpoint = isVisitante ? "/stats/visitantes-report" : "/stats/movilidad-report";
+      
+      // Construir parámetros con filtros
+      const params = new URLSearchParams({
+        tipo_movilidad: tipoMovilidad,
+        ...filters
+      });
+      
+      const res = await api.get(`${endpoint}?${params}`, config);
+      
+      if (res.data?.success) {
+        if (res.data.data.length === 0) {
+          alert("ℹ️ No se encontraron registros con los filtros seleccionados");
+          return;
+        }
+        await generateDetailedReportPdf(res.data.data, tipoMovilidad, filters, filterOptions);
+      } else {
+        setError("No se pudo obtener datos para el reporte");
+      }
+    } catch (e) {
+      setError(e.response?.data?.message || "Error al generar reporte detallado");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (user?.rol !== "administrador") {
     return (
       <div className="access-denied">
@@ -484,10 +543,26 @@ const AdminChartsPage = () => {
           >
             {loading ? "Actualizando..." : "↻ Actualizar"}
           </button>
-          <button className="pdf-button" onClick={handleDownloadPdf}>
-            Descargar Gráficas PDF
+          <button 
+            className="pdf-button" 
+            onClick={handleDownloadPdf}
+            disabled={loading}
+          >
+            📊 Descargar Gráficas PDF
           </button>
-          <button className="pdf-button" onClick={handleOpenEmailModal}>
+          <button 
+            className="pdf-button detailed-report-button" 
+            onClick={handleDownloadDetailedReport}
+            disabled={loading}
+            title="Descargar reporte detallado (requiere seleccionar Tipo de Movilidad)"
+          >
+            📋 Descargar Reporte PDF
+          </button>
+          <button 
+            className="pdf-button email-button" 
+            onClick={handleOpenEmailModal}
+            disabled={loading}
+          >
             ✉ Enviar Gráficas por Correo
           </button>
         </div>
@@ -525,6 +600,16 @@ const AdminChartsPage = () => {
             <SummaryCard number={visitorSummary.unique_ips} label="IPs Únicas" />
             <SummaryCard number={visitorSummary.unique_sessions} label="Sesiones Únicas" />
           </div>
+        </div>
+      )}
+
+      {/* Indicador de reporte detallado */}
+      {showInfoBanner && filters.tipo_movilidad && (
+        <div className="report-info-banner">
+          <span className="info-icon">ℹ️</span>
+          <span>
+            El botón "Descargar Reporte PDF" generará un reporte detallado de <strong>{filters.tipo_movilidad.replace(/_/g, ' ')}</strong> con los filtros aplicados
+          </span>
         </div>
       )}
 

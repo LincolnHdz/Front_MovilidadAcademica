@@ -235,6 +235,80 @@
   font-weight: 500;
 }
 
+/* === BANNER DE INFORMACIÓN === */
+.report-info-banner {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+  border-left: 4px solid #004a98;
+  border-radius: 8px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 74, 152, 0.1);
+}
+
+.report-info-banner .info-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.report-info-banner span {
+  color: #1565c0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.report-info-banner strong {
+  color: #004a98;
+  text-transform: capitalize;
+}
+
+/* === BOTONES PDF === */
+.pdf-button {
+  padding: 0.6rem 1rem;
+  background: linear-gradient(135deg, #004a98 0%, #1e88e5 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 74, 152, 0.2);
+}
+
+.pdf-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #003d82 0%, #1976d2 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 74, 152, 0.3);
+}
+
+.pdf-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pdf-button.detailed-report-button {
+  background: linear-gradient(135deg, #43a047 0%, #66bb6a 100%);
+  box-shadow: 0 2px 6px rgba(67, 160, 71, 0.2);
+}
+
+.pdf-button.detailed-report-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+  box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+}
+
+.pdf-button.email-button {
+  background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+  box-shadow: 0 2px 6px rgba(106, 27, 154, 0.2);
+}
+
+.pdf-button.email-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
+  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .filters-header {
