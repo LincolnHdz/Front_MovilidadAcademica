@@ -18,7 +18,7 @@ const CountrySelector = ({
     <div className={`country-selector ${className}`}>
       {showLabel && (
         <label htmlFor="country" className="form-label">
-          <Globe className="label-icon" />
+          <Globe className="label-icon" color="#2563eb" />
           País Destino
         </label>
       )}

@@ -384,7 +384,7 @@ const AdminUsersPage = () => {
           </tbody>
         </table>
 
-        {/* 👇 PAGINACIÓN */}
+        {/* PAGINACIÓN */}
         {totalPages > 1 && (
           <div className="pagination-container">
             <button
@@ -392,7 +392,7 @@ const AdminUsersPage = () => {
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
             >
-              ⬅ Anterior
+              Anterior
             </button>
 
             <span className="pagination-info">
@@ -404,7 +404,7 @@ const AdminUsersPage = () => {
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
             >
-              Siguiente ➡
+              Siguiente
             </button>
           </div>
         )}

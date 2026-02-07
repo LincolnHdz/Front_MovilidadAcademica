@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import api from "../../api/axiosConfig";
 import { useAuth } from "../../context/useAuth";
 import "./ApplicationPage.css";
@@ -26,6 +26,7 @@ import {
 
 const RegistroMateria = () => {
   const { user } = useAuth();
+  const fileInputRef = useRef(null);
   console.log("Usuario desde useAuth:", user);
   
   // Si el usuario no está cargado en el contexto, intentamos cargarlo desde localStorage
@@ -74,17 +75,23 @@ const RegistroMateria = () => {
   useEffect(() => {
     const checkExistingApplication = async () => {
       try {
-        if (user && user.clave) {
-          const response = await api.get(`/applications/all`);
+        if (user) {
+          const response = await api.get(`/applications/user/applications`);
           
           if (response.data && response.data.success) {
-            const userApplication = response.data.data.find(
-              (app) => app.clave === user.clave
-            );
-            
-            if (userApplication) {
-              console.log("Usuario ya tiene solicitud existente:", userApplication);
-              setExistingApplication(userApplication);
+            const applications = response.data.data;
+            if (applications && applications.length > 0) {
+              // bloquear si hay una solicitud que no está rechazada
+              const activeApplication = applications.find(
+                app => app.estado !== "rechazada"
+              );
+              
+              if (activeApplication) {
+                console.log("Usuario tiene solicitud activa:", activeApplication);
+                setExistingApplication(activeApplication);
+              } else {
+                console.log("La última solicitud fue rechazada. Puede enviar una nueva.");
+              }
             }
           }
         }
@@ -359,6 +366,12 @@ const RegistroMateria = () => {
     }
   };
 
+  const handleUploadClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   const removeFile = () => {
     setFormData((prev) => ({
       ...prev,
@@ -379,10 +392,6 @@ const RegistroMateria = () => {
 
     if (!formData.apellidoPaterno.trim()) {
       newErrors.apellidoPaterno = "El apellido paterno es requerido";
-    }
-
-    if (!formData.clave.trim()) {
-      newErrors.clave = "La clave es requerida";
     }
 
     if (!formData.universidad || !formData.universidad.trim()) {
@@ -580,8 +589,8 @@ const RegistroMateria = () => {
           <main className="form-main">
             <div className="form-card">
               <div className="form-card-header">
-                <h2>Solicitud ya enviada</h2>
-                <p>Ya has enviado una solicitud de registro. Puedes ver su estado en tu perfil.</p>
+                <h2>Solicitud activa</h2>
+                <p>Ya tienes una solicitud en proceso. Podrás enviar una nueva solicitud solo si esta es rechazada.</p>
               </div>
               <div className="application-status-info">
                 <p>Estado: <strong>{existingApplication.estado || "Pendiente"}</strong></p>
@@ -893,6 +902,7 @@ const RegistroMateria = () => {
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
+                    onClick={handleUploadClick}
                   >
                     <input
                       type="file"
@@ -900,6 +910,7 @@ const RegistroMateria = () => {
                       onChange={(e) => handleFileChange(e.target.files[0])}
                       className="file-input"
                       id="archivo"
+                      ref={fileInputRef}
                     />
                     
                     {formData.archivo ? (
@@ -1006,7 +1017,7 @@ const RegistroMateria = () => {
                 return carreraAMostrar ? (
                   <div className="filter-info">
                     <p className="filter-info-text">
-                      📚 Mostrando materias de: <strong>{carreraAMostrar}</strong>
+                      Mostrando materias de: <strong>{carreraAMostrar}</strong>
                       <br />
                       <span style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>
                         ({origenCarrera})

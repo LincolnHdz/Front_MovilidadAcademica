@@ -96,7 +96,7 @@ const ConvocatoriaForm = ({
         </h3>
         {onCancel && (
           <button type="button" onClick={onCancel} className="cancel-btn">
-            ✕
+            X
           </button>
         )}
       </div>

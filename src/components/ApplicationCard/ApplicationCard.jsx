@@ -25,6 +25,11 @@ const ApplicationCard = ({
       materias = [];
     }
   }
+  
+  // Asegurar que materias sea siempre un array
+  if (!Array.isArray(materias)) {
+    materias = [];
+  }
 
   // Parsear el archivo si es necesario
   let archivo = app.archivo;
@@ -166,9 +171,9 @@ const ApplicationCard = ({
 
           {/* Materias de interés */}
           {materias && materias.length > 0 && (
-            <div style={{ marginTop: '0.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <strong style={{ color: '#2980b9', whiteSpace: 'nowrap' }}>Materias:</strong> 
-              <div style={{ flex: 1, maxHeight: '38px', overflow: 'hidden' }}>
+            <div>
+              <strong style={{ color: '#2980b9', display: 'block' }}>Materias:</strong> 
+              <div style={{ width: '100%', maxWidth: '680px', height: '46px', overflow: 'hidden' }}>
                 <MateriasSlider materias={materias} readOnly={true} compactMode={true} />
               </div>
             </div>
