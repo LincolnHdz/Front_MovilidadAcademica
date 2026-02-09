@@ -104,14 +104,40 @@
 
 .refresh-button,
 .pdf-button {
-  background: #3498db;
-  color: #fff;
+  padding: 0.6rem 1rem;
   border: none;
   border-radius: 8px;
-  padding: 0.5rem 0.9rem;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  color: #fff;
+  background: linear-gradient(135deg, #004a98 0%, #1a75d1 100%);
+  box-shadow: 0 2px 8px rgba(0, 74, 152, 0.18);
 }
+
+.refresh-button:hover:not(:disabled),
+.pdf-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #003366 0%, #005fc5 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 74, 152, 0.28);
+}
+
+.refresh-button:disabled,
+.pdf-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.button-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  vertical-align: middle;
+  
+}
+
 
 .pdf-button {
   background: #2e7d32;
@@ -290,23 +316,23 @@
 }
 
 .pdf-button.detailed-report-button {
-  background: linear-gradient(135deg, #43a047 0%, #66bb6a 100%);
-  box-shadow: 0 2px 6px rgba(67, 160, 71, 0.2);
+  background: linear-gradient(135deg, #003366 0%, #004a98 100%);
+  box-shadow: 0 2px 8px rgba(0, 51, 102, 0.18);
 }
 
 .pdf-button.detailed-report-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
-  box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+  background: linear-gradient(135deg, #002b55 0%, #004a98 100%);
+  box-shadow: 0 6px 16px rgba(0, 51, 102, 0.28);
 }
 
 .pdf-button.email-button {
-  background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
-  box-shadow: 0 2px 6px rgba(106, 27, 154, 0.2);
+  background: linear-gradient(135deg, #005fc5 0%, #4d94db 100%);
+  box-shadow: 0 2px 8px rgba(0, 95, 197, 0.18);
 }
 
 .pdf-button.email-button:hover:not(:disabled) {
-  background: linear-gradient(135deg, #4a148c 0%, #7b1fa2 100%);
-  box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+  background: linear-gradient(135deg, #004a98 0%, #1a75d1 100%);
+  box-shadow: 0 6px 16px rgba(0, 95, 197, 0.28);
 }
 
 /* Responsive design */

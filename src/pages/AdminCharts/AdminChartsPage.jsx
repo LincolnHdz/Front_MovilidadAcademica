@@ -21,6 +21,8 @@ import {
   generateDetailedReportPdf 
 } from "../../components/PdfGenerator";
 import "./AdminChartsPage.css";
+import PdfIcon from "../../icons/pdf-icon.svg";
+import BarIcon from "../../icons/bar-chart-icon.svg";
 
 ChartJS.register(
   BarElement,
@@ -548,7 +550,8 @@ const AdminChartsPage = () => {
             onClick={handleDownloadPdf}
             disabled={loading}
           >
-            📊 Descargar Gráficas PDF
+            <img src={BarIcon} alt="Bar Chart Icon" className="button-icon" />
+            Descargar Gráficas PDF
           </button>
           <button 
             className="pdf-button detailed-report-button" 
@@ -556,15 +559,16 @@ const AdminChartsPage = () => {
             disabled={loading}
             title="Descargar reporte detallado (requiere seleccionar Tipo de Movilidad)"
           >
-            📋 Descargar Reporte PDF
+            <img src={PdfIcon} alt="PDF Icon" className="button-icon" />
+            Descargar Reporte PDF
           </button>
-          <button 
+          {/*<button 
             className="pdf-button email-button" 
             onClick={handleOpenEmailModal}
             disabled={loading}
           >
             ✉ Enviar Gráficas por Correo
-          </button>
+          </button>*/}
         </div>
       </div>
 
